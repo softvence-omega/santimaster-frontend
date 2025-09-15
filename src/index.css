@@ -1,1 +1,8 @@
 @import "tailwindcss";
+
+body {
+  font-family: "Inter";
+}
+html {
+  scroll-behavior: smooth;
+}

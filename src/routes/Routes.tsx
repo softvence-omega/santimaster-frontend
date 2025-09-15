@@ -3,6 +3,7 @@ import AuthLayout from "../Layout/AuthLayout";
 import Mainlayout from "../Layout/Mainlayout";
 import PartnerDashboardLayout from "../Layout/DashboardLayout";
 import Home from "../pages/Home/Home";
+import Mvp from "../pages/Mvp/Mvp";
 
 const router = createBrowserRouter([
   {
@@ -15,7 +16,13 @@ const router = createBrowserRouter([
   {
     path: "/",
     element: <Mainlayout />,
-    children: [{ path: "/", element: <Home /> }],
+    children: [
+      { path: "/", element: <Home /> },
+      {
+        path: "/mvp",
+        element: <Mvp />,
+      },
+    ],
   },
 
   {
