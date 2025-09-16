@@ -13,7 +13,15 @@ export default function HomePage() {
   const [active, setActive] = useState("MVP");
   const [menuOpen, setMenuOpen] = useState(false);
 
-  const links = ["Home", "MVP", "Protocols", "Roadmap", "Roles", "Contact"];
+  const links = [
+    { name: "Home", path: "/" },
+    { name: "MVP", path: "/mvp" },
+    { name: "Protocols", path: "/feature-libary" },
+    { name: "Roadmap", path: "/roadmap" },
+    { name: "Roles", path: "/roles" },
+    { name: "Contact", path: "/contact" },
+  ];
+
   return (
     <div className="min-h-screen bg-slate-900 text-white relative overflow-hidden">
       {/* Background Gradient Overlay */}
@@ -46,18 +54,19 @@ export default function HomePage() {
             {/* ----------Nav Links (Desktop)---------------- */}
             <div className="hidden md:flex space-x-6">
               {links.map((link) => (
-                <button
-                  key={link}
-                  onClick={() => setActive(link)}
-                  className={`relative text-[#1D6953] text-center  text-[18px] not-italic font-normal leading-normal hover:text-green-700 ${
-                    active === link ? "font-medium" : ""
+                <Link
+                  key={link.name}
+                  to={link.path}
+                  onClick={() => setActive(link.name)}
+                  className={`relative text-[#1D6953] text-center text-[18px] not-italic font-normal leading-normal hover:text-green-700 ${
+                    active === link.name ? "font-medium" : ""
                   }`}
                 >
-                  {link}
-                  {active === link && (
+                  {link.name}
+                  {active === link.name && (
                     <span className="absolute -bottom-1 left-0 w-full h-[2px] bg-green-900 rounded-full" />
                   )}
-                </button>
+                </Link>
               ))}
             </div>
 
@@ -96,18 +105,19 @@ export default function HomePage() {
           >
             <div className="px-6 pb-4 flex flex-col space-y-4">
               {links.map((link) => (
-                <button
-                  key={link}
-                  onClick={() => {
-                    setActive(link);
-                    setMenuOpen(false);
-                  }}
-                  className={`text-left text-green-900 hover:text-green-700 ${
-                    active === link ? "font-medium underline" : ""
+                <Link
+                  key={link.name}
+                  to={link.path}
+                  onClick={() => setActive(link.name)}
+                  className={`relative text-[#1D6953] text-center text-[18px] not-italic font-normal leading-normal hover:text-green-700 ${
+                    active === link.name ? "font-medium" : ""
                   }`}
                 >
-                  {link}
-                </button>
+                  {link.name}
+                  {active === link.name && (
+                    <span className="absolute -bottom-1 left-0 w-full h-[2px] bg-green-900 rounded-full" />
+                  )}
+                </Link>
               ))}
 
               {/* Search + Sign Up (Mobile) */}

@@ -1,16 +1,21 @@
 import { createBrowserRouter } from "react-router-dom";
-import AuthLayout from "../Layout/AuthLayout";
+
 import Mainlayout from "../Layout/Mainlayout";
 import PartnerDashboardLayout from "../Layout/DashboardLayout";
 import Home from "../pages/Home/Home";
 import Mvp from "../pages/Mvp/Mvp";
 
+import Protocols from "../pages/Protocols/Protocols";
+import LoginForm from "../pages/Authentication/Login";
+import RegisterForm from "../pages/Authentication/Register";
+import Contact from "../pages/Contract/Contract";
+
 const router = createBrowserRouter([
-  {
-    path: "/auth",
-    element: <AuthLayout />,
-    children: [],
-  },
+  // {
+  //   path: "/",
+  //   element: <AuthLayout />,
+  //   children: [],
+  // },
 
   //   -------------main layout------------------
   {
@@ -21,6 +26,22 @@ const router = createBrowserRouter([
       {
         path: "/mvp",
         element: <Mvp />,
+      },
+      {
+        path: "/feature-libary",
+        element: <Protocols />,
+      },
+      {
+        path: "/login",
+        element: <LoginForm />,
+      },
+      {
+        path: "/register",
+        element: <RegisterForm />,
+      },
+      {
+        path: "/contract",
+        element: <Contact />,
       },
     ],
   },

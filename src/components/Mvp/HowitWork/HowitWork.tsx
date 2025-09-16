@@ -116,49 +116,45 @@ const Howitsteps = [
 
 const HowitWork = () => {
   return (
-    <div className="p-4 max-w-4xl mx-auto dark:bg-gray-800 py-20">
-      {/* <h2 className="font-heading dark:text-gray-100 mb-12 text-3xl font-bold lg:text-4xl text-center">
-        How It Works
-      </h2> */}
-
+    <div className="max-w-full sm:max-w-2xl md:max-w-3xl lg:max-w-4xl mx-auto py-10 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8">
       <SectionHeader
         title="How It Works"
         subtitle="Simple, streamlined workflow from submission to publication"
-      ></SectionHeader>
+      />
 
       <div className="relative">
         {/* Stepper Line */}
-        <div className="hidden md:block absolute top-10 left-[30px] w-1 bg-green-200 h-[calc(100%-40px)]"></div>
+        <div className="absolute h-full w-px bg-green-300 left-[calc(3rem/2)] sm:left-[calc(3.5rem/2)] md:left-[calc(4rem/2)] lg:left-[calc(60px/2)] z-0" />
 
-        <div className="space-y-10">
+        <div className="space-y-8 sm:space-y-10 lg:space-y-12">
           {Howitsteps.map((step, idx) => (
             <div
               key={idx}
-              className="flex flex-col md:flex-row gap-6 md:gap-8 relative"
+              className="flex flex-col sm:flex-row gap-4 sm:gap-6 lg:gap-8 relative"
             >
               {/* Icon with Dot */}
-              <div className="flex flex-shrink-0 justify-center md:justify-start items-start md:items-center w-[60px] relative">
-                <div className="flex w-[60px] h-[60px] justify-center items-center rounded-full bg-[#1D6953] z-10">
+              <div className="flex flex-shrink-0 items-start sm:items-center w-12 sm:w-14 md:w-16 lg:w-[60px] relative">
+                <div className="flex w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 lg:w-[60px] lg:h-[60px] justify-center items-center rounded-full bg-[#1D6953] z-10">
                   {step.icon}
                 </div>
               </div>
 
               {/* Step Info */}
-              <div className="flex-1">
-                <p className="text-2xl md:text-3xl font-semibold text-[#0A251D] mb-2 font-barlow">
+              <div className="flex-1 ml-10 sm:ml-8 md:ml-10 lg:ml-12">
+                <p className="text-xl sm:text-2xl md:text-3xl font-semibold text-[#0A251D] mb-2 font-barlow">
                   {step.stepname}
                 </p>
 
-                <p className="text-base md:text-lg text-[#636363] font-roboto leading-relaxed">
+                <p className="text-sm sm:text-base md:text-lg text-[#636363] font-roboto leading-relaxed">
                   {step.desc}
                 </p>
 
                 {step.tags && (
-                  <div className="mt-3 flex flex-wrap gap-2">
+                  <div className="mt-2 sm:mt-3 flex flex-wrap gap-1 sm:gap-2">
                     {step.tags.map((tag, tIdx) => (
                       <span
                         key={tIdx}
-                        className="px-2 py-1 text-xs rounded bg-[#DDE9E5] text-[#1C1C1E]"    
+                        className="px-1.5 py-0.5 sm:px-2 sm:py-1 text-xs sm:text-xs rounded bg-[#DDE9E5] text-[#1C1C1E]"
                       >
                         {tag}
                       </span>

@@ -6,7 +6,7 @@ import libaryicon from "../../../assets/icon/libary.png";
 
 export default function UseCase() {
   return (
-    <div className="py-28 px-4">
+    <div className="py-40 px-4">
       {/* Header */}
       <div className="text-center mb-16">
         <SectionHeader
@@ -16,7 +16,7 @@ export default function UseCase() {
       </div>
 
       {/* Content */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 lg:items-start gap-16">
+      <div className=" gap-10 grid grid-cols-1 lg:grid-cols-3 lg:items-start md:gap-16 lg:gap-18">
         {/* Left Side - Image */}
         <div className="flex justify-center lg:justify-start flex-shrink-0 mb-10">
           <img

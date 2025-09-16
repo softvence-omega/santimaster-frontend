@@ -5,19 +5,11 @@ import menicon from "../../../assets/icon/men.svg";
 import uploadicon from "../../../assets/icon/upload.svg";
 const MVPAccessCard = () => {
   return (
-    <div className="w-full p-8">
+    <div className="w-full ">
       <div className="relative  ">
-        <div className="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-8 p-8 lg:p-12  w-full max-w-[1920px] px-[124px] py-[140px] bg-[#E8F0EE]">
+        <div className=" grid grid-cols-1 lg:grid-cols-2 md:grid-cols-2 sm:grid-flow-row-dense gap-8 relative z-10 p-8 lg:p-12  w-full py-28 bg-[#E8F0EE] h-fit">
           {/* Left Content */}
-          <div className="flex flex-col justify-center space-y-6">
-            {/* <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 leading-tight">
-              Want early access to the MVP?
-            </h2>
-
-            <p className="text-gray-600 text-lg leading-relaxed">
-              Apply to join the beta program and help shape the future of
-              protocol sharing in the research community.
-            </p> */}
+          <div className="grid justify-center space-y-6">
             <SectionHeader
               title="  Want early access to the MVP?"
               subtitle=" Apply to join the beta program and help shape the future of

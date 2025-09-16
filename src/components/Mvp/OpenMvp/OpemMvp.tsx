@@ -2,7 +2,7 @@ import SectionHeader from "../../../utils/SectionHeading";
 
 const OpenMvp = () => {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 py-30 bg-white p-6 ">
+    <div className="py-28 grid grid-cols-1  lg:grid-cols-2 gap-8 bg-white px-4 sm:px-6 lg:px-12   lg:py-40">
       {/* -------left content----- */}
       <div>
         <SectionHeader
@@ -87,7 +87,7 @@ const OpenMvp = () => {
       </div>
 
       {/* --------right flow stepper--------------- */}
-      <div className="p-4 rounded-lg flex flex-wrap justify-center items-center gap-4">
+      <div className="p-4 rounded-lg flex flex-col md:flex-row items-center justify-center gap-4">
         {/* -------submit----------- */}
         <button className="text-[#1C1C1E] px-4 py-2 rounded flex items-center">
           <svg
@@ -105,7 +105,7 @@ const OpenMvp = () => {
           <span className="ml-2">Submit</span>
         </button>
         {/* --------arrow-------- */}
-        <span className="text-[#1D6953]">
+        <span className="text-[#1D6953] rotate-90 md:rotate-0">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="39"
@@ -144,7 +144,7 @@ const OpenMvp = () => {
         </button>
         {/* ---------published------------- */}
         {/* ----arrow-- */}
-        <span className="text-[#1D6953]">
+        <span className="text-[#1D6953] rotate-90 md:rotate-0">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="39"

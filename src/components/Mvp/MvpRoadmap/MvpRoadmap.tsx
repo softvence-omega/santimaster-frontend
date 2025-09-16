@@ -146,7 +146,7 @@ const MvpRoadmap = () => {
         {/* ------------left  --------------------- */}
         <div>
           {/* Progress Section */}
-          <div className="mb-12">
+          <div className="mb-14 ">
             <div className="ml-4">
               <h2 className="text-gray-600 font-medium mb-2">Progress</h2>
               <div className="text-4xl font-bold text-emerald-600 mb-3">
@@ -160,14 +160,10 @@ const MvpRoadmap = () => {
           {/* ---------left oovely bg image--- */}
 
           <img
-            className="w-full h-[400px]  rotate-12  blur-[2px]"
+            className="rotate-12 mb-2 blur-[2px]"
             src={mavroadmapimg}
-            alt=""
+            alt="roadmap mvp"
           />
-          {/* <div
-            className={`w-full h-[500px] bg-no-repeat rotate-45 bg-[length:111.497%_151.718%] bg-[-42.497px_-278.239px] blur-[1px]`}
-            style={{ backgroundImage: `url(${mavroadmapimg})` }}
-          ></div> */}
         </div>
 
         {/* rigt side prograss */}
@@ -185,7 +181,7 @@ const MvpRoadmap = () => {
                     {step.icon}
                   </div>
                   {!step.completed && (
-                    <div className="h-full w-px bg-gray-300 dark:bg-slate-500"></div>
+                    <div className="h-full w-px bg-green-300 "></div>
                   )}
                 </div>
                 <div className="pt-1 pb-8">
@@ -201,11 +197,11 @@ const MvpRoadmap = () => {
                     {step.stepname}
                   </p>
 
-                  <p className="text-[32px] font-semibold leading-normal text-[#0A251D] font-barlow">
+                  <p className="text-2xl md:text-[32px] lg:text-[32px] font-semibold leading-normal text-[#0A251D] font-barlow">
                     {step.title}
                   </p>
                   {step.desc && (
-                    <p className="text-[20px] font-normal leading-[28px] text-[#636363] font-roboto">
+                    <p className="text:lg md:text-[20px] lg:text-[32px] font-normal leading-[28px] text-[#636363] font-roboto">
                       {step.desc}
                     </p>
                   )}
