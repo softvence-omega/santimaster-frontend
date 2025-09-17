@@ -7,7 +7,7 @@ const MVPAccessCard = () => {
   return (
     <div className="w-full ">
       <div className="relative  ">
-        <div className=" grid grid-cols-1 lg:grid-cols-2 md:grid-cols-2 sm:grid-flow-row-dense gap-8 relative z-10 p-8 lg:p-12  w-full py-28 bg-[#E8F0EE] h-fit">
+        <div className=" grid grid-cols-1 lg:grid-cols-2  md:grid-cols-2 sm:grid-flow-row-dense gap-8 relative z-10 p-8 lg:p-12  w-full py-28 bg-[#E8F0EE] h-fit">
           {/* Left Content */}
           <div className="grid justify-center space-y-6">
             <SectionHeader
@@ -36,7 +36,7 @@ const MVPAccessCard = () => {
           </div>
 
           {/* Right Image - Overflowing */}
-          <div className="relative lg:absolute lg:right-0 lg:top-0 lg:bottom-0 lg:w-1/2">
+          <div className="relative md:-translate-10 lg:absolute lg:right-0 lg:top-0 lg:bottom-0 lg:w-1/2">
             <div className="relative h-64 lg:h-full">
               {/* Image container with overflow */}
               <div className="absolute   mb-6 lg:left-8 rounded-xl overflow-hidden shadow-xl">

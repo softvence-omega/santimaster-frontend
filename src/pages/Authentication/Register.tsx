@@ -6,7 +6,7 @@ export default function RegisterForm() {
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
-    password: "",  
+    password: "",
     affiliation: "",
     orcid: "",
   });
@@ -32,7 +32,7 @@ export default function RegisterForm() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F5F5F7] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-[#F5F5F7] flex items-center justify-center py-36  px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
         <div className="bg-white rounded-lg shadow-md p-8">
           {/* Header */}

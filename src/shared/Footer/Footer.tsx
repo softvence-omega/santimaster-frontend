@@ -20,7 +20,7 @@ const Footer = () => {
   return (
     <div>
       {/* Header */}
-      <div className="text-center mb-4 py-11">
+      <div className="text-center mb-4 py-12">
         <SectionHeader
           title="Stay Updated"
           subtitle="Get the latest protocols, research insights, and community updates delivered to your inbox"
@@ -248,3 +248,4 @@ const Footer = () => {
 };
 
 export default Footer;
+

@@ -9,6 +9,8 @@ import Protocols from "../pages/Protocols/Protocols";
 import LoginForm from "../pages/Authentication/Login";
 import RegisterForm from "../pages/Authentication/Register";
 import Contact from "../pages/Contract/Contract";
+import ProtocolDeatils from "../components/Protocols/ProtocolDetails/ProtocolDeatils";
+import Roadmap from "../pages/Roadmap/Roadmap";
 
 const router = createBrowserRouter([
   // {
@@ -28,9 +30,14 @@ const router = createBrowserRouter([
         element: <Mvp />,
       },
       {
-        path: "/feature-libary",
+        path: "/protocol",
         element: <Protocols />,
       },
+      {
+        path: "/protocol-details",
+        element: <ProtocolDeatils />,
+      },
+
       {
         path: "/login",
         element: <LoginForm />,
@@ -42,6 +49,10 @@ const router = createBrowserRouter([
       {
         path: "/contract",
         element: <Contact />,
+      },
+      {
+        path: "/roadmap",
+        element: <Roadmap />,
       },
     ],
   },

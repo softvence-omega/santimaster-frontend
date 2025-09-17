@@ -10,10 +10,10 @@ const Navbar = () => {
   const links = [
     { name: "Home", path: "/" },
     { name: "MVP", path: "/mvp" },
-    { name: "Protocols", path: "/feature-libary" },
+    { name: "Protocols", path: "/protocol" },
     { name: "Roadmap", path: "/roadmap" },
     { name: "Roles", path: "/roles" },
-    { name: "Contact", path: "/contact" },
+    { name: "Contact", path: "/contract" },
   ];
 
   return (
@@ -58,9 +58,11 @@ const Navbar = () => {
                 className="outline-none text-black text-sm w-28 md:w-40"
               />
             </div>
-            <button className="!bg-green-900 text-white px-4 py-2 rounded-lg">
-              Sign Up
-            </button>
+            <Link to={"/register"}>
+              <button className="!bg-green-900 text-white px-4 py-2 rounded-lg">
+                Sign Up
+              </button>
+            </Link>
           </div>
 
           {/*-------------- Hamburger Menu (Mobile + Tablet)------------------- */}
@@ -107,9 +109,11 @@ const Navbar = () => {
                 className="outline-none text-black text-sm w-28 md:w-40"
               />
             </div>
-            <button className="!bg-green-900 text-white px-4 py-2 rounded-lg transition">
-              Sign Up
-            </button>
+            <Link to={"/register"}>
+              <button className="!bg-green-900 text-white px-4 py-2 rounded-lg transition">
+                Sign Up
+              </button>
+            </Link>
           </div>
         </div>
       </div>
@@ -145,9 +149,11 @@ const Navbar = () => {
               className="outline-none text-sm w-full"
             />
           </div>
-          <button className="!bg-green-900 text-white px-4 py-2 rounded-lg transition">
-            Sign Up
-          </button>
+          <Link to={"/register"}>
+            <button className="!bg-green-900 text-white px-4 py-2 rounded-lg transition cursor-pointer">
+              Sign Up
+            </button>
+          </Link>
         </div>
       </div>
     </div>

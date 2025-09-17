@@ -16,10 +16,10 @@ export default function HomePage() {
   const links = [
     { name: "Home", path: "/" },
     { name: "MVP", path: "/mvp" },
-    { name: "Protocols", path: "/feature-libary" },
+    { name: "Protocols", path: "/protocol" },
     { name: "Roadmap", path: "/roadmap" },
     { name: "Roles", path: "/roles" },
-    { name: "Contact", path: "/contact" },
+    { name: "Contact", path: "/contract" },
   ];
 
   return (
@@ -39,7 +39,7 @@ export default function HomePage() {
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-blue-600/20 via-transparent to-transparent"></div>
 
       {/*------------- Header Navbar now -------------------*/}
-      <header className="relative z-10 px-6 py-6">
+      <header className="relative z-10 px-6 py-6 ">
         <div className=" rounded-[12px] border border-black/25 bg-white shadow-[0_4px_15px_0_rgba(0,0,0,0.15)] backdrop-blur-[10px]  ">
           <div className="  px-6 py-3 flex items-center justify-between">
             {/*------------- Logo ------------------------*/}
@@ -52,7 +52,7 @@ export default function HomePage() {
             </Link>
 
             {/* ----------Nav Links (Desktop)---------------- */}
-            <div className="hidden md:flex space-x-6">
+            <div className="hidden lg:flex space-x-6">
               {links.map((link) => (
                 <Link
                   key={link.name}
@@ -71,7 +71,7 @@ export default function HomePage() {
             </div>
 
             {/*------------- Search & Sign Up (Desktop) ----------------*/}
-            <div className="hidden md:flex items-center space-x-3">
+            <div className="hidden lg:flex items-center space-x-3">
               <div className="flex items-center border border-gray-400 rounded-lg px-3 py-2 ">
                 <Search className="h-4 w-4 text-gray-500 mr-2" />
                 <input
@@ -80,13 +80,15 @@ export default function HomePage() {
                   className="outline-none text-black text-sm w-28 md:w-40"
                 />
               </div>
-              <button className="!bg-green-900 text-white px-4 py-2 rounded-lg">
-                Sign Up
-              </button>
+              <Link to={"/register"}>
+                <button className="!bg-green-900 text-white px-4 py-2 rounded-lg cursor-pointer">
+                  Sign Up
+                </button>
+              </Link>
             </div>
 
             {/*-------------- Hamburger Menu (Mobile + Tablet)------------------- */}
-            <div className="md:hidden">
+            <div className="lg:hidden">
               <button onClick={() => setMenuOpen(!menuOpen)}>
                 {menuOpen ? (
                   <X className="h-6 w-6 text-green-900" />
@@ -99,8 +101,10 @@ export default function HomePage() {
 
           {/*------------ Mobile Menu---------- */}
           <div
-            className={`md:hidden bg-white border-t border-gray-200 transition-all duration-300 overflow-hidden ${
-              menuOpen ? "max-h-screen opacity-100" : "max-h-0 opacity-0"
+            className={`lg:hidden bg-white border-t border-gray-200 transition-all duration-300 overflow-hidden ${
+              menuOpen
+                ? "max-h-screen opacity-100 pointer-events-auto"
+                : "max-h-0 opacity-0 pointer-events-none"
             }`}
           >
             <div className="px-6 pb-4 flex flex-col space-y-4">
@@ -129,15 +133,17 @@ export default function HomePage() {
                   className="outline-none text-black text-sm w-28 md:w-40"
                 />
               </div>
-              <button className="!bg-green-900 text-white px-4 py-2 rounded-lg transition">
-                Sign Up
-              </button>
+              <Link to={"/register"}>
+                <button className="!bg-green-900 text-white px-4 py-2 rounded-lg transition cursor-pointer">
+                  Sign Up
+                </button>
+              </Link>
             </div>
           </div>
         </div>
       </header>
 
-      {/*---------------------------- Main Content */}
+      {/*---------------------------- Main Content -------------------------------------*/}
       <main className="relative z-10 px-6 py-16">
         <div className="max-w-7xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
