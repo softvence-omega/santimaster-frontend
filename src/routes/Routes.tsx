@@ -12,6 +12,8 @@ import Contact from "../pages/Contract/Contract";
 import ProtocolDeatils from "../components/Protocols/ProtocolDetails/ProtocolDeatils";
 import Roadmap from "../pages/Roadmap/Roadmap";
 import RolesPage from "../pages/Roles/RolesPage";
+import OpenGeneApplicationForm from "../Common/ApplicationFrom/ApplicationFrom";
+import SubmitProtocol from "../Common/SubmitProtocol/SubmitProtocol";
 
 const router = createBrowserRouter([
   // {
@@ -58,6 +60,14 @@ const router = createBrowserRouter([
       {
         path: "/roles",
         element: <RolesPage />,
+      },
+      {
+        path: "/gene-application",
+        element: <OpenGeneApplicationForm />,
+      },
+      {
+        path: "/submit-potocol",
+        element: <SubmitProtocol />,
       },
     ],
   },

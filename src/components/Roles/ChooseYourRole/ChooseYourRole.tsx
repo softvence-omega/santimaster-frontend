@@ -152,7 +152,7 @@ export default function ChooseYourRole() {
       </div>
 
       {/* Bottom Row */}
-      <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="mt-24 grid grid-cols-1 md:grid-cols-3 gap-6">
         <RoleCard
           icon={
             <svg

@@ -1,3 +1,5 @@
+import SectionHeader from "../../../utils/SectionHeading";
+
 interface PermissionRowProps {
   role: string;
   canSubmit?: boolean | string;
@@ -79,12 +81,16 @@ const PermissionRow = ({
 export default function RolePermissionsTable() {
   return (
     <section className="py-12 px-6 max-w-5xl mx-auto">
-      <h2 className="text-2xl md:text-3xl font-semibold text-center text-gray-800">
+      {/* <h2 className="text-2xl md:text-3xl font-semibold text-center text-gray-800">
         Role Permissions Overview
       </h2>
       <p className="text-gray-600 text-center mt-2 mb-8">
         Understanding what each role can do within the Open Gene platform
-      </p>
+      </p> */}
+      <SectionHeader
+        title="Role Permissions Overview"
+        subtitle="  Understanding what each role can do within the Open Gene platform"
+      ></SectionHeader>
 
       <div className="overflow-x-auto">
         <table className="w-full border border-gray-200 rounded-lg overflow-hidden">
@@ -130,7 +136,7 @@ export default function RolePermissionsTable() {
         </table>
       </div>
 
-      <p className="text-xs text-gray-500 mt-4">
+      <p className="text-lg text-[#636363] mt-4">
         * Reviewer can edit & publish protocols; Contributors create Drafts
         only.
       </p>

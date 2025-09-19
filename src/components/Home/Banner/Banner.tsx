@@ -162,7 +162,7 @@ export default function HomePage() {
               {/*------------- Buttons with Icons ------------------*/}
               <div className="grid md:flex  lg:flex gap-4 mt-8">
                 <Link
-                  to="/apply"
+                  to="/gene-application"
                   className="flex justify-center items-center gap-[10px] px-[28px] py-[16px] rounded-[8px] bg-[#17AA80] text-white font-normal transition duration-300 hover:bg-[#13996F]"
                 >
                   <img src={menicon} alt="Join Icon" className="w-5 h-5" />
