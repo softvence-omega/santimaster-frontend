@@ -1,4 +1,4 @@
-interface RelatedProtocolProps {
+   interface RelatedProtocolsProps {
   category?: string;
   title?: string;
   description?: string;
@@ -7,7 +7,7 @@ interface RelatedProtocolProps {
   icon?: React.ReactNode;
 }
 
-const protocols: RelatedProtocolProps[] = [
+const protocols: RelatedProtocolsProps[] = [
   {
     category: "Gene Editing",
     title: "CRISPR Base Editing in",
@@ -99,7 +99,7 @@ const protocols: RelatedProtocolProps[] = [
   },
 ];
 
-const RelatedProtocol: React.FC = () => {
+const RelatedProtocols: React.FC = () => {
   return (
     <div className="py-6">
       <h2
@@ -154,4 +154,4 @@ const RelatedProtocol: React.FC = () => {
   );
 };
 
-export default RelatedProtocol;
+export default RelatedProtocols;

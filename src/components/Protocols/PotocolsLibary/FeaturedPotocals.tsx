@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import SectionHeader from "../../../utils/SectionHeading";
 
 interface Protocol {
@@ -133,10 +134,11 @@ const FeaturedProtocols = () => {
               </div>
             </div>
             {/* ----------button-------------- */}
-
-            <button className="cursor-pointer w-full bg-[#17AA80] text-white py-2 px-4 rounded hover:bg-green-700 transition">
-              View Protocol
-            </button>
+            <Link to="/protocol-details">
+              <button className="cursor-pointer w-full bg-[#17AA80] text-white py-2 px-4 rounded hover:bg-green-700 transition">
+                View Protocol
+              </button>
+            </Link>
           </div>
         ))}
       </div>

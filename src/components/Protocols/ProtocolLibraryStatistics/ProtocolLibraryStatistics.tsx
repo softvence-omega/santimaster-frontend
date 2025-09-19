@@ -128,23 +128,23 @@ const ProtocolLibraryStats = () => {
           subtitle="Comprehensive data on our growing repository of gene therapy protocols"
         />
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-center">
-          {/* Left image */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-center mx-auto max-w-4xl">
+          {/* ------------Left image-------------------- */}
           <div className="flex justify-center">
             <img
               src={statistics1}
               alt="Lab Scientist"
-              className="w-full max-w-sm rounded-lg object-cover"
+              className="w-full  rounded-lg object-cover"
             />
           </div>
 
-          {/* Right side */}
+          {/* ----------------Right side ------------------------*/}
           <div className="flex flex-col gap-6">
             <div className="flex justify-center">
               <img
                 src={statistics2}
                 alt="Microscope"
-                className="w-full max-w-xs rounded-lg object-cover"
+                className="w-full  rounded-lg object-cover"
               />
             </div>
 

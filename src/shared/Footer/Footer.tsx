@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 import SectionHeader from "../../utils/SectionHeading";
 import backgroundfooter from "../../assets/Homeimg/footer-ragtangle.png";
-import logo from "../../assets/logo/fotter-logo.png";
+import logo from "../../assets/logo/whitelogo.png";
 const Footer = () => {
   const [email, setEmail] = useState("");
   const [interest, setInterest] = useState("");
@@ -111,7 +111,7 @@ const Footer = () => {
               {/* Logo and Description */}
               <div className="md:col-span-1">
                 <div className="flex items-center gap-2 mb-4">
-                  <div className="w-14 h-14 bg-transparent">
+                  <div className="w-28 h-20 bg-transparent">
                     <img src={logo} alt="" />
                   </div>
                 </div>
@@ -205,7 +205,7 @@ const Footer = () => {
             </div>
 
             {/* --------------Bottom Footer --------------------------------*/}
-            <div className="border-t border-green-600 mt-8 pt-8">
+            <div className="mt-8 pt-8">
               <div className="flex flex-col md:flex-row justify-between items-center gap-4">
                 {/* Social Icons */}
                 <div className="flex gap-4 text-white">
@@ -248,4 +248,3 @@ const Footer = () => {
 };
 
 export default Footer;
-

@@ -8,14 +8,15 @@ import PeerReviewSection from "./PeerReviewSection";
 
 import ProtocalStapper from "./ProtocolStapper";
 import References from "./References";
-import RelatedProtocol from "./RelatedProtocol";
+import RelatedProtocols from "./RelatedProtocol";
+
 import TableMaterials from "./TableMaterials";
 import TroubleshootingTips from "./TroubleshootingTips";
 
 const ProtocolDeatils = () => {
   return (
     <ContainerWrapper>
-      <CrisprDeatils />
+      <CrisprDeatils /> 
       <TableMaterials />
       <Equipment />
       <ProtocalStapper />
@@ -23,7 +24,7 @@ const ProtocolDeatils = () => {
       <TroubleshootingTips />
       <AuthorInfo />
       <PeerReviewSection />
-      <RelatedProtocol />
+      <RelatedProtocols />
       <References />
     </ContainerWrapper>
   );

@@ -4,6 +4,7 @@ import FeaturedPotocals from "./FeaturedPotocals";
 import { Clock, Search, X } from "lucide-react";
 
 import SectionHeader from "../../../utils/SectionHeading";
+import { Link } from "react-router-dom";
 
 // Define types for protocols
 interface Protocol {
@@ -214,7 +215,7 @@ const PotocolsLibary = () => {
         return { ...prev, [category]: current.filter((v) => v !== value) };
       }
     });
-  }; 
+  };
 
   return (
     <div className="min-h-screen bg-white py-8">
@@ -372,9 +373,11 @@ const PotocolsLibary = () => {
 
                     {/* Footer with button */}
                     <div className="px-6 py-4 ">
-                      <button className="w-full py-3 px-4 bg-[#17AA80] hover:bg-[#148f68] text-white font-medium rounded-md transition-colors duration-200 text-sm">
-                        {protocol.buttonText}
-                      </button>
+                      <Link to="/protocol-details">
+                        <button className="w-full py-3 px-4 bg-[#17AA80] hover:bg-[#148f68] text-white font-medium rounded-md transition-colors duration-200 text-sm">
+                          {protocol.buttonText}
+                        </button>
+                      </Link>
                     </div>
                   </div>
                 ))}

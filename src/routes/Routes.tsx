@@ -11,6 +11,7 @@ import RegisterForm from "../pages/Authentication/Register";
 import Contact from "../pages/Contract/Contract";
 import ProtocolDeatils from "../components/Protocols/ProtocolDetails/ProtocolDeatils";
 import Roadmap from "../pages/Roadmap/Roadmap";
+import RolesPage from "../pages/Roles/RolesPage";
 
 const router = createBrowserRouter([
   // {
@@ -53,6 +54,10 @@ const router = createBrowserRouter([
       {
         path: "/roadmap",
         element: <Roadmap />,
+      },
+      {
+        path: "/roles",
+        element: <RolesPage />,
       },
     ],
   },
