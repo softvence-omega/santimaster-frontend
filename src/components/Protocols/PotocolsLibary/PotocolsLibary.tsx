@@ -396,7 +396,7 @@ const PotocolsLibary = () => {
                     <button
                       key={page}
                       className={`px-3 py-2 border border-gray-300 rounded ${
-                        currentPage === page ? "bg-green-600 text-white" : ""
+                        currentPage === page ? "bg-[#1D6953] text-white" : ""
                       }`}
                       onClick={() => setCurrentPage(page)}
                     >
