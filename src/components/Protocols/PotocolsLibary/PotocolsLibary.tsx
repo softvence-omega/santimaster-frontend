@@ -193,7 +193,6 @@ const PotocolsLibary = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const protocolsPerPage = 6;
 
-  // Filter logic - simplified, in real app integrate with API
   const filteredProtocols = mockProtocols
     .filter(
       (protocol) =>
@@ -218,17 +217,15 @@ const PotocolsLibary = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white py-8">
+    <div className="min-h-screen bg-white py-40">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* -------heading serarch bar---- */}
-        <div className="max-w-3xl  gap-4">
-          <h1 className="text-3xl font-bold text-[#1C1C1E] mb-4">
-            Protocol Library
-          </h1>
-          <p className="text-[#636363] mb-8">
-            Browse peer-reviewed protocols by technique, modality, organism, and
-            phase.
-          </p>
+        <div className="max-w-2xl items-start ">
+          <SectionHeader
+            title=" Protocol Library"
+            subtitle="Browse peer-reviewed protocols by technique, modality, organism, and
+            phase."
+          ></SectionHeader>
 
           {/* Search Bar */}
           <div className="mb-6 w-80 relative">
@@ -332,10 +329,10 @@ const PotocolsLibary = () => {
 
                     {/* Content */}
                     <div className="p-6">
-                      <h3 className="text-lg font-bold text-gray-800 mb-3 leading-tight">
+                      <h3 className="text-2xl font-bold text-gray-800 mb-3 leading-tight">
                         {protocol.title}
                       </h3>
-                      <p className="text-sm text-gray-600 mb-4 leading-relaxed">
+                      <p className="text-lg text-gray-600 mb-4 leading-relaxed">
                         {protocol.subtitle}
                       </p>
 

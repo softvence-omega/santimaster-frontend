@@ -36,7 +36,7 @@ export default function HomePage() {
       </div>
 
       {/* ----------------------Background Effects -----------------------------*/}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-blue-600/20 via-transparent to-transparent"></div>
+      <div className="absolute inset-0 rounded-lg border-b-2 border-[#1D6953]"></div>
 
       {/*------------- Header Navbar now -------------------*/}
       <header className="relative z-10 px-6 py-6 ">
@@ -64,7 +64,7 @@ export default function HomePage() {
                 >
                   {link.name}
                   {active === link.name && (
-                    <span className="absolute -bottom-1 left-0 w-full h-[2px] bg-green-900 rounded-full" />
+                    <span className="absolute rounded-lg border-b-2 border-[#1D6953]" />
                   )}
                 </Link>
               ))}
@@ -119,7 +119,7 @@ export default function HomePage() {
                 >
                   {link.name}
                   {active === link.name && (
-                    <span className="absolute -bottom-1 left-0 w-full h-[2px] bg-green-900 rounded-full" />
+                    <span className="absolute rounded-lg border-b-2 border-[#1D6953]" />
                   )}
                 </Link>
               ))}
@@ -170,7 +170,7 @@ export default function HomePage() {
                 </Link>
 
                 <Link
-                  to="/submit"
+                  to="/submit-potocol"
                   className="flex justify-center items-center gap-[10px] px-[28px] py-[16px] rounded-[8px] border border-[#17AA80] text-[#17AA80] hover:bg-[#17AA80] hover:text-white font-normal transition duration-300"
                 >
                   <img

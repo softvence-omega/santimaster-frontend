@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import supportimage from "../../../assets/Homeimg/support.png";
 
 const NeedSupport = () => {
@@ -27,22 +28,22 @@ const NeedSupport = () => {
           </p>
         </div>
 
-        {/* Donate Button */}
+        {/*    Donate Button      */}
         <div className="mt-6">
-          <button className="flex cursor-pointer items-center justify-center gap-2 px-7 py-4 bg-[#17AA80] rounded-lg text-white font-semibold transition transform hover:scale-105 hover:shadow-lg">
-            <span className="text-lg md:text-xl">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="25"
-                height="24"
-                viewBox="0 0 25 24"
-                fill="none"
-              >
-                {/* SVG path omitted for brevity */}
-              </svg>
-            </span>
-            <span className="text-sm md:text-base">Donate Now</span>
-          </button>
+          <Link to="/donation">
+            <button className="flex cursor-pointer items-center justify-center gap-2 px-7 py-4 bg-[#17AA80] rounded-lg text-white font-semibold transition transform hover:scale-105 hover:shadow-lg">
+              <span className="text-lg md:text-xl">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="25"
+                  height="24"
+                  viewBox="0 0 25 24"
+                  fill="none"
+                ></svg>
+              </span>
+              <span className="text-sm md:text-base">Donate Now</span>
+            </button>
+          </Link>
         </div>
 
         {/* Stats with percentage */}

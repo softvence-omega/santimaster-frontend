@@ -137,7 +137,7 @@ const MvpRoadmap = () => {
   ];
 
   return (
-    <div className="min-h-screen  p-8">
+    <div className=" p-8">
       <SectionHeader
         title="MVP Roadmap & Milestones"
         subtitle="Track our progress through key development phases"

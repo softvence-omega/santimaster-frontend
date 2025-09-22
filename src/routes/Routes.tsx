@@ -1,7 +1,7 @@
 import { createBrowserRouter } from "react-router-dom";
 
 import Mainlayout from "../Layout/Mainlayout";
-import PartnerDashboardLayout from "../Layout/DashboardLayout";
+import PartnerDashboardLayout from "../Layout/UserDashboardLayou";
 import Home from "../pages/Home/Home";
 import Mvp from "../pages/Mvp/Mvp";
 
@@ -14,14 +14,9 @@ import Roadmap from "../pages/Roadmap/Roadmap";
 import RolesPage from "../pages/Roles/RolesPage";
 import OpenGeneApplicationForm from "../Common/ApplicationFrom/ApplicationFrom";
 import SubmitProtocol from "../Common/SubmitProtocol/SubmitProtocol";
+import Donation from "../Common/Donation/Donation";
 
 const router = createBrowserRouter([
-  // {
-  //   path: "/",
-  //   element: <AuthLayout />,
-  //   children: [],
-  // },
-
   //   -------------main layout------------------
   {
     path: "/",
@@ -69,11 +64,15 @@ const router = createBrowserRouter([
         path: "/submit-potocol",
         element: <SubmitProtocol />,
       },
+      {
+        path: "/donation",
+        element: <Donation />,
+      },
     ],
   },
 
   {
-    path: "/partner-dashboard",
+    path: "/user-dashboard",
     element: <PartnerDashboardLayout />,
     children: [],
   },

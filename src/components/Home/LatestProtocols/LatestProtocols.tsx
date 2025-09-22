@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import SectionHeader from "../../../utils/SectionHeading";
 import { Clock } from "lucide-react"; // <-- Lucide icon import
 
@@ -159,19 +160,23 @@ const LatestProtocols = () => {
             </div>
 
             {/* Footer with button */}
-            <div className="px-6 py-4 ">
-              <button className="w-full py-3 px-4 bg-[#17AA80] hover:bg-[#148f68] text-white font-medium rounded-md transition-colors duration-200 text-sm">
-                {protocol.buttonText}
-              </button>
-            </div>
+            <Link to="/protocol">
+              <div className="px-6 py-4 ">
+                <button className="w-full py-3 px-4 bg-[#17AA80] hover:bg-[#148f68] text-white font-medium rounded-md transition-colors duration-200 text-sm">
+                  {protocol.buttonText}
+                </button>
+              </div>
+            </Link>
           </div>
         ))}
       </div>
 
       <div className="mt-8 text-center">
-        <button className=" gap-2 px-7 py-4 border border-[#17AA80] rounded-lg text-[#17AA80] font-normal hover:bg-[#17AA80] hover:text-white transition-colors duration-200">
-          See More
-        </button>
+        <Link to="/protocol">
+          <button className=" gap-2 px-7 py-4 border border-[#17AA80] rounded-lg text-[#17AA80] font-normal hover:bg-[#17AA80] hover:text-white transition-colors duration-200">
+            See More
+          </button>
+        </Link>
       </div>
     </div>
   );
