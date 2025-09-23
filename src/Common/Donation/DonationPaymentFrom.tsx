@@ -61,7 +61,7 @@ const DonationPaymentForm = () => {
         />
       </div>
 
-      <div className="max-w-2xl mx-auto bg-[#E8F0EE] rounded-lg p-6">
+      <div className="max-w-2xl mx-auto  rounded-lg p-6">
         {/* Frequency Selection */}
         <div className="flex gap-1 mb-8">
           {[
