@@ -41,13 +41,7 @@ const supporters: Supporter[] = [
 const RecentSupporters = () => {
   return (
     <section className="w-full max-w-6xl mx-auto px-6 py-12">
-      {/* Heading */}
-      {/* <h2 className="text-2xl md:text-3xl font-bold text-center">
-        Recent Supporters
-      </h2>
-      <p className="text-gray-500 text-center mt-2">
-        Join these amazing individuals supporting open science
-      </p> */}
+     
 
 <SectionHeader title="Recent Supporters" subtitle=" Join these amazing individuals supporting open science">
 

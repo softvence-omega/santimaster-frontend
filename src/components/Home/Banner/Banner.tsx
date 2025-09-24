@@ -125,7 +125,8 @@ export default function HomePage() {
               ))}
 
               {/* Search + Sign Up (Mobile) */}
-              <div className="flex items-center border border-gray-400 rounded-lg px-3 py-2">
+              <div className="flex items-center border border-gray-400 
+              rounded-lg px-3 py-2">
                 <Search className="h-4 w-4 text-gray-500 mr-2" />
                 <input
                   type="text"
@@ -134,7 +135,7 @@ export default function HomePage() {
                 />
               </div>
               <Link to={"/register"}>
-                <button className="!bg-green-900 text-white px-4 py-2 rounded-lg transition cursor-pointer">
+                <button className="bg-green-900 text-white px-4 py-2 rounded-lg transition cursor-pointer">
                   Sign Up
                 </button>
               </Link>

@@ -1,7 +1,7 @@
 import { createBrowserRouter } from "react-router-dom";
 
 import Mainlayout from "../Layout/Mainlayout";
-import PartnerDashboardLayout from "../Layout/UserDashboardLayou";
+
 import Home from "../pages/Home/Home";
 import Mvp from "../pages/Mvp/Mvp";
 
@@ -15,6 +15,8 @@ import RolesPage from "../pages/Roles/RolesPage";
 import OpenGeneApplicationForm from "../Common/ApplicationFrom/ApplicationFrom";
 import SubmitProtocol from "../Common/SubmitProtocol/SubmitProtocol";
 import Donation from "../Common/Donation/Donation";
+import UserDashboardLayout from "../Layout/UserDashboardLayou";
+import UserDashboard from "../pages/UserDahsboard/userDashboard";
 
 const router = createBrowserRouter([
   //   -------------main layout------------------
@@ -72,14 +74,18 @@ const router = createBrowserRouter([
   },
 
   {
-    path: "/user-dashboard",
-    element: <PartnerDashboardLayout />,
-    children: [],
+    path: "/user",
+    element: <UserDashboardLayout />,
+    children: [
+      {
+        path: "dashboard",
+        element: <UserDashboard/>
+      },
+    ],
   },
 
   {
     path: "*",
-    element: <h1>Not Found</h1>,
   },
 ]);
 

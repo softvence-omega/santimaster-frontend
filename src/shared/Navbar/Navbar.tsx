@@ -17,9 +17,9 @@ const Navbar = () => {
   ];
 
   return (
-    <div className="w-full p-2 fixed top-0 left-0 z-50 ">
-      <div className=" rounded-[12px] border border-black/25 bg-white shadow-[0_4px_15px_0_rgba(0,0,0,0.15)] backdrop-blur-[10px]  ">
-        <div className="  px-6 py-3 flex items-center justify-between">
+    <div className="w-full p-2 fixed top-0 left-0 z-50">
+      <div className="rounded-[12px] border border-black/25 bg-white shadow-[0_4px_15px_0_rgba(0,0,0,0.15)] backdrop-blur-[10px]">
+        <div className="px-6 py-3 flex items-center justify-between">
           {/*------------- Logo ------------------------*/}
           <Link to="/" className="flex items-center space-x-2">
             <img
@@ -50,7 +50,7 @@ const Navbar = () => {
 
           {/*------------- Search & Sign Up (Desktop) ----------------*/}
           <div className="hidden md:flex items-center space-x-3">
-            <div className="flex items-center border border-gray-400 rounded-lg px-3 py-2 ">
+            <div className="flex items-center border border-gray-400 rounded-lg px-3 py-2">
               <Search className="h-4 w-4 text-gray-500 mr-2" />
               <input
                 type="text"
@@ -96,11 +96,12 @@ const Navbar = () => {
             >
               {link.name}
               {active === link.name && (
-                <span className="absolute -bottom-1 left-0 w-full h-[2px] bg-green-900 rounded-full" />
+                <span className="absolute -bottom-1 left-0 w-fit h-[2px] bg-green-900 rounded-full" />
               )}
             </Link>
           ))}
 
+          {/* Search Bar for Mobile */}
           <div className="flex items-center border rounded-lg px-3 py-2">
             <Search className="h-4 w-4 text-gray-500 mr-2" />
             <input
@@ -109,11 +110,12 @@ const Navbar = () => {
               className="outline-none text-sm w-full"
             />
           </div>
+
+          {/* Sign Up Button for Mobile */}
           <Link to={"/register"}>
             <button className="!bg-green-900 text-white px-4 py-2 rounded-lg transition cursor-pointer">
               Sign Up
-            </button>
-          </Link>
+            </button> </Link>
         </div>
       </div>
     </div>
