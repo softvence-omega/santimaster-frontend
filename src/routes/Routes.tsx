@@ -17,6 +17,8 @@ import SubmitProtocol from "../Common/SubmitProtocol/SubmitProtocol";
 import Donation from "../Common/Donation/Donation";
 import UserDashboardLayout from "../Layout/UserDashboardLayou";
 import UserDashboard from "../pages/UserDahsboard/userDashboard";
+import AdminDashboardLayout from "../Layout/AdminDashboardLayout";
+import AdminDashboard from "../pages/AdminDashboard/AdminDashboard";
 
 const router = createBrowserRouter([
   //   -------------main layout------------------
@@ -80,6 +82,17 @@ const router = createBrowserRouter([
       {
         path: "dashboard",
         element: <UserDashboard/>
+      },
+    ],
+  },
+// ----------admin dashboard-------------
+    {
+    path: "/admin",
+    element: <AdminDashboardLayout/>,
+    children: [
+      {
+        path: "dashboard",
+        element: <AdminDashboard/>
       },
     ],
   },
