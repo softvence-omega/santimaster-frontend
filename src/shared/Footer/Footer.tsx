@@ -26,12 +26,12 @@ const Footer = () => {
           subtitle="Get the latest protocols, research insights, and community updates delivered to your inbox"
         />
       </div>
-      <div className="  relative ">
+      <div className="  relative border border-white">
         {/* Main Newsletter Section */}
-        <div className="px-4 py-16">
+        <div className="px-4  md:py-16">
           <div className="max-w-4xl mx-auto">
             {/* ----------Newsletter Card -------------*/}
-            <div className="bg-[#F5F5F7] rounded-2xl shadow-lg p-8  md:p-12 md:translate-y-10  lg:md:translate-y-10 absolute top-20  z-50 max-w-2xl mx-auto">
+            <div className="bg-[#F5F5F7] rounded-2xl shadow-lg p-8  md:p-12 md:translate-y-14  lg:md:translate-y-10 absolute -top-30 md:top-28  z-50 max-w-2xl mx-auto">
               <div className="grid grid-cols-1 md:grid-cols-2  lg:grid-cols-2 gap-8 items-center">
                 <div>
                   <h2 className="text-2xl font-semibold text-gray-900 mb-6">
@@ -98,7 +98,7 @@ const Footer = () => {
         </div>
 
         {/*------------------------- Footer--------------- */}
-        <footer className="relative  overflow-hidden">
+        <footer className="relative  overflow-hidden mt-20 ">
           {/* footer background image */}
 
           <div

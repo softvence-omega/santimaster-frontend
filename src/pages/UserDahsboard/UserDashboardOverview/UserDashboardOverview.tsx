@@ -2,14 +2,14 @@ import SectionHeader from "../../../utils/SectionHeading";
 
 export default function UserDashboardOverview() {
   return (
-    <div className=" bg-gray-50 py-20">
+    <div className=" py-20">
       {/* Header Section */}
       <div className="bg-gradient-to-r from-[#E8F0EE] via-[#80AB9E] to-[#1D6953] text-white rounded-b-xl shadow p-6 flex justify-between items-center">
         <div>
-        
-          <SectionHeader title="Welcome back, Dr. Chen!" subtitle="You have protocols pending review and new notifications.  ">
-
-          </SectionHeader>
+          <SectionHeader
+            title="Welcome back, Dr. Chen!"
+            subtitle="You have protocols pending review and new notifications.  "
+          ></SectionHeader>
           <button className="mt-4 px-4 py-2 bg-[#17AA80] text-white font-medium rounded-lg shadow hover:bg-gray-100 transition">
             Browse Protocols
           </button>

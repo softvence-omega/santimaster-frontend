@@ -153,22 +153,24 @@ const ProjectRoadmap = () => {
     <div className="min-h-screen p-6">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="flex items-center justify-between mb-8">
-          <div className="relative">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+          {/* Search box */}
+          <div className="relative w-full sm:w-auto">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
             <input
               type="text"
               placeholder="Search milestones..."
-              className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg w-64 focus:outline-none focus:ring-2 focus:ring-green-500"
+              className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg w-full sm:w-64 focus:outline-none focus:ring-2 focus:ring-green-500"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
 
-          <div className="flex items-center space-x-4">
-            <div className="relative">
+          {/* Dropdown filters */}
+          <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-4 gap-4 sm:gap-0 w-full sm:w-auto">
+            <div className="relative w-full sm:w-auto">
               <select
-                className="appearance-none bg-[#EDEDEF] border border-gray-300 rounded px-4 py-2 pr-8 focus:outline-none focus:ring-2 focus:ring-green-500"
+                className="appearance-none bg-[#EDEDEF] border border-gray-300 rounded px-4 py-2 pr-8 w-full sm:w-auto focus:outline-none focus:ring-2 focus:ring-green-500"
                 value={groupBy}
                 onChange={(e) => setGroupBy(e.target.value)}
               >
@@ -179,9 +181,9 @@ const ProjectRoadmap = () => {
               <ChevronDown className="absolute right-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
             </div>
 
-            <div className="relative">
+            <div className="relative w-full sm:w-auto">
               <select
-                className="appearance-none bg-[#EDEDEF] border border-gray-300 rounded px-4 py-2 pr-8 focus:outline-none focus:ring-2 focus:ring-green-500"
+                className="appearance-none bg-[#EDEDEF] border border-gray-300 rounded px-4 py-2 pr-8 w-full sm:w-auto focus:outline-none focus:ring-2 focus:ring-green-500"
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
               >

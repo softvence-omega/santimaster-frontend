@@ -93,7 +93,7 @@ const UserManagement = () => {
     selectedUsers.length > 0 && selectedUsers.length < users.length;
 
   return (
-    <div className="rounded-xl shadow-sm border  p-6 py-15">
+    <div className="rounded-xl shadow-sm  p-6 py-16">
       {/* Header */}
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-gray-900 mb-2">

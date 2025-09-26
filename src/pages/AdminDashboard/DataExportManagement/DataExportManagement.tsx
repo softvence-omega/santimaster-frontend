@@ -43,7 +43,7 @@ const DataExportManagement = () => {
   ];
 
   return (
-    <div className="py-15 rounded-xl shadow-sm border border-gray-200 p-6">
+    <div className="py-16 mt-10 rounded-xl shadow-sm border border-gray-200 p-6">
       {/* Header */}
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-gray-900 mb-2">

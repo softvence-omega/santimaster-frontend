@@ -56,22 +56,22 @@ const AdminOverview = () => {
         </div>
 
         {/* Metrics Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 py-10">
           {metrics.map((metric, index) => {
             const IconComponent = metric.icon;
             return (
               <div
                 key={index}
-                className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow"
+                className="bg-[#F5F5F7] rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow"
               >
                 <div className="flex items-start justify-between mb-4">
-                  <div className="p-3 bg-emerald-100 rounded-lg">
-                    <IconComponent className="w-6 h-6 text-emerald-600" />
+                  <div className="p-3 bg-[#1D6953] rounded-lg">
+                    <IconComponent className="w-6 h-6 text-white" />
                   </div>
                   <span
                     className={`text-sm font-medium px-2 py-1 rounded-full ${
                       metric.changeType === "positive"
-                        ? "text-emerald-700 bg-emerald-100"
+                        ? "text-black bg-[#DDE9E5]"
                         : "text-red-700 bg-red-100"
                     }`}
                   >

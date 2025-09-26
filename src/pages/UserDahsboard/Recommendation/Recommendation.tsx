@@ -1,5 +1,5 @@
-import React from 'react';
-import { User, Eye } from 'lucide-react';
+import React from "react";
+import { User, Eye } from "lucide-react";
 
 interface ProtocolCardProps {
   title: string;
@@ -25,30 +25,32 @@ const ProtocolCard: React.FC<ProtocolCardProps> = ({
   description,
   author,
   views,
-  bslLevel
+  bslLevel,
 }) => {
   return (
     <div className="bg-[#F5F5F7] rounded-lg p-5 border border-gray-200 hover:shadow-md transition-shadow cursor-pointer">
       <div className="flex justify-end mb-3">
         <BSLBadge level={bslLevel} />
       </div>
-      
+
       <h3 className="text-lg font-semibold text-gray-900 mb-2 leading-tight">
         {title}
       </h3>
-      
+
       <p className="text-gray-600 text-sm mb-4 leading-relaxed">
         {description}
       </p>
-      
+
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-2">
           <div className="w-6 h-6 bg-orange-400 rounded-full flex items-center justify-center">
             <User className="w-4 h-4 text-white" />
           </div>
-          <span className="text-sm text-gray-700 font-medium">{author.name}</span>
+          <span className="text-sm text-gray-700 font-medium">
+            {author.name}
+          </span>
         </div>
-        
+
         <div className="flex items-center space-x-1 text-gray-500">
           <Eye className="w-4 h-4" />
           <span className="text-sm">{views} views</span>
@@ -62,28 +64,32 @@ const RecommendedForYou: React.FC = () => {
   const recommendedProtocols: ProtocolCardProps[] = [
     {
       title: "Advanced DNA Extraction Methods",
-      description: "Comprehensive guide for high-purity genomic DNA extraction from various sample types.",
+      description:
+        "Comprehensive guide for high-purity genomic DNA extraction from various sample types.",
       author: {
-        name: "Dr. Sarah Chen"
+        name: "Dr. Sarah Chen",
       },
       views: 342,
-      bslLevel: "BSL-1"
+      bslLevel: "BSL-1",
     },
     {
       title: "Cell Culture Optimization",
-      description: "Step-by-step protocol for optimizing mammalian cell culture conditions for maximum viability.",
+      description:
+        "Step-by-step protocol for optimizing mammalian cell culture conditions for maximum viability.",
       author: {
-        name: "Dr. Emily Zhang"
+        name: "Dr. Emily Zhang",
       },
       views: 189,
-      bslLevel: "BSL-1"
-    }
+      bslLevel: "BSL-1",
+    },
   ];
 
   return (
-    <div className="max-w-4xl mx-auto p-6 ">
-      <h1 className="text-2xl font-bold text-gray-900 mb-6">Recommended for You</h1>
-      
+    <div className="max-w-5xl mx-auto p-6 py-15 ">
+      <h1 className="text-2xl font-bold text-gray-900 mb-6">
+        Recommended for You
+      </h1>
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {recommendedProtocols.map((protocol, index) => (
           <ProtocolCard key={index} {...protocol} />

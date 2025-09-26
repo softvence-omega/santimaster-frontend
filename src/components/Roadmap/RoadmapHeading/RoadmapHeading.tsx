@@ -14,7 +14,7 @@ phases. Our commitment to transparency drives everything we do."
         </div>
 
         {/* --------right flow stepper--------------- */}
-        <div className="p-4 rounded-lg flex flex-col md:flex-row items-center justify-center gap-4">
+        <div className="p-4 rounded-lg flex flex-col md:flex-row items-center justify-end md:justify-center gap-4">
           {/* -------submit----------- */}
           <button className="text-[#1C1C1E] p-2 rounded-2xl bg-[#DDE9E5] flex items-center">
             <span className="">Planned</span>
