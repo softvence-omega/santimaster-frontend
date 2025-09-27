@@ -125,8 +125,10 @@ export default function HomePage() {
               ))}
 
               {/* Search + Sign Up (Mobile) */}
-              <div className="flex items-center border border-gray-400 
-              rounded-lg px-3 py-2">
+              <div
+                className="flex items-center border border-gray-400 
+              rounded-lg px-3 py-2"
+              >
                 <Search className="h-4 w-4 text-gray-500 mr-2" />
                 <input
                   type="text"
@@ -171,7 +173,7 @@ export default function HomePage() {
                 </Link>
 
                 <Link
-                  to="/submit-potocol"
+                  to="/submit-protocol"
                   className="flex justify-center items-center gap-[10px] px-[28px] py-[16px] rounded-[8px] border border-[#17AA80] text-[#17AA80] hover:bg-[#17AA80] hover:text-white font-normal transition duration-300"
                 >
                   <img

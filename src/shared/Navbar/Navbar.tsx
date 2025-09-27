@@ -7,6 +7,8 @@ const Navbar = () => {
   const [active, setActive] = useState("MVP");
   const [menuOpen, setMenuOpen] = useState(false);
 
+  // const dispatch = useAppDispatch();
+  // const currentUser = useAppSelector(selectCurrentUser);
   const links = [
     { name: "Home", path: "/" },
     { name: "MVP", path: "/mvp" },
@@ -115,7 +117,8 @@ const Navbar = () => {
           <Link to={"/register"}>
             <button className="!bg-green-900 text-white px-4 py-2 rounded-lg transition cursor-pointer">
               Sign Up
-            </button> </Link>
+            </button>{" "}
+          </Link>
         </div>
       </div>
     </div>

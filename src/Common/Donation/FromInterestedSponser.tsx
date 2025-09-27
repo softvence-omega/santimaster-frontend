@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import SectionHeader from "../../utils/SectionHeading";
+import { useCreateSponsorshipMutation } from "../../redux/features/Sponsor/Sponsor.api";
 
 interface SponsorshipFormData {
   companyName: string;
@@ -22,6 +23,9 @@ const SponsorshipForm: React.FC = () => {
     message: "",
   });
 
+  const [createSponsorship, { isLoading, isSuccess, error }] =
+    useCreateSponsorshipMutation();
+
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
@@ -34,17 +38,38 @@ const SponsorshipForm: React.FC = () => {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle form submission here
-    console.log("Form submitted:", formData);
-    // You would typically send this data to your backend
+
+    try {
+      const response = await createSponsorship({
+        companyName: formData.companyName,
+        contactName: formData.contactName,
+        email: formData.email,
+        sponsorshipLevel: formData.sponsorshipLevel,
+        message: formData.message,
+      }).unwrap();
+
+      console.log("Sponsor created successfully:", response);
+      // Optionally reset form
+      setFormData({
+        companyName: "",
+        contactName: "",
+        email: "",
+        phone: "",
+        sponsorshipInterest: "",
+        sponsorshipLevel: "",
+        message: "",
+      });
+    } catch (err) {
+      console.error("Failed to create sponsor:", err);
+    }
   };
 
   return (
-    <div className="  py-12 px-4 sm:px-6 lg:px-8">
+    <div className="py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-3xl mx-auto">
-        <div className="rounded-lg  overflow-hidden">
+        <div className="rounded-lg overflow-hidden">
           {/* Header Section */}
           <div className="px-6 py-8">
             <SectionHeader
@@ -210,12 +235,24 @@ const SponsorshipForm: React.FC = () => {
                 <div className="flex justify-center">
                   <button
                     type="submit"
+                    disabled={isLoading}
                     className="w-fit bg-[#17AA80] cursor-pointer text-white font-semibold py-4 px-6 rounded-lg hover:from-blue-700 hover:to-indigo-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200 transform hover:-translate-y-0.5"
                   >
-                    Submit Inquiry
+                    {isLoading ? "Submitting..." : "Submit Inquiry"}
                   </button>
                 </div>
               </div>
+
+              {isSuccess && (
+                <p className="text-green-600 mt-2 text-center">
+                  Sponsorship request submitted successfully!
+                </p>
+              )}
+              {error && (
+                <p className="text-red-600 mt-2 text-center">
+                  Failed to submit sponsorship request.
+                </p>
+              )}
             </form>
           </div>
         </div>

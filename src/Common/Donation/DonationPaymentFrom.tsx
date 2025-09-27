@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { ChevronDown, Lock } from "lucide-react";
 import SectionHeader from "../../utils/SectionHeading";
+import { useCreateDonationMutation } from "../../redux/features/donation/donation.api";
+
 
 const DonationPaymentForm = () => {
   const [frequency, setFrequency] = useState<"one-time" | "monthly" | "annual">(
@@ -20,6 +22,9 @@ const DonationPaymentForm = () => {
   });
 
   const predefinedAmounts = [25, 75, 150, 500];
+
+  // RTK Query mutation
+  const [createDonation, { isLoading }] = useCreateDonationMutation();
 
   const handleAmountClick = (amount: number | "other") => {
     setSelectedAmount(amount);
@@ -51,6 +56,34 @@ const DonationPaymentForm = () => {
     formData.agreedToTerms &&
     ((selectedAmount === "other" && customAmount) ||
       typeof selectedAmount === "number");
+
+  const handleSubmit = async () => {
+    if (!isDonateEnabled) return;
+
+    try {
+      const amount =
+        selectedAmount === "other" ? Number(customAmount) : Number(selectedAmount);
+
+      const response = await createDonation({
+        donationType: frequency === "one-time" ? "ONE_TIME" : "MONTHLY",
+        amount,
+        donarName: formData.fullName,
+        donarEmail: formData.email,
+        country: formData.country,
+        tribute: formData.tribute,
+      }).unwrap();
+
+      // Redirect to Stripe checkout
+      if (response.data.stripeCheckout?.url) {
+        window.location.href = response.data.stripeCheckout.url;
+      } else {
+        alert("Donation saved, but Stripe URL missing");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("❌ Donation failed");
+    }
+  };
 
   return (
     <div className="max-w-2xl mx-auto p-6 py-40">
@@ -230,11 +263,11 @@ const DonationPaymentForm = () => {
 
         {/* Donate Button */}
         <button
-          disabled={!isDonateEnabled}
+          onClick={handleSubmit}
+          disabled={!isDonateEnabled || isLoading}
           className="w-full bg-[#1D6953] hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white font-semibold py-4 px-6 rounded-lg transition-colors text-lg"
         >
-          Donate {getButtonAmount()}
-          {getFrequencyText()}
+          {isLoading ? "Processing..." : `Donate ${getButtonAmount()}${getFrequencyText()}`}
         </button>
 
         {/* Security Notice */}

@@ -1,4 +1,5 @@
 import { Heart, Award, FileText, Users } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const SupportMission: React.FC = () => {
   // JSON data for donation benefits
@@ -191,10 +192,11 @@ const SupportMission: React.FC = () => {
                   </svg>
                 </div>
               </div>
-
-              <button className="bg-red-500 hover:bg-red-600 text-white font-semibold px-8 py-3 rounded-lg transition-colors duration-200 shadow-lg hover:shadow-xl">
-                Donate Now
-              </button>
+              <Link to="/donation">
+                <button className="bg-red-500 cursor-pointer hover:bg-red-600 text-white font-semibold px-8 py-3 rounded-lg transition-colors duration-200 shadow-lg hover:shadow-xl">
+                  Donate Now
+                </button>
+              </Link>
             </div>
           </div>
         </div>

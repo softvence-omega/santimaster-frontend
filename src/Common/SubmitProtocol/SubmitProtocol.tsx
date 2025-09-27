@@ -1,6 +1,8 @@
 import { Plus, Upload, X, FileText } from "lucide-react";
 import { useState, useRef } from "react";
-
+import MDEditor from "react-markdown-editor-lite";
+import "react-markdown-editor-lite/lib/index.css";
+import MarkdownIt from "markdown-it";
 interface Material {
   item: string;
   qty: string;
@@ -33,6 +35,8 @@ interface UploadedFile {
 }
 
 export default function SubmitProtocol() {
+  const [value, setValue] = useState("");
+
   const [materials, setMaterials] = useState<Material[]>([
     { item: "", qty: "", catalog: "", supplier: "" },
   ]);
@@ -305,25 +309,35 @@ export default function SubmitProtocol() {
   return (
     <div className="min-h-screen py-36 bg-gray-50 px-4 sm:px-6 lg:px-8 ">
       <div className="max-w-6xl mx-auto bg-white rounded-2xl shadow-lg p-4 sm:p-6 lg:p-8">
-        <h1 className="text-2xl sm:text-3xl font-semibold text-[#1C1C1E] mb-6">
-          Submit New Protocol
-        </h1>
+        <div className="flex justify-between">
+          <h1 className="text-2xl sm:text-3xl font-semibold text-[#1C1C1E] mb-6">
+            Submit New Protocol
+          </h1>
+          <p>Auto-saved at 14:23</p>
+        </div>
 
         {/* Basic Information */}
         <section className="space-y-4 mb-8">
           <h2 className="text-lg sm:text-xl font-medium text-[#1C1C1E]">
             Basic Information
           </h2>
-          <input
-            type="text"
-            placeholder="Enter a descriptive title for your protocol"
-            className="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          />
-          <textarea
-            placeholder="Provide a brief abstract describing your protocol (280-400 characters)"
-            rows={3}
-            className="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
-          />
+          <div className="grid gap-2">
+            <h1>Protocol Title</h1>
+            <input
+              type="text"
+              placeholder="Enter a descriptive title for your protocol"
+              className="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
+          </div>
+          <div className="grid gap-2">
+            <h1>Abstract (Short Description)</h1>
+            <textarea
+              placeholder="Provide a brief abstract describing your protocol (280-400 characters)"
+              rows={3}
+              className="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+            />
+          </div>
+
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <select
               value={category}
@@ -345,55 +359,68 @@ export default function SubmitProtocol() {
           </div>
         </section>
 
-        {/* Protocol Details */}
+        {/*------- Protocol Details------- */}
         <section className="space-y-4 mb-8">
           <h2 className="text-lg sm:text-xl font-medium text-[#1C1C1E]">
             Protocol Details
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <select
-              value={technique}
-              onChange={(e) => setTechnique(e.target.value)}
-              className="border border-gray-300 rounded-lg p-3 text-[#636363] focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            >
-              <option value="">Select technique</option>
-              {techniqueOptions.map((option) => (
-                <option key={option} value={option}>
-                  {option}
-                </option>
-              ))}
-            </select>
-            <select
-              value={modality}
-              onChange={(e) => setModality(e.target.value)}
-              className="border border-gray-300 rounded-lg p-3 text-[#636363] focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            >
-              <option value="">Select modality</option>
-              {modalityOptions.map((option) => (
-                <option key={option} value={option}>
-                  {option}
-                </option>
-              ))}
-            </select>
-            <input
-              type="text"
-              value={organismCellType}
-              onChange={(e) => setOrganismCellType(e.target.value)}
-              placeholder="Organism / Cell Type"
-              className="border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            />
-            <select
-              value={phase}
-              onChange={(e) => setPhase(e.target.value)}
-              className="border border-gray-300 rounded-lg p-3 text-[#636363] focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            >
-              <option value="">Select phase</option>
-              {phaseOptions.map((option) => (
-                <option key={option} value={option}>
-                  {option}
-                </option>
-              ))}
-            </select>
+            <div className="grid gap-2">
+              <h1>Select technique</h1>
+              <select
+                value={technique}
+                onChange={(e) => setTechnique(e.target.value)}
+                className="border border-gray-300 rounded-lg p-3 text-[#636363] focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              >
+                <option value="">Select technique</option>
+                {techniqueOptions.map((option) => (
+                  <option key={option} value={option}>
+                    {option}
+                  </option>
+                ))}
+              </select>
+            </div>
+            {/* -----Select modality-------- */}
+            <div className="grid gap-2">
+              <h1>Select modality</h1>
+              <select
+                value={modality}
+                onChange={(e) => setModality(e.target.value)}
+                className="border border-gray-300 rounded-lg p-3 text-[#636363] focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              >
+                <option value="">Select modality</option>
+                {modalityOptions.map((option) => (
+                  <option key={option} value={option}>
+                    {option}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="grid gap-2">
+              <h1>Organism / Cell Type</h1>
+              <input
+                type="text"
+                value={organismCellType}
+                onChange={(e) => setOrganismCellType(e.target.value)}
+                placeholder="Organism / Cell Type"
+                className="border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+            </div>
+            <div className="grid gap-2">
+              <h1>Phase</h1>
+              <select
+                value={phase}
+                onChange={(e) => setPhase(e.target.value)}
+                className="border border-gray-300 rounded-lg p-3 text-[#636363] focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              >
+                <option value="">Select phase</option>
+                {phaseOptions.map((option) => (
+                  <option key={option} value={option}>
+                    {option}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
@@ -470,60 +497,145 @@ export default function SubmitProtocol() {
           </p>
         </section>
 
-        {/*------------ Materials---------------------- */}
+        {/* ---------materials------- */}
+        {/* Equipment */}
+        <section className="space-y-4 mb-8">
+          <h2 className="text-lg sm:text-xl font-medium text-[#1C1C1E]">
+            Materials & Equipment
+          </h2>
+          <h1 className="text-2xl sm:text-xl font-medium text-[#1C1C1E]">
+            Materials
+          </h1>
+          <div className="space-y-3">
+            {equipments.map((equipment, i) => (
+              <div
+                key={i}
+                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 p-3  "
+              >
+                <div className="gap-2 grid">
+                  <h1>Item Name</h1>
+                  <input
+                    value={equipment.qty}
+                    onChange={(e) => {
+                      const newEquipments = [...equipments];
+                      newEquipments[i].qty = e.target.value;
+                      setEquipments(newEquipments);
+                    }}
+                    className="border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="Item Name"
+                  />
+                </div>
+                <div className="gap-2 grid">
+                  <h1>Quantity</h1>
+                  <input
+                    value={equipment.qty}
+                    onChange={(e) => {
+                      const newEquipments = [...equipments];
+                      newEquipments[i].qty = e.target.value;
+                      setEquipments(newEquipments);
+                    }}
+                    className="border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="Quantity"
+                  />
+                </div>
+
+                <div className="grid gap-2">
+                  <h1>catalog</h1>
+                  <input
+                    value={equipment.catalog || ""}
+                    onChange={(e) => {
+                      const newEquipments = [...equipments];
+                      newEquipments[i].catalog = e.target.value;
+                      setEquipments(newEquipments);
+                    }}
+                    className="border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="Catalog/Model (optional)"
+                  />
+                </div>
+                <div className="grid gap-2">
+                  <h1>Supplier</h1>
+                  <input
+                    value={equipment.supplier || ""}
+                    onChange={(e) => {
+                      const newEquipments = [...equipments];
+                      newEquipments[i].supplier = e.target.value;
+                      setEquipments(newEquipments);
+                    }}
+                    className="border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="Supplier (optional)"
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/*------------  Equipment---------------------- */}
         <section className="space-y-4 mb-8">
           <h1 className="text-2xl sm:text-xl font-medium text-[#1C1C1E]">
-            Materials & Equipment
+            Equipment
           </h1>
-          <h2 className="text-lg sm:text-xl font-medium text-[#1C1C1E]">
-            Materials
-          </h2>
+
           <div className="space-y-3">
             {materials.map((material, i) => (
               <div
                 key={i}
-                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 p-3 border border-gray-200 rounded-lg bg-gray-50"
+                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 p-3  rounded-lg"
               >
-                <input
-                  value={material.item}
-                  onChange={(e) => {
-                    const newMaterials = [...materials];
-                    newMaterials[i].item = e.target.value;
-                    setMaterials(newMaterials);
-                  }}
-                  className="border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="Item Name"
-                />
-                <input
-                  value={material.qty}
-                  onChange={(e) => {
-                    const newMaterials = [...materials];
-                    newMaterials[i].qty = e.target.value;
-                    setMaterials(newMaterials);
-                  }}
-                  className="border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="Quantity"
-                />
-                <input
-                  value={material.catalog || ""}
-                  onChange={(e) => {
-                    const newMaterials = [...materials];
-                    newMaterials[i].catalog = e.target.value;
-                    setMaterials(newMaterials);
-                  }}
-                  className="border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="Catalog (optional)"
-                />
-                <input
-                  value={material.supplier || ""}
-                  onChange={(e) => {
-                    const newMaterials = [...materials];
-                    newMaterials[i].supplier = e.target.value;
-                    setMaterials(newMaterials);
-                  }}
-                  className="border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="Supplier (optional)"
-                />
+                <div className="grid gap-2">
+                  <h1>Equipment Name</h1>
+                  <input
+                    value={material.item}
+                    onChange={(e) => {
+                      const newMaterials = [...materials];
+                      newMaterials[i].item = e.target.value;
+                      setMaterials(newMaterials);
+                    }}
+                    className="border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="Item Name"
+                  />
+                </div>
+
+                <div className="grid gap-2">
+                  <h1>Notes</h1>
+                  <input
+                    value={material.qty}
+                    onChange={(e) => {
+                      const newMaterials = [...materials];
+                      newMaterials[i].qty = e.target.value;
+                      setMaterials(newMaterials);
+                    }}
+                    className="border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="Quantity"
+                  />
+                </div>
+
+                <div className="gap-2 grid">
+                  <h1>Organism / Cell Type</h1>
+                  <input
+                    value={material.catalog || ""}
+                    onChange={(e) => {
+                      const newMaterials = [...materials];
+                      newMaterials[i].catalog = e.target.value;
+                      setMaterials(newMaterials);
+                    }}
+                    className="border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="Catalog (optional)"
+                  />
+                </div>
+                <div className="grid gap-2">
+                  <h1>Phase</h1>
+                  <input
+                    value={material.supplier || ""}
+                    onChange={(e) => {
+                      const newMaterials = [...materials];
+                      newMaterials[i].supplier = e.target.value;
+                      setMaterials(newMaterials);
+                    }}
+                    className="border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="Supplier (optional)"
+                  />
+                </div>
                 {materials.length > 1 && (
                   <button
                     onClick={() => removeMaterial(i)}
@@ -534,102 +646,30 @@ export default function SubmitProtocol() {
                 )}
               </div>
             ))}
-            <button
-              onClick={addMaterial}
-              className="flex items-center justify-center gap-2 px-4 py-2 border border-[#17AA80] rounded-lg text-[#17AA80] text-sm sm:text-base font-medium hover:bg-[#17AA80] hover:text-white transition-colors"
-            >
-              <Plus className="w-4 h-4" />
-              Add Material
-            </button>
           </div>
         </section>
 
-        {/* Equipment */}
-        <section className="space-y-4 mb-8">
-          <h2 className="text-lg sm:text-xl font-medium text-[#1C1C1E]">
-            Equipment
-          </h2>
-          <div className="space-y-3">
-            {equipments.map((equipment, i) => (
-              <div
-                key={i}
-                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 p-3 border border-gray-200 rounded-lg bg-blue-50"
-              >
-                <input
-                  value={equipment.item}
-                  onChange={(e) => {
-                    const newEquipments = [...equipments];
-                    newEquipments[i].item = e.target.value;
-                    setEquipments(newEquipments);
-                  }}
-                  className="border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="Equipment Name"
-                />
-                <input
-                  value={equipment.qty}
-                  onChange={(e) => {
-                    const newEquipments = [...equipments];
-                    newEquipments[i].qty = e.target.value;
-                    setEquipments(newEquipments);
-                  }}
-                  className="border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="Quantity"
-                />
-                <input
-                  value={equipment.catalog || ""}
-                  onChange={(e) => {
-                    const newEquipments = [...equipments];
-                    newEquipments[i].catalog = e.target.value;
-                    setEquipments(newEquipments);
-                  }}
-                  className="border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="Catalog/Model (optional)"
-                />
-                <input
-                  value={equipment.supplier || ""}
-                  onChange={(e) => {
-                    const newEquipments = [...equipments];
-                    newEquipments[i].supplier = e.target.value;
-                    setEquipments(newEquipments);
-                  }}
-                  className="border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="Supplier (optional)"
-                />
-                {equipments.length > 1 && (
-                  <button
-                    onClick={() => removeEquipment(i)}
-                    className="sm:col-span-4 lg:col-span-1 bg-red-100 text-red-600 px-3 py-1 rounded-md text-sm hover:bg-red-200 transition-colors"
-                  >
-                    Remove
-                  </button>
-                )}
-              </div>
-            ))}
-
-            <button
-              onClick={addEquipment}
-              className="flex items-center justify-center gap-2 px-4 py-2 border border-[#17AA80] rounded-lg text-[#17AA80] text-sm sm:text-base font-medium hover:bg-[#17AA80] hover:text-white transition-colors"
-            >
-              <Plus className="w-4 h-4 sm:w-5 sm:h-5" />
-              Add Equipment
-            </button>
-          </div>
-        </section>
-
-        {/* Full Protocol */}
+        {/* ------- Full Protocol  using react markdown --------- */}
         <section className="space-y-3 mb-8">
           <h2 className="text-lg sm:text-xl font-medium text-[#1C1C1E]">
             Full Protocol / Steps
           </h2>
+
+          {/* Safety warning */}
           <div className="bg-red-50 border border-red-200 rounded-lg p-3 text-sm text-red-700">
             Ensure all procedures comply with your institution's safety
             policies. Include all necessary safety precautions.
           </div>
-          <textarea
-            placeholder="Enter your detailed protocol steps..."
-            rows={8}
-            className="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
-          />
+
+         
+          <div>
+            <MDEditor
+              value={value}
+              onChange={(val: any) => {
+                setValue(val!);
+              }}
+            />
+          </div>
         </section>
 
         {/* Notes */}

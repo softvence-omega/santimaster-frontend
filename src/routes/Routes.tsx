@@ -65,7 +65,7 @@ const router = createBrowserRouter([
         element: <OpenGeneApplicationForm />,
       },
       {
-        path: "/submit-potocol",
+        path: "/submit-protocol",
         element: <SubmitProtocol />,
       },
       {
@@ -81,18 +81,18 @@ const router = createBrowserRouter([
     children: [
       {
         path: "dashboard",
-        element: <UserDashboard/>
+        element: <UserDashboard />,
       },
     ],
   },
-// ----------admin dashboard-------------
-    {
+  // ----------admin dashboard-------------
+  {
     path: "/admin",
-    element: <AdminDashboardLayout/>,
+    element: <AdminDashboardLayout />,
     children: [
       {
         path: "dashboard",
-        element: <AdminDashboard/>
+        element: <AdminDashboard />,
       },
     ],
   },

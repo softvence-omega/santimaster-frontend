@@ -1,20 +1,21 @@
 import React, { useState, useRef } from "react";
 import { Upload, Send } from "lucide-react";
 import SectionHeader from "../../utils/SectionHeading";
+import { useCreateMessageMutation } from "../../redux/features/contract/contract.api";
+import toast from "react-hot-toast";
 
 interface FormData {
   fullName: string;
-  emailAddress: string;
+  email: string;
   subject: string;
   message: string;
 }
 
-interface ContactProps {}
-
-const Contact: React.FC<ContactProps> = () => {
+const Contact: React.FC = () => {
+  const [createMessage] = useCreateMessageMutation();
   const [formData, setFormData] = useState<FormData>({
-    fullName: "Ayesha Rahman",
-    emailAddress: "you@institution.edu",
+    fullName: "",
+    email: "",
     subject: "",
     message: "",
   });
@@ -34,17 +35,12 @@ const Contact: React.FC<ContactProps> = () => {
   ];
 
   const handleInputChange = (field: keyof FormData, value: string) => {
-    setFormData((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
-    if (files) {
-      setAttachedFiles((prev) => [...prev, ...Array.from(files)]);
-    }
+    if (files) setAttachedFiles((prev) => [...prev, ...Array.from(files)]);
   };
 
   const handleBrowseFiles = () => {
@@ -55,57 +51,62 @@ const Contact: React.FC<ContactProps> = () => {
     setAttachedFiles((prev) => prev.filter((_, i) => i !== index));
   };
 
-  const handleSubmit = () => {
-    console.log("Form submission:", {
-      ...formData,
-      attachedFiles: attachedFiles.map((f) => f.name),
-      agreeToPrivacy,
-      isNotRobot,
-    });
-  };
-
   const getTotalFileSize = () => {
     const totalBytes = attachedFiles.reduce((sum, file) => sum + file.size, 0);
     return (totalBytes / (1024 * 1024)).toFixed(2);
   };
 
+  const handleSubmit = async () => {
+    if (!agreeToPrivacy || !isNotRobot) {
+      toast.error("Please agree to the privacy policy and confirm you are not a robot.");
+      return;
+    }
+
+    const payload = {
+      fullName: formData.fullName,
+      email: formData.email,
+      subject: formData.subject,
+      message: formData.message,
+      isTermAgreed: agreeToPrivacy,
+    };
+
+    try {
+      const response = await createMessage(payload).unwrap();
+      toast.success(response.message || "Message sent successfully!");
+
+      // Reset form
+      setFormData({ fullName: "", email: "", subject: "", message: "" });
+      setAttachedFiles([]);
+      setAgreeToPrivacy(false);
+      setIsNotRobot(false);
+    } catch (error: any) {
+      toast.error(error?.data?.message || "Failed to send message.");
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-gray-50 py-40 ">
+    <div className="min-h-screen bg-gray-50 py-40">
       <div className="max-w-2xl mx-auto">
-        {/* Header */}
         <div className="text-center mb-8">
           <SectionHeader
             title="Get in touch with Open Gene"
-            subtitle="  For general inquiries, press, partnerships or support — expect a
-            reply within 3 business days."
-          ></SectionHeader>
+            subtitle="For general inquiries, press, partnerships or support — expect a reply within 3 business days."
+          />
         </div>
 
-        {/* Form Container */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8">
-          {/* Form Header */}
           <div className="bg-gray-100 rounded-lg p-4 mb-6">
-            <h2 className="text-lg font-medium text-[#1C1C1E] mb-2">
-              Send us a message
-            </h2>
+            <h2 className="text-lg font-medium text-[#1C1C1E] mb-2">Send us a message</h2>
             <p className="text-sm text-gray-600">
-              Fill out the form below and we'll get back to you within 3
-              business days.
+              Fill out the form below and we'll get back to you within 3 business days.
             </p>
           </div>
 
-          {/* Form Fields */}
           <div className="space-y-6">
             {/* Full Name */}
             <div>
-              <label
-                htmlFor="fullName"
-                className="block text-sm font-medium text-gray-700 mb-2"
-              >
-                Full Name
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
               <input
-                id="fullName"
                 type="text"
                 value={formData.fullName}
                 onChange={(e) => handleInputChange("fullName", e.target.value)}
@@ -113,127 +114,74 @@ const Contact: React.FC<ContactProps> = () => {
               />
             </div>
 
-            {/* Email Address */}
+            {/* Email */}
             <div>
-              <label
-                htmlFor="emailAddress"
-                className="block text-sm font-medium text-gray-700 mb-2"
-              >
-                Email Address
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
               <input
-                id="emailAddress"
                 type="email"
-                value={formData.emailAddress}
-                onChange={(e) =>
-                  handleInputChange("emailAddress", e.target.value)
-                }
+                value={formData.email}
+                onChange={(e) => handleInputChange("email", e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
               />
             </div>
 
             {/* Subject */}
             <div>
-              <label
-                htmlFor="subject"
-                className="block text-sm font-medium text-gray-700 mb-2"
+              <label className="block text-sm font-medium text-gray-700 mb-2">Subject</label>
+              <select
+                value={formData.subject}
+                onChange={(e) => handleInputChange("subject", e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent appearance-none bg-white"
               >
-                Subject
-              </label>
-              <div className="relative">
-                <select
-                  id="subject"
-                  value={formData.subject}
-                  onChange={(e) => handleInputChange("subject", e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent appearance-none bg-white"
-                >
-                  {subjectOptions.map((option, index) => (
-                    <option
-                      key={index}
-                      value={index === 0 ? "" : option}
-                      disabled={index === 0}
-                    >
-                      {option}
-                    </option>
-                  ))}
-                </select>
-                <div className="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
-                  <svg className="w-4 h-4 fill-gray-400" viewBox="0 0 20 20">
-                    <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
-                  </svg>
-                </div>
-              </div>
+                {subjectOptions.map((option, idx) => (
+                  <option key={idx} value={idx === 0 ? "" : option} disabled={idx === 0}>
+                    {option}
+                  </option>
+                ))}
+              </select>
             </div>
 
             {/* Message */}
             <div>
-              <label
-                htmlFor="message"
-                className="block text-sm font-medium text-gray-700 mb-2"
-              >
-                Message
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Message</label>
               <textarea
-                id="message"
                 rows={6}
                 value={formData.message}
                 onChange={(e) => handleInputChange("message", e.target.value)}
-                placeholder="Write your message here... (include links or ticket numbers if relevant)"
+                placeholder="Write your message here..."
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent resize-vertical"
               />
-              <p className="text-xs text-gray-500 mt-1">0/3K maximum</p>
             </div>
 
             {/* Attachments */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Attachments (Optional)
-              </label>
-
-              {/* Upload Area */}
+              <label className="block text-sm font-medium text-gray-700 mb-2">Attachments (Optional)</label>
               <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-gray-400 transition-colors">
                 <Upload className="mx-auto h-8 w-8 text-gray-400 mb-2" />
                 <p className="text-sm text-gray-600 mb-2">
                   Click to upload files or{" "}
-                  <button
-                    type="button"
-                    onClick={handleBrowseFiles}
-                    className="text-blue-600 hover:text-blue-500 underline"
-                  >
+                  <button type="button" onClick={handleBrowseFiles} className="text-blue-600 hover:text-blue-500 underline">
                     browse files
                   </button>
                 </p>
-                <p className="text-xs text-gray-500">
-                  PNG, PDF, DOCX, Max 10 MB
-                </p>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  multiple
+                  onChange={handleFileUpload}
+                  className="hidden"
+                  accept=".png,.pdf,.docx,.jpg,.jpeg"
+                />
               </div>
 
-              <input
-                ref={fileInputRef}
-                type="file"
-                multiple
-                onChange={handleFileUpload}
-                className="hidden"
-                accept=".png,.pdf,.docx,.jpg,.jpeg"
-              />
-
-              {/* File List */}
               {attachedFiles.length > 0 && (
                 <div className="mt-3">
-                  <p className="text-xs text-gray-600 mb-2">
-                    Attached files ({getTotalFileSize()} MB):
-                  </p>
+                  <p className="text-xs text-gray-600 mb-2">Attached files ({getTotalFileSize()} MB):</p>
                   <div className="space-y-1">
-                    {attachedFiles.map((file, index) => (
-                      <div
-                        key={index}
-                        className="flex items-center justify-between text-xs text-gray-600 bg-gray-50 px-2 py-1 rounded"
-                      >
+                    {attachedFiles.map((file, idx) => (
+                      <div key={idx} className="flex items-center justify-between text-xs text-gray-600 bg-gray-50 px-2 py-1 rounded">
                         <span>{file.name}</span>
-                        <button
-                          onClick={() => removeFile(index)}
-                          className="text-red-500 hover:text-red-700 ml-2"
-                        >
+                        <button onClick={() => removeFile(idx)} className="text-red-500 hover:text-red-700 ml-2">
                           ✕
                         </button>
                       </div>
@@ -241,51 +189,34 @@ const Contact: React.FC<ContactProps> = () => {
                   </div>
                 </div>
               )}
-
-              <p className="text-xs text-gray-500 mt-2">
-                Required for first-time visit; optional for others
-              </p>
             </div>
 
             {/* Checkboxes */}
             <div className="space-y-3">
-              {/* Privacy Policy */}
               <div className="flex items-start">
                 <input
-                  id="privacy"
                   type="checkbox"
                   checked={agreeToPrivacy}
                   onChange={(e) => setAgreeToPrivacy(e.target.checked)}
                   className="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded mt-0.5"
                 />
-                <label
-                  htmlFor="privacy"
-                  className="ml-2 block text-sm text-gray-700"
-                >
-                  I agree to the Privacy Policy and consent to the site storing
-                  my message for a response.
+                <label className="ml-2 block text-sm text-gray-700">
+                  I agree to the Privacy Policy and consent to the site storing my message for a response.
                 </label>
               </div>
 
-              {/* Robot Check */}
               <div className="flex items-center justify-center">
                 <input
-                  id="robot"
                   type="checkbox"
                   checked={isNotRobot}
                   onChange={(e) => setIsNotRobot(e.target.checked)}
                   className="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded"
                 />
-                <label
-                  htmlFor="robot"
-                  className="ml-2 block text-sm text-gray-700"
-                >
-                  I'm not a robot
-                </label>
+                <label className="ml-2 block text-sm text-gray-700">I'm not a robot</label>
               </div>
             </div>
 
-            {/* Submit Button */}
+            {/* Submit */}
             <div className="text-center">
               <button
                 onClick={handleSubmit}
