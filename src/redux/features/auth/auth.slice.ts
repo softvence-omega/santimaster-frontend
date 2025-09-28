@@ -1,50 +1,48 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import type { TUser } from "../../../types/user.types";
-import type { RootState } from "../../hook";
+import type { RootState } from "../../store";
 
-type Tstate = {
-  user: TUser | null;
+type TState = {
   accessToken: string | null;
+  user: TUser | null;
 };
 
-// 🔹 Demo User for testing
-const demoUser: TUser = {
-  fullName: "Abumahid Islam",
-  email: "dev.abumahid@gmail.com",
-  password: "123456",
-  affiliation: "236548963",
-  orcid: "156466",
-};
+// Load from localStorage
+const storedToken = localStorage.getItem("accessToken");
+const storedUser = localStorage.getItem("user");
 
-const initialState: Tstate = {
-  user: demoUser,
-  accessToken: "demo-accessToken-12345",
+const initialState: TState = {
+  accessToken: storedToken || null,
+  user: storedUser ? JSON.parse(storedUser) : null,
 };
 
 const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
-    setUser: (state, action) => {
-      const { user, accessToken } = action.payload || {};
-      if (!user || !accessToken) {
-        console.error("Invalid payload received:", action.payload);
-        return;
+    setAuth: (state, action: PayloadAction<{ token: string; user: TUser | null }>) => {
+      state.accessToken = action.payload.token;
+      state.user = action.payload.user;
+
+      localStorage.setItem("accessToken", action.payload.token);
+      if (action.payload.user) {
+        localStorage.setItem("user", JSON.stringify(action.payload.user));
       }
-      state.accessToken = accessToken;
-      state.user = user;
     },
     logout: (state) => {
-      state.user = null;
       state.accessToken = null;
+      state.user = null;
+
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("user");
     },
   },
 });
 
-export const { setUser, logout } = authSlice.actions;
+export const { setAuth, logout } = authSlice.actions;
 
-export const selectUser = (state: RootState) => state.auth?.user || demoUser;
-export const selectaccessToken = (state: RootState) => state.auth?.accessToken;
+// Selectors
+export const selectToken = (state: RootState) => state.auth?.accessToken;
+export const selectUser = (state: RootState) => state.auth?.user;
 
-const authReducer = authSlice.reducer;
-export default authReducer;
+export default authSlice.reducer;

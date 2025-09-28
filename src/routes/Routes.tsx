@@ -19,6 +19,12 @@ import UserDashboardLayout from "../Layout/UserDashboardLayou";
 import UserDashboard from "../pages/UserDahsboard/userDashboard";
 import AdminDashboardLayout from "../Layout/AdminDashboardLayout";
 import AdminDashboard from "../pages/AdminDashboard/AdminDashboard";
+import ProtectedRoute from "./ProtectedRoute";
+import UserDashboardOverview from "../pages/UserDahsboard/UserDashboardOverview/UserDashboardOverview";
+import DraftProtocols from "../pages/UserDahsboard/DraftProtocols/DraftProtocols";
+import SubmittedProtocols from "../pages/UserDahsboard/SubmittedProtocols/SubmittedProtocols";
+import ReviewQueue from "../pages/UserDahsboard/ReviewQueue/ReviewQueue";
+import ProfileSettings from "../pages/UserDahsboard/ProfileSettings/ProfileSettings";
 
 const router = createBrowserRouter([
   //   -------------main layout------------------
@@ -62,11 +68,19 @@ const router = createBrowserRouter([
       },
       {
         path: "/gene-application",
-        element: <OpenGeneApplicationForm />,
+        element: (
+          <ProtectedRoute>
+            <OpenGeneApplicationForm />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "/submit-protocol",
-        element: <SubmitProtocol />,
+        element: (
+          <ProtectedRoute>
+            <SubmitProtocol />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "/donation",
@@ -77,11 +91,39 @@ const router = createBrowserRouter([
 
   {
     path: "/user",
-    element: <UserDashboardLayout />,
+    element: (
+      <ProtectedRoute>
+        <UserDashboardLayout />
+      </ProtectedRoute>
+    ),
     children: [
       {
         path: "dashboard",
-        element: <UserDashboard />,
+        element: (
+          <ProtectedRoute>
+            <UserDashboard />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "overview",
+        element: <UserDashboardOverview />,
+      },
+      {
+        path: "my-drafts",
+        element: <DraftProtocols />,
+      },
+      {
+        path: "submitted",
+        element: <SubmittedProtocols />,
+      },
+      {
+        path: "review-queue",
+        element: <ReviewQueue />,
+      },
+      {
+        path: "settings",
+        element: <ProfileSettings />,
       },
     ],
   },

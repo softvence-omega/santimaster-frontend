@@ -4,7 +4,6 @@ import toast from "react-hot-toast";
 
 interface FormData {
   fullName: string;
-  email: string;
   affiliation: string;
   orcid: string;
   bio: string;
@@ -22,7 +21,6 @@ const OpenGeneApplicationForm = () => {
   const [fileName, setFileName] = useState<string | null>(null);
   const [formData, setFormData] = useState<FormData>({
     fullName: "",
-    email: "",
     affiliation: "",
     orcid: "",
     bio: "",
@@ -46,7 +44,9 @@ const OpenGeneApplicationForm = () => {
   };
 
   const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -56,22 +56,39 @@ const OpenGeneApplicationForm = () => {
     setFormData((prev) => ({ ...prev, role }));
   };
 
-  const mapRoleToEnum = (role: string): "RESEARCHER" | "CLINICIAN" | "ENGINEER" | "REVIEWER" | "DONAR" | undefined => {
-    const roleMap: { [key: string]: "RESEARCHER" | "CLINICIAN" | "ENGINEER" | "REVIEWER" | "DONAR" } = {
-      "Researcher": "RESEARCHER",
-      "Clinician": "CLINICIAN",
-      "Engineer": "ENGINEER",
-      "Reviewer": "REVIEWER",
-      "Doner": "DONAR"
+  const mapRoleToEnum = (
+    role: string
+  ):
+    | "RESEARCHER"
+    | "CLINICIAN"
+    | "ENGINEER"
+    | "REVIEWER"
+    | "DONAR"
+    | undefined => {
+    const roleMap: {
+      [key: string]:
+        | "RESEARCHER"
+        | "CLINICIAN"
+        | "ENGINEER"
+        | "REVIEWER"
+        | "DONAR";
+    } = {
+      Researcher: "RESEARCHER",
+      Clinician: "CLINICIAN",
+      Engineer: "ENGINEER",
+      Reviewer: "REVIEWER",
+      Doner: "DONAR",
     };
     return roleMap[role];
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!privacyAgreed || !notRobot) {
-      alert("Please agree to the Privacy Policy and confirm you're not a robot");
+      toast(
+        "Please agree to the Privacy Policy and confirm you're not a robot"
+      );
       return;
     }
 
@@ -94,10 +111,11 @@ const OpenGeneApplicationForm = () => {
 
     try {
       const response = await updateAccount(payload).unwrap();
-    toast("Application submitted successfully!");
+      console.log(response);
+      toast("Application submitted successfully!");
     } catch (err) {
       console.error("Failed to update account:", err);
-      alert("Failed to submit application. Please try again.");
+      toast("Failed to submit application. Please try again.");
     }
   };
 
@@ -129,27 +147,23 @@ const OpenGeneApplicationForm = () => {
                   viewBox="0 0 16 16"
                   fill="none"
                 >
-                  {/* SVG paths remain unchanged for brevity */}
-                  <path
-                    d={
-                      role === "Researcher"
-                        ? "M16 9C16 5.87533..." 
-                        : role === "Clinician"
-                        ? "M8.5168 9.5C5.8696..." 
-                        : role === "Engineer"
-                        ? "M3.33464 4.00029..." 
-                        : role === "Reviewer"
-                        ? "M15.2133 11.5146..." 
-                        : "M6.472 8.366..." 
-                    }
-                    fill="#F5F5F7"
-                  />
+                  <g clip-path="url(#clip0_196_373)">
+                    <path
+                      d="M3.33464 4.00029C3.33464 3.82348 3.40487 3.65391 3.5299 3.52889C3.65492 3.40386 3.82449 3.33363 4.0013 3.33363H4.01664C4.09573 2.48035 4.47071 1.68159 5.07666 1.07565C5.6826 0.469702 6.48136 0.0947205 7.33464 0.015625V2.00029C7.33464 2.1771 7.40487 2.34667 7.5299 2.4717C7.65492 2.59672 7.82449 2.66696 8.0013 2.66696C8.17811 2.66696 8.34768 2.59672 8.47271 2.4717C8.59773 2.34667 8.66797 2.1771 8.66797 2.00029V0.015625C9.5212 0.0948458 10.3199 0.469868 10.9258 1.07579C11.5317 1.68171 11.9067 2.4804 11.986 3.33363H12.0013C12.1781 3.33363 12.3477 3.40386 12.4727 3.52889C12.5977 3.65391 12.668 3.82348 12.668 4.00029C12.668 4.1771 12.5977 4.34667 12.4727 4.4717C12.3477 4.59672 12.1781 4.66696 12.0013 4.66696H4.0013C3.82449 4.66696 3.65492 4.59672 3.5299 4.4717C3.40487 4.34667 3.33464 4.1771 3.33464 4.00029ZM12.8546 10.0596L10.8573 10.5516C10.243 10.6636 9.68744 10.9875 9.28748 11.467C8.88752 11.9465 8.66851 12.5512 8.66864 13.1756V15.3283C8.66864 15.505 8.73878 15.6745 8.86366 15.7995C8.98854 15.9245 9.15794 15.9948 9.33464 15.995L14.6653 16.0003C14.7529 16.0004 14.8397 15.9832 14.9206 15.9497C15.0016 15.9163 15.0752 15.8672 15.1371 15.8053C15.1991 15.7434 15.2483 15.6698 15.2818 15.5889C15.3154 15.508 15.3326 15.4212 15.3326 15.3336V12.0016C15.3328 11.6983 15.2639 11.3989 15.1311 11.1261C14.9984 10.8533 14.8053 10.6143 14.5666 10.4272C14.3278 10.24 14.0496 10.1097 13.753 10.046C13.4564 9.98235 13.1492 9.987 12.8546 10.0596ZM5.14397 10.5516L3.14664 10.0596C2.85206 9.98701 2.54483 9.98237 2.2482 10.046C1.95157 10.1097 1.67331 10.24 1.4345 10.4272C1.19568 10.6143 1.00256 10.8533 0.869755 11.126C0.736953 11.3988 0.66795 11.6982 0.667969 12.0016V15.3276C0.667969 15.5044 0.738207 15.674 0.863231 15.799C0.988255 15.9241 1.15782 15.9943 1.33464 15.9943H6.6653C6.84211 15.9943 7.01168 15.9241 7.13671 15.799C7.26173 15.674 7.33197 15.5044 7.33197 15.3276V13.1756C7.33209 12.5512 7.11309 11.9465 6.71313 11.467C6.31316 10.9875 5.75761 10.6636 5.1433 10.5516H5.14397ZM12.0013 6.00029H4.0013C4.0533 8.16096 5.82797 10.0003 8.0013 10.0003C10.2086 10.003 12.0046 8.19563 12.0013 6.00029Z"
+                      fill="#F5F5F7"
+                    />
+                  </g>
+                  <defs>
+                    <clipPath id="clip0_196_373">
+                      <rect width="16" height="16" fill="white" />
+                    </clipPath>
+                  </defs>
                 </svg>
               </div>
               <button
                 type="button"
                 onClick={() => handleRoleSelect(role)}
-                className="px-4 py-2 font-medium"
+                className="px-4 py-2 font-medium cursor-pointer"
               >
                 {role}
               </button>
@@ -175,7 +189,7 @@ const OpenGeneApplicationForm = () => {
             required
           />
         </div>
-        <div>
+        {/* <div>
           <label className="block text-lg font-medium text-[#1C1C1E] mb-1">
             Email Address
           </label>
@@ -188,7 +202,7 @@ const OpenGeneApplicationForm = () => {
             className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
             disabled
           />
-        </div>
+        </div> */}
         <div>
           <label className="block text-lg font-medium text-[#1C1C1E] mb-1">
             Affiliation / Organization

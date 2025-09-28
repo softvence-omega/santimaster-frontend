@@ -1,6 +1,5 @@
 import { baseAPI } from "../../api/baseApi";
 
-
 export const userAPI = baseAPI.injectEndpoints({
   endpoints: (build) => ({
     login: build.mutation({
@@ -35,22 +34,19 @@ export const userAPI = baseAPI.injectEndpoints({
       }),
     }),
 
-  getMe:build.mutation({
-    query:()=>({
-      url:"/auth/me",
-      method:"GET"
-    })
-  })
-  
-
+    getMe: build.query({
+      query: () => ({
+        url: "/auth/me",
+        method: "GET",
+      }),
+    }),
   }),
 });
-
-
 
 export const {
   useLoginMutation,
   useVerifyOTPMutation,
   useRegisterMutation,
   useUpdatePasswordMutation,
+  useGetMeQuery
 } = userAPI;

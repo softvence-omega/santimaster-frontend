@@ -87,7 +87,7 @@ const OpenMvp = () => {
       </div>
 
       {/* --------right flow stepper--------------- */}
-      <div className="p-4 rounded-lg flex flex-col md:flex-row items-center justify-center gap-4">
+      <div className="p-4 rounded-lg   flex flex-col md:flex-row items-center justify-center gap-4">
         {/* -------submit----------- */}
         <button className="text-[#1C1C1E] px-4 py-2 rounded flex items-center">
           <svg

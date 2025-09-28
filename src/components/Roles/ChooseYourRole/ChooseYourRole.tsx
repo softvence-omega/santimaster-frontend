@@ -1,5 +1,6 @@
 import SectionHeader from "../../../utils/SectionHeading";
 import roleimg from "../../../assets/roles/rolesimg.png";
+import { Link } from "react-router-dom";
 interface RoleCardProps {
   icon: React.ReactNode;
   title: string;
@@ -38,9 +39,11 @@ const RoleCard = ({ icon, title, description, items }: RoleCardProps) => {
           </li>
         ))}
       </ul>
-      <button className="mt-2 text-center mx-auto text-white w-fit flex justify-center items-center gap-2 px-4 py-2 rounded-lg bg-[#17AA80]">
-        Learn More / Apply
-      </button>
+      <Link className="cursor-pointer" to="/gene-application">
+        <button className="mt-2 text-center cursor-pointer mx-auto text-white w-fit flex justify-center items-center gap-2 px-4 py-2 rounded-lg bg-[#17AA80]">
+          Learn More / Apply
+        </button>
+      </Link>
     </div>
   );
 };

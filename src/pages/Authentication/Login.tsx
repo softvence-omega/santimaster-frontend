@@ -1,36 +1,73 @@
 import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
-import { Link, Navigate, useNavigate } from "react-router-dom";
-
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
-import { useLoginMutation } from "../../redux/features/auth/auth.api";
+
+import { useLoginMutation, userAPI } from "../../redux/features/auth/auth.api";
+import { useAppDispatch } from "../../redux/hook";
+import { setAuth } from "../../redux/features/auth/auth.slice";
 
 export default function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isNotRobot, setIsNotRobot] = useState(false);
-  const [loginUser, { isLoading }] = useLoginMutation();
+  const [isSubmitting, setIsSubmitting] = useState(false); // Combined loading state
 
-const route=useNavigate()
+  const [login] = useLoginMutation(); // No need for isLoading; use local state
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+
   const handleSubmit = async () => {
+    // Validate inputs
+    if (!email || !password) {
+      toast.error("Please fill in all fields");
+      return;
+    }
+
     if (!isNotRobot) {
       toast.error("Please confirm you are not a robot");
       return;
     }
 
+    setIsSubmitting(true);
+
     try {
-      const response = await loginUser({ email, password }).unwrap();
-      console.log("Login response:", response);
+      // 1️⃣ Login
+      const loginResponse = await login({ email, password }).unwrap();
 
+      if (!loginResponse?.success || !loginResponse?.data?.accessToken) {
+        toast.error(loginResponse?.message || "Login failed!");
+        return;
+      }
 
+      const token = loginResponse.data.accessToken;
 
-      toast.success(response.message || "Logged in successfully!");
-      // redirect to dashboard
-      route("/")
-    } catch (error: any) {
-      console.error("Login error:", error);
-      toast.error(error?.data?.message || "Login failed!");
+      // 2️⃣ Set token in Redux (headers will now include it for getMe)
+      dispatch(setAuth({ token, user: null }));
+
+      // 3️⃣ Manually fetch user profile
+      const userResponse = await dispatch(
+        userAPI.endpoints.getMe.initiate(undefined)
+      ).unwrap();
+
+      if (!userResponse?.success || !userResponse?.data) {
+        toast.error(userResponse?.message || "Failed to fetch user profile!");
+        return;
+      }
+
+      // 4️⃣ Update Redux with full user data
+      dispatch(setAuth({ token, user: userResponse.data }));
+
+      toast.success("Logged in successfully!");
+      navigate("/"); // Redirect to dashboard
+    } catch (err: any) {
+      console.error("Login error:", err);
+      const errorMessage =
+        err?.data?.message || "An unexpected error occurred during login.";
+      toast.error(errorMessage);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -40,7 +77,9 @@ const route=useNavigate()
         <div className="bg-white rounded-lg shadow-md p-8">
           {/* Header */}
           <div className="text-center mb-8">
-            <h2 className="text-2xl font-semibold text-gray-900 mb-2">Welcome back</h2>
+            <h2 className="text-2xl font-semibold text-gray-900 mb-2">
+              Welcome back
+            </h2>
             <p className="text-gray-600 text-sm">
               Access your account to submit and manage protocols
             </p>
@@ -48,24 +87,28 @@ const route=useNavigate()
 
           {/* Form */}
           <div className="space-y-6">
-            {/* Email */}
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+              <label
+                htmlFor="email"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
                 Email address
               </label>
               <input
                 id="email"
                 type="email"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => setEmail(e.target.value.trim())}
                 className="w-full px-3 py-3 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
                 placeholder="Enter your email"
               />
             </div>
 
-            {/* Password */}
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+              <label
+                htmlFor="password"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
                 Password
               </label>
               <div className="relative">
@@ -82,12 +125,15 @@ const route=useNavigate()
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
                 >
-                  {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                  {showPassword ? (
+                    <EyeOff className="h-5 w-5" />
+                  ) : (
+                    <Eye className="h-5 w-5" />
+                  )}
                 </button>
               </div>
             </div>
 
-            {/* Robot */}
             <div className="flex items-center">
               <input
                 id="not-robot"
@@ -96,26 +142,58 @@ const route=useNavigate()
                 onChange={(e) => setIsNotRobot(e.target.checked)}
                 className="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded"
               />
-              <label htmlFor="not-robot" className="ml-2 block text-sm text-gray-700">
+              <label
+                htmlFor="not-robot"
+                className="ml-2 block text-sm text-gray-700"
+              >
                 I'm not a robot
               </label>
             </div>
 
-            {/* Submit */}
             <button
               onClick={handleSubmit}
-              disabled={isLoading}
-              className="w-full flex bg-[#17AA80] justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white cursor-pointer hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition duration-150 ease-in-out"
+              disabled={isSubmitting}
+              className={`w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white transition duration-150 ease-in-out ${
+                isSubmitting
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "bg-[#17AA80] hover:bg-green-700 focus:ring-2 focus:ring-offset-2 focus:ring-green-500 cursor-pointer"
+              }`}
             >
-              {isLoading ? "Logging in..." : "Log in"}
+              {isSubmitting ? (
+                <span className="flex items-center">
+                  <svg
+                    className="animate-spin h-5 w-5 mr-2 text-white"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    />
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8v8z"
+                    />
+                  </svg>
+                  Logging in...
+                </span>
+              ) : (
+                "Log in"
+              )}
             </button>
           </div>
 
-          {/* Footer */}
           <div className="mt-6 text-center">
             <p className="text-sm text-gray-600">
               Don't have an account?{" "}
-              <Link to="/register" className="font-medium text-green-600 hover:text-green-500">
+              <Link
+                to="/register"
+                className="font-medium text-green-600 hover:text-green-500"
+              >
                 Sign Up
               </Link>
             </p>

@@ -6,7 +6,7 @@ const baseQueryAPI = fetchBaseQuery({
   prepareHeaders(headers, { getState }) {
     const accessToken = (getState() as RootState).auth.accessToken;
     if (accessToken) {
-      headers.set("Authorization", accessToken); // 👈 no Bearer
+      headers.set("Authorization", accessToken); 
       console.log("Attached raw token:", accessToken);
     } else {
       console.log(" No access token in Redux state");

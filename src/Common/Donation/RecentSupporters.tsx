@@ -1,51 +1,53 @@
+import { useGetDonationsQuery } from "../../redux/features/donation/donation.api";
 import SectionHeader from "../../utils/SectionHeading";
-
 
 type Supporter = {
   name: string;
-  role?: string;
   timeAgo: string;
   message: string;
   amount: number;
   avatar: string;
 };
 
-const supporters: Supporter[] = [
-  {
-    name: "Dr. Sarah Chen",
-    role: "",
-    timeAgo: "2 hours ago",
-    message: "Proud to support open access to research protocols.",
-    amount: 150,
-    avatar: "https://i.pravatar.cc/100?img=1", // demo avatar
-  },
-  {
-    name: "Prof. Michael Rodriguez",
-    role: "",
-    timeAgo: "5 hours ago",
-    message:
-      "Essential resource for our lab. Happy to contribute to making protocols.",
-    amount: 75,
-    avatar: "https://i.pravatar.cc/100?img=2",
-  },
-  {
-    name: "Anonymous Donor",
-    role: "",
-    timeAgo: "1 day ago",
-    message: "Keep up the excellent work in advancing open science initiatives.",
-    amount: 75,
-    avatar: "https://i.pravatar.cc/100?img=3",
-  },
-];
-
 const RecentSupporters = () => {
+  const { data, isLoading, isError } = useGetDonationsQuery(undefined);
+  console.log(data)
+
+  // Fallback avatars for variety
+  const avatars = [
+    "https://i.pravatar.cc/100?img=1",
+    "https://i.pravatar.cc/100?img=2",
+    "https://i.pravatar.cc/100?img=3",
+    "https://i.pravatar.cc/100?img=4",
+    "https://i.pravatar.cc/100?img=5",
+  ];
+
+  const supporters: Supporter[] =
+    data?.map((donation: any, idx: number) => ({
+      name: donation.donarName || "Anonymous Donor",
+      timeAgo: new Date(donation.createdAt).toLocaleDateString(), 
+      message: donation.tribute || "Supporting open science.",
+      amount: donation.amount,
+      avatar: avatars[idx % avatars.length], 
+    })) || [];
+
   return (
     <section className="w-full max-w-6xl mx-auto px-6 py-12">
-     
+      <SectionHeader
+        title="Recent Supporters"
+        subtitle="Join these amazing individuals supporting open science"
+      />
 
-<SectionHeader title="Recent Supporters" subtitle=" Join these amazing individuals supporting open science">
+      {/* Loading / Error states */}
+      {isLoading && (
+        <p className="text-center text-gray-500 mt-6">Loading supporters...</p>
+      )}
+      {isError && (
+        <p className="text-center text-red-500 mt-6">
+          Failed to load supporters.
+        </p>
+      )}
 
-</SectionHeader>
       {/* Supporters list */}
       <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
         {supporters.map((supporter, index) => (

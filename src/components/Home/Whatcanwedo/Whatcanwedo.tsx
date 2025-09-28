@@ -13,7 +13,7 @@ const features = [
       "Search rigorously reviewed protocols by technique, modality, organism, and phase.",
     icon: libaryicon,
     linkText: "Explore Protocols",
-    linkUrl: "",
+    linkUrl: "/protocol",
     isRouterLink: true,
   },
   {
@@ -23,7 +23,7 @@ const features = [
       "See how we'll expand into AI tools and mRNA workflows in the MVP and beyond.",
     icon: microrna,
     linkText: "View MVP Roadmap",
-    linkUrl: "#",
+    linkUrl: "/protocol",
     isRouterLink: false,
   },
   {
@@ -33,7 +33,7 @@ const features = [
       "Join researchers, clinicians, and engineers driving open science forward.",
     icon: communityicon,
     linkText: "Join Community",
-    linkUrl: "#",
+    linkUrl: "/protocol",
     isRouterLink: false,
   },
 ];
@@ -74,7 +74,7 @@ const WhatCanWeDo = () => {
               {feature.description}
             </p>
 
-            {/* Button / Link */}
+            {/* ------- Button / Link  --------------*/}
             <Link
               to={feature.linkUrl}
               className="inline-flex gap-3 items-center text-green-800 font-semibold hover:text-green-900 transition-colors justify-center"

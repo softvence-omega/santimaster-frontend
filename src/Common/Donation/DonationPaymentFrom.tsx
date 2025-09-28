@@ -3,7 +3,6 @@ import { ChevronDown, Lock } from "lucide-react";
 import SectionHeader from "../../utils/SectionHeading";
 import { useCreateDonationMutation } from "../../redux/features/donation/donation.api";
 
-
 const DonationPaymentForm = () => {
   const [frequency, setFrequency] = useState<"one-time" | "monthly" | "annual">(
     "annual"
@@ -62,7 +61,9 @@ const DonationPaymentForm = () => {
 
     try {
       const amount =
-        selectedAmount === "other" ? Number(customAmount) : Number(selectedAmount);
+        selectedAmount === "other"
+          ? Number(customAmount)
+          : Number(selectedAmount);
 
       const response = await createDonation({
         donationType: frequency === "one-time" ? "ONE_TIME" : "MONTHLY",
@@ -81,7 +82,7 @@ const DonationPaymentForm = () => {
       }
     } catch (err) {
       console.error(err);
-      alert("❌ Donation failed");
+      alert(" Donation failed");
     }
   };
 
@@ -121,7 +122,7 @@ const DonationPaymentForm = () => {
           <h2 className="text-xl font-semibold text-gray-900 mb-4">
             Select Amount
           </h2>
-          <div className="grid grid-cols-5 gap-3 mb-4">
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-4">
             {predefinedAmounts.map((amount) => (
               <button
                 key={amount}
@@ -267,7 +268,9 @@ const DonationPaymentForm = () => {
           disabled={!isDonateEnabled || isLoading}
           className="w-full bg-[#1D6953] hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white font-semibold py-4 px-6 rounded-lg transition-colors text-lg"
         >
-          {isLoading ? "Processing..." : `Donate ${getButtonAmount()}${getFrequencyText()}`}
+          {isLoading
+            ? "Processing..."
+            : `Donate ${getButtonAmount()}${getFrequencyText()}`}
         </button>
 
         {/* Security Notice */}
