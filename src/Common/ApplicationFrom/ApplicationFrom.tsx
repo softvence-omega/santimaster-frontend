@@ -184,7 +184,7 @@ const OpenGeneApplicationForm = () => {
             name="fullName"
             value={formData.fullName}
             onChange={handleInputChange}
-            placeholder="Ayesha Rahman"
+            placeholder="joy Rahman"
             className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
             required
           />

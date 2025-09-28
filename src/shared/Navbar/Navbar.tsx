@@ -25,10 +25,10 @@ const Navbar = () => {
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
-        (desktopDropdownRef.current &&
-          !desktopDropdownRef.current.contains(event.target as Node)) &&
-        (mobileDropdownRef.current &&
-          !mobileDropdownRef.current.contains(event.target as Node))
+        desktopDropdownRef.current &&
+        !desktopDropdownRef.current.contains(event.target as Node) &&
+        mobileDropdownRef.current &&
+        !mobileDropdownRef.current.contains(event.target as Node)
       ) {
         setDropdownOpen(false);
       }
@@ -157,7 +157,7 @@ const Navbar = () => {
                 {dropdownOpen && (
                   <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
                     <div className="px-4 py-2 text-sm text-gray-700 border-b">
-                      {user?.fullName || user?.fullName|| "User"}
+                      {user?.fullName || user?.fullName || "User"}
                     </div>
                     <button
                       onClick={handleLogout}
@@ -195,7 +195,9 @@ const Navbar = () => {
         {/*------------ Mobile Menu (below md)---------- */}
         <div
           className={`md:hidden bg-white border-t border-gray-200 transition-all duration-300 ease-in-out overflow-hidden ${
-            menuOpen ? "max-h-[500px] opacity-100 pointer-events-auto" : "max-h-0 opacity-0 pointer-events-none"
+            menuOpen
+              ? "max-h-[500px] opacity-100 pointer-events-auto"
+              : "max-h-0 opacity-0 pointer-events-none"
           }`}
         >
           <div className="px-4 sm:px-6 py-4 flex flex-col space-y-4">
@@ -225,41 +227,6 @@ const Navbar = () => {
                 className="outline-none text-black text-sm w-full"
               />
             </div>
-            {user ? (
-              <div className="relative" ref={mobileDropdownRef}>
-                <button
-                  type="button"
-                  onClick={() => setDropdownOpen(!dropdownOpen)}
-                  className="flex items-center space-x-2 px-3 py-2 rounded-lg border border-gray-300 hover:bg-gray-100 w-full"
-                  aria-label="User menu"
-                  aria-expanded={dropdownOpen}
-                >
-                  <User className="h-5 w-5 text-green-900" />
-                  <span className="text-[#1D6953] text-sm">
-                    {user?.fullName || user?.fullName || "User"}
-                  </span>
-                </button>
-                {dropdownOpen && (
-                  <div className="mt-2 w-full bg-white border border-gray-200 rounded-lg shadow-lg z-50">
-                    <div className="px-4 py-2 text-sm text-gray-700 border-b">
-                      {user?.fullName || user?.fullName || "User"}
-                    </div>
-                    <button
-                      onClick={handleLogout}
-                      className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
-                    >
-                      Logout
-                    </button>
-                  </div>
-                )}
-              </div>
-            ) : (
-              <Link to="/register">
-                <button className="bg-green-900 text-white px-4 py-2 rounded-lg w-full">
-                  Sign Up
-                </button>
-              </Link>
-            )}
           </div>
         </div>
       </div>
