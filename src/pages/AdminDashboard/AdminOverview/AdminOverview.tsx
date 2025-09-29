@@ -1,34 +1,44 @@
 import { FileText, Users, DollarSign, Shield, Download } from "lucide-react";
 
-const AdminOverview = () => {
+interface AdminOverviewProps {
+  overview?: {
+    pendingProtocol: number;
+    draftProtocol: number;
+    totalUser: number;
+    totalDonation: number;
+  };
+}
+
+const AdminOverview = ({ overview }: AdminOverviewProps) => {
+  // Map API data to metrics
   const metrics = [
     {
       icon: FileText,
-      value: "47",
+      value: overview?.pendingProtocol ?? 0,
       label: "Pending Submissions",
-      sublabel: "12 require immediate review",
-      change: "+12%",
+      sublabel: "Requires review", // you can customize
+      change: "+12%", // optional: compute dynamically
       changeType: "positive",
     },
     {
       icon: Shield,
-      value: "23",
+      value: overview?.draftProtocol ?? 0,
       label: "Draft Protocols",
-      sublabel: "8 abandoned > 30 days",
+      sublabel: "Abandoned > 30 days",
       change: "-3%",
       changeType: "negative",
     },
     {
       icon: Users,
-      value: "156",
+      value: overview?.totalUser ?? 0,
       label: "New Users",
-      sublabel: "34 this week",
+      sublabel: "This week",
       change: "+28%",
       changeType: "positive",
     },
     {
       icon: DollarSign,
-      value: "$12.4k",
+      value: `$${overview?.totalDonation ?? 0}`,
       label: "Monthly Donations",
       sublabel: "Target: $15k",
       change: "+15%",
@@ -43,7 +53,7 @@ const AdminOverview = () => {
         <div className="flex justify-between items-start mb-8">
           <div>
             <h1 className="text-3xl font-bold text-gray-900 mb-2">
-              AdminOverview
+              Admin Overview
             </h1>
             <p className="text-gray-600">
               Monitor your biotech research platform's key metrics

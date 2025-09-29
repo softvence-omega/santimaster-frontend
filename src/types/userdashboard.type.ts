@@ -1,3 +1,4 @@
+// types/userDashboard.ts
 export interface Material {
   itemName: string;
   quantity: number;
@@ -9,6 +10,8 @@ export interface Equipment {
   equipmentName: string;
   note: string;
 }
+
+export type ProtocolStatus = "DRAFT" | "PENDING" | "PUBLISHED" | "REJECTED";
 
 export interface Protocol {
   _id: string;
@@ -29,13 +32,38 @@ export interface Protocol {
   additionalReference?: string;
   stepProcedure: string;
   attachment?: string;
-  license: string;
-  authors: string[];
+  license?: string;
+  authors: string;
   coAuthors: string[];
   isConfirmed: boolean;
   isAcknowledged: boolean;
   isConfidential: boolean;
-  status: string;
+  status: ProtocolStatus;
   createdAt: string;
   updatedAt: string;
+}
+
+export interface ProtocolsData {
+  draft: Protocol[];
+  published: Protocol[];
+  rejected: Protocol[];
+  pending: Protocol[];
+}
+
+export interface ProtocolOverview {
+  total: number;
+  published: number;
+  rejected: number;
+  pending: number;
+  draft: number;
+}
+
+export interface UserDashboardResponse {
+  success: boolean;
+  message: string;
+  data: {
+    protocols: ProtocolsData;
+    overview: ProtocolOverview;
+  };
+  meta: any | null;
 }

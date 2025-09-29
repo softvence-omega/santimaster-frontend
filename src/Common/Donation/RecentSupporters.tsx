@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useGetDonationsQuery } from "../../redux/features/donation/donation.api";
 import SectionHeader from "../../utils/SectionHeading";
 
@@ -11,9 +12,12 @@ type Supporter = {
 
 const RecentSupporters = () => {
   const { data, isLoading, isError } = useGetDonationsQuery(undefined);
-  console.log(data)
+  const [showAll, setShowAll] = useState(false);
 
-  // Fallback avatars for variety
+  // Extract donations array safely
+  const donations = data?.data?.donations || [];
+
+  // Fallback avatars
   const avatars = [
     "https://i.pravatar.cc/100?img=1",
     "https://i.pravatar.cc/100?img=2",
@@ -22,14 +26,16 @@ const RecentSupporters = () => {
     "https://i.pravatar.cc/100?img=5",
   ];
 
-  const supporters: Supporter[] =
-    data?.map((donation: any, idx: number) => ({
-      name: donation.donarName || "Anonymous Donor",
-      timeAgo: new Date(donation.createdAt).toLocaleDateString(), 
-      message: donation.tribute || "Supporting open science.",
-      amount: donation.amount,
-      avatar: avatars[idx % avatars.length], 
-    })) || [];
+  const supporters: Supporter[] = donations.map((donation: any, idx: number) => ({
+    name: donation.donarName || "Anonymous Donor",
+    timeAgo: new Date(donation.createdAt).toLocaleDateString(),
+    message: donation.tribute || "Supporting open science.",
+    amount: donation.amount,
+    avatar: avatars[idx % avatars.length],
+  }));
+
+  // Show only first 4 unless "showAll" is true
+  const visibleSupporters = showAll ? supporters : supporters.slice(0, 4);
 
   return (
     <section className="w-full max-w-6xl mx-auto px-6 py-12">
@@ -50,7 +56,7 @@ const RecentSupporters = () => {
 
       {/* Supporters list */}
       <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-        {supporters.map((supporter, index) => (
+        {visibleSupporters.map((supporter, index) => (
           <div
             key={index}
             className="bg-gray-50 p-6 rounded-xl shadow-sm hover:shadow-md transition"
@@ -81,15 +87,17 @@ const RecentSupporters = () => {
         ))}
       </div>
 
-      {/* View all link */}
-      <div className="text-center mt-8">
-        <a
-          href="#"
-          className="text-blue-600 font-medium hover:underline inline-flex items-center"
-        >
-          View all supporters →
-        </a>
-      </div>
+      {/* View all / collapse button */}
+      {supporters.length > 4 && (
+        <div className="text-center mt-8">
+          <button
+            onClick={() => setShowAll((prev) => !prev)}
+            className="text-blue-600 font-medium hover:underline inline-flex items-center"
+          >
+            {showAll ? "Show less ↑" : "View all supporters →"}
+          </button>
+        </div>
+      )}
     </section>
   );
 };

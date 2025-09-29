@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import SectionHeader from "../../utils/SectionHeading";
 import { useCreateSponsorshipMutation } from "../../redux/features/Sponsor/Sponsor.api";
+import toast from "react-hot-toast";
 
 interface SponsorshipFormData {
   companyName: string;
@@ -50,7 +51,8 @@ const SponsorshipForm: React.FC = () => {
         message: formData.message,
       }).unwrap();
 
-      console.log("Sponsor created successfully:", response);
+      toast("Sponsor created successfully:");
+      console.log( response)
       // Optionally reset form
       setFormData({
         companyName: "",

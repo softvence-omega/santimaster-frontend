@@ -1,7 +1,23 @@
 import { Link } from "react-router-dom";
 import SectionHeader from "../../../utils/SectionHeading";
+import { useGetAllProtocolsQuery } from "../../../redux/features/protocols/potocols.api";
 
-interface Protocol {
+// ------------------ API INTERFACE ------------------
+export interface ApiProtocol {
+  _id: string;
+  protocolTitle: string;
+  protocolDescription: string;
+  tags: string[];
+  estimatedTime: string;
+  difficulty: string;
+  authors: string[]; 
+  attachment?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+// ------------------ UI INTERFACE ------------------
+interface UiProtocol {
   id: string;
   title: string;
   description: string;
@@ -17,12 +33,13 @@ interface Protocol {
   techniques?: string;
 }
 
-const featuredProtocols: Protocol[] = [
+// ------------------ FALLBACK DEMO DATA ------------------
+const featuredProtocols: UiProtocol[] = [
   {
     id: "1",
     title: "Editor Pick: Next-Gen CAR-T Manufacturing",
     description:
-      "Next-Generation CAR-T Manufacturing with 2x higher expansion rates and enhanced persistence. Includes automated bioprocess protocols and quality control.",
+      "Next-Generation CAR-T Manufacturing with 2x higher expansion rates and enhanced persistence.",
     author: {
       name: "Dr. Sarah Chen",
       image:
@@ -35,50 +52,61 @@ const featuredProtocols: Protocol[] = [
     estimatedTime: "3-5 Days",
     techniques: "Editor's Pick",
   },
-  {
-    id: "2",
-    title: "High-Throughput CRISPR Screening in 96-Well Format",
-    description:
-      "Rapid CRISPR Screening protocol in 96-Well Format optimized for functional genomics studies. Includes automated liquid handling and genomic analysis pipelines.",
-    author: {
-      name: "Dr. Emily ",
-      image:
-        "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&h=150&q=80",
-      affiliation: "Broad Institute",
-    },
-    tags: ["CRISPR", "Screening", "High-Throughput"],
-    image:
-      "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&h=150&q=80",
-    difficulty: "Hard",
-    estimatedTime: "9-10 Days",
-    techniques: "Editor's Pick",
-  },
 ];
 
+// ------------------ COMPONENT ------------------
 const FeaturedProtocols = () => {
-  return (
-    <div className="py-10 px-4  ">
-      <SectionHeader
-        title=" Featured Protocols"
-        subtitle="Editor picks and most downloaded protocols this month"
-      ></SectionHeader>
+  const { data, isLoading, isError } = useGetAllProtocolsQuery(undefined);
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 ]">
-        {featuredProtocols.map((protocol) => (
+  // Map API response -> UI shape
+  const apiProtocols: UiProtocol[] =
+    data?.data?.slice(0, 2).map((p: ApiProtocol) => ({
+      id: p._id,
+      title: p.protocolTitle,
+      description: p.protocolDescription,
+      author: {
+        name: p.authors?.[0] || "Unknown Author",
+        image: "https://via.placeholder.com/40?text=A", // fallback avatar
+        affiliation: "Unknown Affiliation", // backend doesn’t provide yet
+      },
+      tags: p.tags || [],
+      image: p.attachment,
+      difficulty: p.difficulty,
+      estimatedTime: p.estimatedTime,
+      techniques: "Latest", // mark API ones differently
+    })) || [];
+
+  // Use API if available, else fallback
+  const protocols = apiProtocols.length > 0 ? apiProtocols : featuredProtocols;
+
+  if (isLoading) return <p className="text-center">Loading protocols...</p>;
+  if (isError)
+    return (
+      <p className="text-center text-red-500">Failed to load protocols.</p>
+    );
+
+  return (
+    <div className="py-10 px-4">
+      <SectionHeader
+        title="Featured Protocols"
+        subtitle="Editor picks and most downloaded protocols this month"
+      />
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {protocols.map((protocol) => (
           <div
             key={protocol.id}
-            className="bg-[#F5F5F7 rounded-xl p-8  shadow-md transition"
+            className="bg-[#F5F5F7] rounded-xl p-8 shadow-md transition"
           >
+            {/* Top badges */}
             <div className="p-4 flex justify-between items-center">
-              {/* ------------Techniques ---------------*/}
               <div className="flex flex-wrap gap-2">
-                <p className="px-3 py-1 rounded-full text-xs font-medium bg-[##DDE9E5  ] text-black">
-                  {" "}
-                  {protocol.techniques}
-                </p>
+                {protocol.techniques && (
+                  <p className="px-3 py-1 rounded-full text-xs font-medium bg-[#DDE9E5] text-black">
+                    {protocol.techniques}
+                  </p>
+                )}
               </div>
-
-              {/*------------- BSL-2 Badge -------------*/}
               <div className="inline-block bg-[#F8E0DF] text-[#FF3B30] px-2 py-1 rounded-full text-xs font-medium">
                 BSL-2
               </div>
@@ -87,11 +115,11 @@ const FeaturedProtocols = () => {
             <h3 className="text-lg font-semibold text-gray-900 mb-2 line-clamp-2">
               {protocol.title}
             </h3>
-
             <p className="text-sm text-gray-600 mb-3 line-clamp-3">
               {protocol.description}
             </p>
 
+            {/* Difficulty + time */}
             <div className="flex flex-wrap gap-2 mb-3">
               {protocol.difficulty && (
                 <span className="inline-block bg-gray-100 text-gray-800 text-xs px-2 py-1 rounded">
@@ -104,10 +132,11 @@ const FeaturedProtocols = () => {
                 </span>
               )}
             </div>
-            {/* ------------auth image & tag--- */}
+
+            {/* Tags + author */}
             <div className="flex justify-between">
               <div className="flex flex-wrap gap-2 mb-4">
-                {protocol.tags.map((tag, index) => (
+                {protocol.tags?.map((tag, index) => (
                   <span
                     key={index}
                     className="bg-[#EDEDEF] text-black text-xs px-2 py-1 rounded"
@@ -116,7 +145,6 @@ const FeaturedProtocols = () => {
                   </span>
                 ))}
               </div>
-
               <div className="flex items-center mb-3">
                 <img
                   src={protocol.author.image}
@@ -133,8 +161,9 @@ const FeaturedProtocols = () => {
                 </div>
               </div>
             </div>
-            {/* ----------button-------------- */}
-            <Link to="/protocol-details">
+
+            {/* Button */}
+            <Link to={`/protocol-details/${protocol.id}`}>
               <button className="cursor-pointer w-full bg-[#17AA80] text-white py-2 px-4 rounded hover:bg-green-700 transition">
                 View Protocol
               </button>

@@ -1,49 +1,199 @@
-import SectionHeader from "../../../utils/SectionHeading";
+import { useState } from "react";
+import jsPDF from "jspdf";
+import { Download, Info, Menu, Star } from "lucide-react";
 
-const CrisprDeatils = () => {
+import SectionHeader from "../../../utils/SectionHeading";
+import type { Protocol } from "../../../types/potocols.type";
+import toast from "react-hot-toast";
+
+interface CrisprDeatilsProps {
+  protocol: Protocol;
+}
+
+const CrisprDeatils = ({ protocol }: CrisprDeatilsProps) => {
+  const [isDownloading, setIsDownloading] = useState(false);
+
+  const generatePDF = () => {
+    setIsDownloading(true);
+    try {
+      const doc = new jsPDF();
+      let yOffset = 20;
+
+      // Title
+      doc.setFontSize(18);
+      doc.text(protocol.protocolTitle || "Untitled Protocol", 20, yOffset);
+      yOffset += 10;
+
+      // Description
+      doc.setFontSize(12);
+      doc.text("Description:", 20, yOffset);
+      yOffset += 5;
+      doc.setFontSize(10);
+      doc.text(
+        doc.splitTextToSize(
+          protocol.protocolDescription || "No description available",
+          170
+        ),
+        20,
+        yOffset
+      );
+      yOffset += 10 + (protocol.protocolDescription?.length || 0) / 50;
+
+      // Tags
+      doc.setFontSize(12);
+      doc.text("Tags:", 20, yOffset);
+      yOffset += 5;
+      doc.setFontSize(10);
+      doc.text(protocol.tags?.join(", ") || "No tags", 20, yOffset);
+      yOffset += 10;
+
+      // Meta Info
+      doc.setFontSize(12);
+      doc.text("Meta Information:", 20, yOffset);
+      yOffset += 5;
+      doc.setFontSize(10);
+      doc.text(`Published: ${protocol.createdAt || "Unknown"}`, 20, yOffset);
+      yOffset += 5;
+
+      yOffset += 5;
+      doc.text(`DOI: ${protocol.doiLink || "Not available"}`, 20, yOffset);
+      yOffset += 5;
+      doc.text(`Status: ${protocol.status || "Unknown"}`, 20, yOffset);
+      yOffset += 10;
+
+      // Materials
+      doc.setFontSize(12);
+      doc.text("Materials:", 20, yOffset);
+      yOffset += 5;
+      doc.setFontSize(10);
+      protocol.materials?.forEach((material, index) => {
+        doc.text(
+          `${index + 1}. ${material.itemName} (Quantity: ${
+            material.quantity
+          }, Catalog: ${material.catalog}, Supplier: ${material.supplier})`,
+          20,
+          yOffset
+        );
+        yOffset += 5;
+      });
+      yOffset += 10;
+
+      // Equipment
+      doc.setFontSize(12);
+      doc.text("Equipment:", 20, yOffset);
+      yOffset += 5;
+      doc.setFontSize(10);
+      protocol.equipment?.forEach((equip, index) => {
+        doc.text(
+          `${index + 1}. ${equip.equipmentName} (Note: ${
+            equip.note || "None"
+          })`,
+          20,
+          yOffset
+        );
+        yOffset += 5;
+      });
+      yOffset += 10;
+
+      // Authors
+      doc.setFontSize(12);
+      doc.text("Authors:", 20, yOffset);
+      yOffset += 5;
+      doc.setFontSize(10);
+      doc.text(protocol.authors?.join(", ") || "No authors", 20, yOffset);
+      yOffset += 5;
+      doc.text(
+        `Co-Authors: ${protocol.coAuthors?.join(", ") || "None"}`,
+        20,
+        yOffset
+      );
+      yOffset += 10;
+
+      // Other Details
+      doc.setFontSize(12);
+      doc.text("Additional Details:", 20, yOffset);
+      yOffset += 5;
+      doc.setFontSize(10);
+      doc.text(`Category: ${protocol.category || "Unknown"}`, 20, yOffset);
+      yOffset += 5;
+      doc.text(`Technique: ${protocol.technique || "Unknown"}`, 20, yOffset);
+      yOffset += 5;
+      doc.text(`Modality: ${protocol.modality || "Unknown"}`, 20, yOffset);
+      yOffset += 5;
+      doc.text(`Organism: ${protocol.organism || "Unknown"}`, 20, yOffset);
+      yOffset += 5;
+      doc.text(`Phase: ${protocol.phase || "Unknown"}`, 20, yOffset);
+      yOffset += 5;
+      doc.text(`BSL Level: ${protocol.bslLevel || "Unknown"}`, 20, yOffset);
+      yOffset += 5;
+      doc.text(`Difficulty: ${protocol.difficulty || "Unknown"}`, 20, yOffset);
+      yOffset += 5;
+      doc.text(
+        `Estimated Time: ${protocol.estimatedTime || "Unknown"}`,
+        20,
+        yOffset
+      );
+      yOffset += 5;
+      doc.text(`License: ${protocol.license || "Unknown"}`, 20, yOffset);
+      yOffset += 5;
+      doc.text(
+        `Additional Reference: ${protocol.additionalReference || "None"}`,
+        20,
+        yOffset
+      );
+      yOffset += 5;
+      doc.text(
+        `Confidential: ${protocol.isConfidential ? "Yes" : "No"}`,
+        20,
+        yOffset
+      );
+      yOffset += 5;
+      doc.text(
+        `Confirmed: ${protocol.isConfirmed ? "Yes" : "No"}`,
+        20,
+        yOffset
+      );
+      yOffset += 5;
+      doc.text(
+        `Acknowledged: ${protocol.isAcknowledged ? "Yes" : "No"}`,
+        20,
+        yOffset
+      );
+      yOffset += 10;
+
+      // Procedure
+      if (protocol.stepProcedure) {
+        doc.setFontSize(12);
+        doc.text("Procedure:", 20, yOffset);
+        yOffset += 5;
+        doc.setFontSize(10);
+        doc.text(doc.splitTextToSize(protocol.stepProcedure, 170), 20, yOffset);
+      }
+
+      // Save the PDF
+      doc.save(`${protocol.protocolTitle || "protocol"}.pdf`);
+    } catch (error) {
+      console.error("Error generating PDF:", error);
+    toast("Failed to generate PDF. Please try again.");
+    } finally {
+      setIsDownloading(false);
+    }
+  };
+
   return (
     <div className="w-full px-6 py-32 grid grid-cols-1 lg:grid-cols-4 gap-8">
       {/* Main Content */}
       <div className="lg:col-span-3 space-y-6">
-        {/*--------- Header --------------*/}
+        {/* Header */}
         <header>
           <SectionHeader
-            subtitle=" A comprehensive protocol for targeted gene disruption using
-            CRISPR-Cas9 technology in human embryonic kidney cells, optimized
-            for high efficiency and minimal off-target effects."
-            title="  CRISPR-Cas9 Mediated Gene Knockout in HEK293T Cells"
-          ></SectionHeader>
+            subtitle={protocol.protocolDescription}
+            title={protocol.protocolTitle}
+          />
 
           {/* Tags */}
           <div className="flex flex-wrap gap-2 mt-4">
-            <span>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
-                viewBox="0 0 16 16"
-                fill="none"
-              >
-                <g clip-path="url(#clip0_136_1619)">
-                  <path
-                    d="M8.84698 4.98669L13.385 0.448686C13.6749 0.174533 14.0604 0.0242827 14.4594 0.0298748C14.8584 0.0354669 15.2395 0.196461 15.5217 0.478632C15.8039 0.760803 15.9649 1.1419 15.9705 1.54091C15.976 1.93992 15.8258 2.32538 15.5516 2.61535L11.0136 7.15335C10.7453 7.42176 10.4268 7.63467 10.0762 7.77995C9.7256 7.92522 9.34982 8 8.97031 8.00002H8.00031V7.03002C8.00031 6.26335 8.30498 5.52869 8.84698 4.98669ZM13.8316 6.22135L11.9563 8.09669C11.5643 8.4888 11.0989 8.79984 10.5867 9.01203C10.0744 9.22422 9.52542 9.33341 8.97098 9.33335H7.33431C7.1575 9.33335 6.98793 9.26311 6.86291 9.13809C6.73788 9.01307 6.66764 8.8435 6.66764 8.66669V7.03002C6.66764 6.67735 6.71564 6.33335 6.79898 6.00002H3.33431C2.89657 6.00002 2.46312 6.08624 2.0587 6.25375C1.65428 6.42127 1.28682 6.6668 0.977287 6.97633C0.352166 7.60145 0.000976563 8.4493 0.000976563 9.33335V12C0.000976562 12.4378 0.0871958 12.8712 0.254711 13.2756C0.422227 13.68 0.667759 14.0475 0.977287 14.357C1.60241 14.9822 2.45025 15.3334 3.33431 15.3334H12.6676C13.1054 15.3334 13.5388 15.2471 13.9433 15.0796C14.3477 14.9121 14.7151 14.6666 15.0247 14.357C15.3342 14.0475 15.5797 13.68 15.7472 13.2756C15.9148 12.8712 16.001 12.4378 16.001 12V9.33335C16.001 7.90669 15.095 6.69602 13.8316 6.22135ZM3.66764 11.9714C3.53628 11.9713 3.40621 11.9454 3.28486 11.8951C3.16351 11.8448 3.05326 11.771 2.9604 11.6781C2.86754 11.5852 2.79389 11.4749 2.74366 11.3535C2.69343 11.2321 2.6676 11.1021 2.66764 10.9707C2.66769 10.8393 2.6936 10.7092 2.74392 10.5879C2.79423 10.4666 2.86795 10.3563 2.96087 10.2634C3.05379 10.1706 3.16409 10.0969 3.28547 10.0467C3.40686 9.99647 3.53694 9.97064 3.66831 9.97069C3.93361 9.97077 4.18802 10.0763 4.37556 10.2639C4.56309 10.4516 4.6684 10.706 4.66831 10.9714C4.66822 11.2367 4.56274 11.4911 4.37508 11.6786C4.18742 11.8661 3.93295 11.9714 3.66764 11.9714ZM7.00098 11.9714C6.86961 11.9713 6.73954 11.9454 6.61819 11.8951C6.49684 11.8448 6.38659 11.771 6.29373 11.6781C6.20087 11.5852 6.12723 11.4749 6.07699 11.3535C6.02676 11.2321 6.00093 11.1021 6.00098 10.9707C6.00102 10.8393 6.02694 10.7092 6.07725 10.5879C6.12756 10.4666 6.20128 10.3563 6.2942 10.2634C6.38712 10.1706 6.49742 10.0969 6.61881 10.0467C6.74019 9.99647 6.87028 9.97064 7.00164 9.97069C7.26695 9.97077 7.52135 10.0763 7.70889 10.2639C7.89642 10.4516 8.00173 10.706 8.00164 10.9714C8.00155 11.2367 7.89608 11.4911 7.70842 11.6786C7.52076 11.8661 7.26628 11.9714 7.00098 11.9714Z"
-                    fill="#1C1C1E"
-                  />
-                </g>
-                <defs>
-                  <clipPath id="clip0_136_1619">
-                    <rect width="16" height="16" fill="white" />
-                  </clipPath>
-                </defs>
-              </svg>
-            </span>
-            {[
-              "Gene Editing",
-              "Cell Culture",
-              "Research Phase",
-              "Intermediate",
-              "5-7 days",
-            ].map((tag) => (
+            {protocol.tags?.map((tag) => (
               <span
                 key={tag}
                 className="bg-[#DDE9E5] text-[#1C1C1E] text-sm px-3 py-1 rounded-full"
@@ -55,53 +205,42 @@ const CrisprDeatils = () => {
 
           {/* Meta Info */}
           <div className="mt-3 text-sm text-gray-500 space-x-3">
-            <span>Published: Mar 15, 2024</span>
-            <span>Version: 2.1</span>
-            <a href="#" className="text-blue-600 underline">
-              DOI: 10.1234/opengene.2024.001
-            </a>
+            <span>Published: {protocol.createdAt || "Unknown"}</span>
+
+            {protocol.doiLink ? (
+              <a
+                href={protocol.doiLink}
+                className="text-blue-600 underline"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="View DOI link"
+              >
+                DOI: {protocol.doiLink}
+              </a>
+            ) : (
+              <span>DOI: Not available</span>
+            )}
           </div>
 
-          {/*------- Download Button */}
-          <button className="mt-4 flex items-center gap-2 bg-[#17AA80] text-white px-4 py-2 rounded-lg hover:bg-green-700">
-            <p>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-              >
-                <path
-                  d="M7.98 16.11C7.98 16.58 7.57 16.97 7.09 16.97H6.26V15.25H7.1C7.58 15.25 7.99 15.64 7.99 16.11H7.98ZM15 8H21.54C21.19 7.09 20.66 6.25 19.95 5.54L16.47 2.05C15.7706 1.35332 14.9324 0.811584 14.01 0.46V7C14.01 7.55 14.46 8 15.01 8H15ZM12.09 15.25H11.25V18.75H12.09C12.57 18.75 12.98 18.36 12.98 17.89V16.11C12.98 15.64 12.57 15.25 12.09 15.25ZM22 10.49V19C22 21.76 19.76 24 17 24H7C4.24 24 2 21.76 2 19V5C2 2.24 4.24 0 7 0H11.51C11.67 0 11.83 0.01 12 0.02V7C12 8.65 13.35 10 15 10H21.98C21.99 10.16 22 10.32 22 10.49ZM9.23 16.11C9.23 14.95 8.27 14 7.09 14H6C5.45 14 5 14.45 5 15V19.44C5 19.79 5.28 20.06 5.62 20.06C5.96 20.06 6.24 19.78 6.24 19.44V18.22H7.08C8.26 18.22 9.22 17.27 9.22 16.11H9.23ZM14.23 16.11C14.23 14.95 13.27 14 12.09 14H11C10.45 14 10 14.45 10 15V19.44C10 19.79 10.28 20 10.62 20H12.08C13.26 20 14.22 19.05 14.22 17.89V16.11H14.23ZM19.02 14.63C19.02 14.28 18.74 14.01 18.4 14.01H16.09C15.74 14.01 15.47 14.29 15.47 14.63V19.44C15.47 19.79 15.75 20.06 16.09 20.06C16.43 20.06 16.71 19.78 16.71 19.44V17.64H17.95C18.3 17.64 18.57 17.36 18.57 17.02C18.57 16.68 18.29 16.4 17.95 16.4H16.71V15.26H18.4C18.75 15.26 19.02 14.98 19.02 14.64V14.63Z"
-                  fill="#F5F5F7"
-                />
-              </svg>
-            </p>
-            Download PDF
+          {/* Download Button */}
+          <button
+            className="mt-4 flex items-center gap-2 bg-[#17AA80] text-white px-4 py-2 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 disabled:opacity-50"
+            aria-label="Download protocol as PDF"
+            onClick={generatePDF}
+            disabled={isDownloading}
+          >
+            <Download className="w-6 h-6 text-[#F5F5F7]" />
+            {isDownloading ? "Generating PDF..." : "Download PDF"}
           </button>
         </header>
 
-        {/* ----------Table of Contents & Status ---------------*/}
+        {/* Table of Contents & Status */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* TOC */}
-          <div className="p-5  rounded-xl shadow-sm bg-[#FAFAFA]">
+          {/* Table of Contents */}
+          <div className="p-5 rounded-xl shadow-sm bg-[#FAFAFA]">
             <div className="font-semibold mb-3 flex gap-6">
-              <p className="w-4 h-4">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                >
-                  <path
-                    d="M22.5 10.5H1.5C0.671578 10.5 0 11.1716 0 12C0 12.8284 0.671578 13.5 1.5 13.5H22.5C23.3284 13.5 24 12.8284 24 12C24 11.1716 23.3284 10.5 22.5 10.5ZM1.5 6.5H22.5C23.3284 6.5 24 5.82842 24 5C24 4.17158 23.3284 3.5 22.5 3.5H1.5C0.671578 3.5 0 4.17158 0 5C0 5.82842 0.671578 6.5 1.5 6.5ZM22.5 17.5H1.5C0.671578 17.5 0 18.1715 0 19C0 19.8284 0.671578 20.5 1.5 20.5H22.5C23.3284 20.5 24 19.8284 24 19C24 18.1715 23.3284 17.5 22.5 17.5Z"
-                    fill="#0A251D"
-                  />
-                </svg>{" "}
-              </p>
-              <span className="text-[#1C1C1E] text-xl"> Table of Contents</span>
+              <Menu className="w-4 h-4 text-[#0A251D]" />
+              <span className="text-[#1C1C1E] text-xl">Table of Contents</span>
             </div>
             <ul className="space-y-2 text-gray-700">
               {[
@@ -113,72 +252,37 @@ const CrisprDeatils = () => {
                 "Files & Attachments",
               ].map((item) => (
                 <li key={item} className="flex items-center gap-2">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="16"
-                    height="16"
-                    viewBox="0 0 16 16"
-                    fill="none"
-                  >
-                    <g clip-path="url(#clip0_144_1746)">
-                      <path
-                        d="M12.9995 15.3333C11.4515 15.3333 10.6662 14.548 10.6662 13C10.6662 11.5513 12.3642 10.006 12.5575 9.83395C12.6795 9.72598 12.8367 9.66637 12.9995 9.66637C13.1624 9.66637 13.3196 9.72598 13.4415 9.83395C13.6349 10.0053 15.3329 11.5513 15.3329 13C15.3329 14.548 14.5475 15.3333 12.9995 15.3333ZM6.62155 4.66929C3.39888 7.90195 1.68555 10.0206 1.23421 10.598C0.347547 11.7333 0.504214 13.17 1.66488 14.3713C2.79421 15.4233 4.18021 15.6853 5.37421 14.7773C5.95555 14.3253 8.08688 12.6073 11.3329 9.37995L6.62155 4.66862V4.66929ZM15.0222 5.43595C15.0109 5.42929 13.9149 4.72995 12.5915 3.40729C11.2695 2.08462 10.5702 0.987954 10.5629 0.977287C10.4674 0.830373 10.318 0.726938 10.1469 0.689352C9.97575 0.651767 9.79671 0.683052 9.64848 0.776442C9.50024 0.869832 9.39473 1.01782 9.35476 1.1884C9.31479 1.35898 9.34357 1.53843 9.43488 1.68795L9.50555 1.79462L7.56488 3.72662L12.2735 8.43529L14.2035 6.49329L14.3109 6.56395C14.4603 6.65358 14.6388 6.68116 14.8083 6.64081C14.9777 6.60045 15.1247 6.49536 15.2177 6.34803C15.3106 6.2007 15.3422 6.02283 15.3057 5.85249C15.2692 5.68215 15.1674 5.53221 15.0222 5.43595Z"
-                        fill="#636363"
-                      />
-                    </g>
-                    <defs>
-                      <clipPath id="clip0_144_1746">
-                        <rect width="16" height="16" fill="white" />
-                      </clipPath>
-                    </defs>
-                  </svg>
-
+                  <Star className="w-4 h-4 text-[#636363]" />
                   {item}
                 </li>
               ))}
             </ul>
           </div>
 
-          {/*--------------- Status table--------------------------- */}
-          <div className="p-5  rounded-xl  bg-[#FAFAFA]">
-            {/* -----logo & title----------- */}
+          {/* Status Table */}
+          <div className="p-5 rounded-xl bg-[#FAFAFA]">
             <div className="font-semibold mb-3 flex gap-4">
-              <span>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="26"
-                  viewBox="0 0 24 26"
-                  fill="none"
-                >
-                  <path
-                    d="M21.9981 7.64402V18.519C21.9981 20.449 20.4281 22.019 18.4981 22.019H13.9981V25.019L10.2911 21.226C10.1036 21.0385 9.9983 20.7842 9.9983 20.519C9.9983 20.2539 10.1036 19.9995 10.2911 19.812L13.9981 16.019V19.019H18.4981C18.6307 19.019 18.7579 18.9663 18.8516 18.8726C18.9454 18.7788 18.9981 18.6516 18.9981 18.519V7.64402C18.2806 7.30299 17.7004 6.7281 17.3529 6.01376C17.0053 5.29942 16.911 4.48811 17.0855 3.7131C17.26 2.93809 17.6928 2.24546 18.313 1.74898C18.9331 1.25249 19.7037 0.98168 20.4981 0.981018C21.293 0.980672 22.0644 1.25095 22.6853 1.74737C23.3062 2.2438 23.7396 2.93679 23.9142 3.71232C24.0887 4.48785 23.9941 5.29972 23.6459 6.01432C23.2976 6.72892 22.7165 7.30368 21.9981 7.64402ZM4.99809 18.356V7.48002C4.99809 7.34741 5.05077 7.22023 5.14454 7.12646C5.23831 7.0327 5.36548 6.98002 5.49809 6.98002H9.99809V10.019L13.7051 6.22602C13.8926 6.03849 13.9979 5.78418 13.9979 5.51902C13.9979 5.25385 13.8926 4.99955 13.7051 4.81202L9.99809 1.01902V3.98002H5.49809C3.56809 3.98002 1.99809 5.55002 1.99809 7.48002V18.356C1.28061 18.697 0.700431 19.2719 0.352866 19.9863C0.00530094 20.7006 -0.0889888 21.5119 0.0854845 22.2869C0.259958 23.0619 0.69282 23.7546 1.31297 24.2511C1.93312 24.7475 2.70368 25.0184 3.49809 25.019C4.29303 25.0194 5.06441 24.7491 5.68529 24.2527C6.30617 23.7562 6.73957 23.0632 6.91416 22.2877C7.08875 21.5122 6.99413 20.7003 6.64588 19.9857C6.29763 19.2711 5.71649 18.6964 4.99809 18.356Z"
-                    fill="#1C1C1E"
-                  />
-                </svg>
-              </span>{" "}
+              <Info className="w-6 h-6 text-[#1C1C1E]" />
               <p className="text-[#1C1C1E] text-2xl">Status & Version</p>
             </div>
-            {/* ------ */}
             <div className="space-y-4">
-              <div className="flex justify-between ">
+              <div className="flex justify-between">
                 <strong className="w-40 text-[#636363] text-xl font-normal">
                   Current Version:
                 </strong>
-                <p>V2.1</p>
               </div>
-              <div className="flex justify-between ">
+              <div className="flex justify-between">
                 <strong className="w-40 text-[#636363] text-xl font-normal">
                   Published:
                 </strong>
-                <p>Mar 15, 2024</p>
+                <p>{protocol.createdAt || "Unknown"}</p>
               </div>
               <div className="flex justify-between">
-                <p className="text-[#636363] text-xl font-normal w-40 ">
+                <p className="text-[#636363] text-xl font-normal w-40">
                   Status
                 </p>
                 <p className="flex h-8 px-4 py-2 justify-center items-center gap-2 rounded-2xl text-[#34C759] bg-[#E1F7E6]">
-                  Published
+                  {protocol.status || "Unknown"}
                 </p>
               </div>
             </div>
@@ -186,62 +290,54 @@ const CrisprDeatils = () => {
         </div>
       </div>
 
-      {/* -------------Sidebar Protocol Summary-------------- */}
-      <aside className="flex w-fit max-w-lg  p-10 flex-col justify-center items-start gap-8 shrink-0 rounded-xl border border-emerald-500/50 bg-gray-50">
+      {/* Sidebar Protocol Summary */}
+      <aside className="flex w-fit max-w-lg p-10 flex-col justify-center items-start gap-8 shrink-0 rounded-xl border border-emerald-500/50 bg-gray-50">
         <h2 className="font-semibold mb-4 text-xl text-[#1C1C1E]">
           Protocol Summary
         </h2>
         <dl className="space-y-6 text-gray-700">
           <div className="flex items-center">
             <dt className="w-36 text-[#636363]">Technique</dt>
-            <dd className="flex-1 font-medium">Gene Editing</dd>
+            <dd className="flex-1 font-medium">
+              {protocol.technique || "Unknown"}
+            </dd>
           </div>
           <div className="flex items-center">
             <dt className="w-36 text-[#636363]">Modality</dt>
-            <dd className="flex-1 font-medium">Cell Culture</dd>
+            <dd className="flex-1 font-medium">
+              {protocol.modality || "Unknown"}
+            </dd>
           </div>
           <div className="flex items-center">
             <dt className="w-36 text-[#636363]">Organism</dt>
-            <dd className="flex-1 font-medium">Human (HEK293T)</dd>
+            <dd className="flex-1 font-medium">
+              {protocol.organism || "Unknown"}
+            </dd>
           </div>
           <div className="flex items-center">
             <dt className="w-36 text-[#636363]">Phase</dt>
-            <dd className="flex-1 font-medium">Research</dd>
+            <dd className="flex-1 font-medium">
+              {protocol.phase || "Unknown"}
+            </dd>
           </div>
           <div className="flex items-center">
             <dt className="w-36 text-[#636363]">BSL Level</dt>
             <dd className="flex-1 flex h-8 px-4 py-2 justify-center items-center gap-2 rounded-2xl text-[#F5B235] bg-[#FAEED8]">
-              BSL-2
+              {protocol.bslLevel || "Unknown"}
             </dd>
           </div>
           <div className="flex items-center">
-            <dt className="w-36">Difficulty</dt>
+            <dt className="w-36 text-[#636363]">Difficulty</dt>
             <dd className="flex-1 flex h-9 px-4 py-2 justify-center items-center gap-2.5 rounded-2xl bg-[#DDE9E5]">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
-                viewBox="0 0 16 16"
-                fill="none"
-              >
-                <g clipPath="url(#clip0_144_1709)">
-                  <path
-                    d="M12.6667 0H3.33333C1.49533 0 0 1.49533 0 3.33333V12.6667C0 14.5047 1.49533 16 3.33333 16H12.6667C14.5047 16 16 14.5047 16 12.6667V3.33333C16 1.49533 14.5047 0 12.6667 0ZM4.33333 9C4.06803 8.99991 3.81362 8.89444 3.62609 8.70677C3.43855 8.51911 3.33325 8.26464 3.33333 7.99933C3.33342 7.73403 3.4389 7.47962 3.62656 7.29209C3.81422 7.10455 4.0687 6.99924 4.334 6.99933C4.59931 6.99942 4.85371 7.1049 5.04124 7.29256C5.22878 7.48022 5.33409 7.7347 5.334 8C5.33391 8.26531 5.22844 8.51971 5.04077 8.70724C4.85311 8.89478 4.59864 9.00009 4.33333 9ZM8 9C7.7347 8.99991 7.48029 8.89444 7.29276 8.70677C7.10522 8.51911 6.99991 8.26464 7 7.99933C7.00009 7.73403 7.10557 7.47962 7.29323 7.29209C7.48089 7.10455 7.73536 6.99924 8.00067 6.99933C8.26597 6.99942 8.52038 7.1049 8.70791 7.29256C8.89545 7.48022 9.00076 7.7347 9.00067 8C9.00058 8.26531 8.8951 8.51971 8.70744 8.70724C8.51978 8.89478 8.26531 9.00009 8 9ZM11.6667 9C11.4014 8.99991 11.147 8.89444 10.9594 8.70677C10.7719 8.51911 10.6666 8.26464 10.6667 7.99933C10.6668 7.73403 10.7722 7.47962 10.9599 7.29209C11.1476 7.10455 11.402 6.99924 11.6673 6.99933C11.9326 6.99942 12.187 7.1049 12.3746 7.29256C12.5621 7.48022 12.6674 7.7347 12.6673 8C12.6672 8.26531 12.5618 8.51971 12.3741 8.70724C12.1864 8.89478 11.932 9.00009 11.6667 9Z"
-                    fill="#1C1C1E"
-                  />
-                </g>
-                <defs>
-                  <clipPath id="clip0_144_1709">
-                    <rect width="16" height="16" fill="white" />
-                  </clipPath>
-                </defs>
-              </svg>
-              Intermediate
+              <Star className="w-4 h-4 text-[#1C1C1E]" />
+              {protocol.difficulty || "Unknown"}
             </dd>
           </div>
           <div className="flex items-center">
             <dt className="w-36 text-[#636363]">Time Required</dt>
-            <dd className="flex-1 font-medium">5-7 days</dd>
+            <dd className="flex-1 font-medium">
+              {protocol.estimatedTime || "Unknown"}
+            </dd>
           </div>
         </dl>
       </aside>

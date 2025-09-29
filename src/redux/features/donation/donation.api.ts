@@ -46,7 +46,24 @@ export const donationApi = baseAPI.injectEndpoints({
       invalidatesTags: ["donation"],
     }),
 
-    getDonations: builder.query<DonationResponse[], void>({
+    getDonations: builder.query<{
+      success: boolean;
+      message: string;
+      data: {
+        donations: {
+          donationType: string;
+          amount: number;
+          donarName: string;
+          donarEmail: string;
+          country: string;
+          tribute?: string;
+          paymentStatus: string;
+          _id: string;
+          createdAt: string;
+          updatedAt: string;
+        }[];
+      };
+    }, void>({
       query: () => ({
         url: "/donation",
         method: "GET",

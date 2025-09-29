@@ -1,42 +1,50 @@
-import { useState } from "react";
-
-interface Notification {
-  id: number;
-  type: "approved" | "review";
-  title: string;
-  description: string;
-  time: string;
+interface Protocol {
+  _id: string;
+  protocolTitle: string;
+  status: "DRAFT" | "PENDING" | "PUBLISHED" | "REJECTED";
+  createdAt: string;
 }
-const RecentNotification = () => {
-    const [notifications] = useState<Notification[]>([
-    {
-      id: 1,
-      type: "approved",
-      title: "Protocol Approved",
-      description:
-        "Your protocol 'CRISPR-Cas9 Gene Editing in E. coli' has been approved and published.",
-      time: "2 hours ago",
-    },
-    {
-      id: 2,
-      type: "review",
-      title: "Review Required",
-      description:
-        "Protocol 'Protein Purification Workflow' needs revision. Reviewer comments available.",
-      time: "1 day ago",
-    },
-  ]);
+
+interface RecentNotificationProps {
+  protocols?: {
+    draft?: Protocol[];
+    pending?: Protocol[];
+    published?: Protocol[];
+    rejected?: Protocol[];
+  };
+}
+
+const RecentNotification = ({ protocols }: RecentNotificationProps) => {
+  const notifications =
+    [
+      ...(protocols?.published?.map((p) => ({
+        id: p._id,
+        type: "approved" as const,
+        title: "Protocol Approved",
+        description: `Your protocol "${p.protocolTitle}" has been approved and published.`,
+        time: new Date(p.createdAt).toLocaleString(),
+      })) || []),
+      ...(protocols?.pending?.map((p) => ({
+        id: p._id,
+        type: "review" as const,
+        title: "Review Required",
+        description: `Your protocol "${p.protocolTitle}" is pending review.`,
+        time: new Date(p.createdAt).toLocaleString(),
+      })) || []),
+    ].slice(0, 5); // show only 5 latest
 
   return (
-    <div>
-      <div className="p-6">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-lg font-semibold">Recent Notifications</h2>
-          <button className="text-emerald-600 text-sm hover:underline">
-            View All
-          </button>
-        </div>
+    <div className="p-6">
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-lg font-semibold">Recent Notifications</h2>
+        <button className="text-emerald-600 text-sm hover:underline">
+          View All
+        </button>
+      </div>
 
+      {notifications.length === 0 ? (
+        <p className="text-gray-500 text-sm">No recent notifications</p>
+      ) : (
         <div className="space-y-4">
           {notifications.map((n) => (
             <div
@@ -49,9 +57,9 @@ const RecentNotification = () => {
             </div>
           ))}
         </div>
-      </div>
+      )}
     </div>
-  )
-}
+  );
+};
 
 export default RecentNotification;

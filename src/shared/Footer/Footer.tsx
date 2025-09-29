@@ -13,9 +13,28 @@ import {
 import SectionHeader from "../../utils/SectionHeading";
 import backgroundfooter from "../../assets/Homeimg/footer-ragtangle.png";
 import logo from "../../assets/logo/whitelogo.png";
+import { useCreateSubscriberMutation } from "../../redux/features/subscribe/subscribe.api";
+import toast from "react-hot-toast";
+import { Link } from "react-router-dom";
 const Footer = () => {
+  const [createSubscribe, { isLoading, isSuccess, error }] =
+    useCreateSubscriberMutation();
   const [email, setEmail] = useState("");
   const [interest, setInterest] = useState("");
+
+  const handleSubscribe = async () => {
+    if (!email || !interest) return alert("Please fill in all fields.");
+
+    try {
+      await createSubscribe({ email, interest }).unwrap();
+      setEmail("");
+      setInterest("");
+      toast("Subscribed successfully!");
+    } catch (err) {
+      console.error(err);
+      toast("Failed to subscribe. Try again.");
+    }
+  };
 
   return (
     <div>
@@ -31,41 +50,30 @@ const Footer = () => {
         <div className="px-4  md:py-16">
           <div className="max-w-4xl mx-auto">
             {/* ----------Newsletter Card -------------*/}
-            <div className="bg-[#F5F5F7] rounded-2xl shadow-lg p-8  md:p-12 md:translate-y-14  lg:md:translate-y-10 absolute -top-30 md:top-28  z-50 max-w-2xl mx-auto">
-              <div className="grid grid-cols-1 md:grid-cols-2  lg:grid-cols-2 gap-8 items-center">
+            <div className="bg-[#F5F5F7] rounded-2xl shadow-lg p-8 md:p-12 md:translate-y-14 lg:md:translate-y-10 absolute -top-30 md:top-28 z-50 max-w-2xl mx-auto">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8 items-center">
+                {/*----------- Left Side - Features---------------- */}
                 <div>
                   <h2 className="text-2xl font-semibold text-gray-900 mb-6">
                     Weekly Research Digest
                   </h2>
                   <div className="space-y-4">
-                    <div className="flex items-center gap-3">
-                      <div className="w-5 h-5 bg-gray-800 rounded-sm flex items-center justify-center">
-                        <Mail className="w-3 h-3 text-white" />
+                    {[
+                      { icon: Mail, text: "New protocol releases" },
+                      { icon: Lightbulb, text: "Research breakthroughs" },
+                      { icon: Users, text: "Community highlights" },
+                    ].map((item, idx) => (
+                      <div key={idx} className="flex items-center gap-3">
+                        <div className="w-5 h-5 bg-gray-800 rounded-sm flex items-center justify-center">
+                          <item.icon className="w-3 h-3 text-white" />
+                        </div>
+                        <span className="text-gray-700">{item.text}</span>
                       </div>
-                      <span className="text-gray-700">
-                        New protocol releases
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <div className="w-5 h-5 bg-gray-800 rounded-sm flex items-center justify-center">
-                        <Lightbulb className="w-3 h-3 text-white" />
-                      </div>
-                      <span className="text-gray-700">
-                        Research breakthroughs
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <div className="w-5 h-5 bg-gray-800 rounded-sm flex items-center justify-center">
-                        <Users className="w-3 h-3 text-white" />
-                      </div>
-                      <span className="text-gray-700">
-                        Community highlights
-                      </span>
-                    </div>
+                    ))}
                   </div>
                 </div>
 
-                {/* Right Side - Form */}
+                {/*----------  Right Side - Form  ----------------------*/}
                 <div className="space-y-4">
                   <input
                     type="email"
@@ -85,9 +93,23 @@ const Footer = () => {
                     <option value="mrna">mRNA</option>
                     <option value="other">Other</option>
                   </select>
-                  <button className="w-full bg-[#17AA80] cursor-pointer hover:bg-green-600 text-white font-medium py-3 px-6 rounded-lg transition-colors">
-                    Subscribe to Updates
+                  <button
+                    onClick={handleSubscribe}
+                    disabled={isLoading}
+                    className="w-full bg-[#17AA80] cursor-pointer hover:bg-green-600 text-white font-medium py-3 px-6 rounded-lg transition-colors"
+                  >
+                    {isLoading ? "Subscribing..." : "Subscribe to Updates"}
                   </button>
+                  {isSuccess && (
+                    <p className="text-sm text-green-600 text-center">
+                      Subscribed successfully!
+                    </p>
+                  )}
+                  {error && (
+                    <p className="text-sm text-red-600 text-center">
+                      Failed to subscribe.
+                    </p>
+                  )}
                   <p className="text-sm text-gray-500 text-center">
                     No spam. Unsubscribe anytime.
                   </p>
@@ -127,24 +149,27 @@ const Footer = () => {
                 <h3 className="font-semibold mb-4 text-white">Platform</h3>
                 <ul className="space-y-2 text-sm text-white">
                   <li>
-                    <a href="#" className="hover:text-white">
+                    <Link to="/mvp" className="hover:text-white">
                       MVP
-                    </a>
+                    </Link>
                   </li>
                   <li>
-                    <a href="#" className="hover:text-white">
+                    <Link
+                      to="/protocol"
+                      className=" cursor-pointer hover:text-white"
+                    >
                       Protocols
-                    </a>
+                    </Link>
                   </li>
                   <li>
-                    <a href="#" className="hover:text-white">
+                    <Link to="/roadmap" className="hover:text-white">
                       Roadmap
-                    </a>
+                    </Link>
                   </li>
                   <li>
-                    <a href="#" className="hover:text-white">
+                    <Link to={"/roles"} className="hover:text-white">
                       Roles
-                    </a>
+                    </Link>
                   </li>
                 </ul>
               </div>
@@ -154,19 +179,22 @@ const Footer = () => {
                 <h3 className="font-semibold text-white mb-4">Support</h3>
                 <ul className="space-y-2 text-sm text-green-100">
                   <li>
-                    <a href="#" className="hover:text-white">
+                    <Link to="/donation" className="hover:text-white">
                       Donate
-                    </a>
+                    </Link>
                   </li>
                   <li>
-                    <a href="#" className="hover:text-white">
+                    <Link to="/contract" className="hover:text-white">
                       Contact
-                    </a>
+                    </Link>
                   </li>
                   <li>
-                    <a href="#" className="hover:text-white">
+                    <Link
+                      to="/gene-application"
+                      className=" cursor-pointer hover:text-white"
+                    >
                       Apply to join
-                    </a>
+                    </Link>
                   </li>
                   <li>
                     <a href="#" className="hover:text-white">

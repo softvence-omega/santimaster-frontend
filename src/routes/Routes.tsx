@@ -1,4 +1,5 @@
 import { createBrowserRouter } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
 import Mainlayout from "../Layout/Mainlayout";
 
@@ -10,6 +11,13 @@ import LoginForm from "../pages/Authentication/Login";
 import RegisterForm from "../pages/Authentication/Register";
 import Contact from "../pages/Contract/Contract";
 import ProtocolDeatils from "../components/Protocols/ProtocolDetails/ProtocolDeatils";
+
+// Wrapper component to extract id from URL params
+const ProtocolDetails = () => {
+  const { id } = useParams<{ id: string }>();
+  if (!id) return <div>Protocol ID not found</div>;
+  return <ProtocolDeatils id={id} />;
+};
 import Roadmap from "../pages/Roadmap/Roadmap";
 import RolesPage from "../pages/Roles/RolesPage";
 import OpenGeneApplicationForm from "../Common/ApplicationFrom/ApplicationFrom";
@@ -42,8 +50,8 @@ const router = createBrowserRouter([
         element: <Protocols />,
       },
       {
-        path: "/protocol-details",
-        element: <ProtocolDeatils />,
+        path: "/protocol/:id",
+        element: <ProtocolDetails />,
       },
 
       {
@@ -115,7 +123,7 @@ const router = createBrowserRouter([
       },
       {
         path: "submitted",
-        element: <SubmittedProtocols />,
+        element: <SubmittedProtocols published={[]} />,
       },
       {
         path: "review-queue",

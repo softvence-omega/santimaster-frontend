@@ -6,7 +6,7 @@ const baseQueryAPI = fetchBaseQuery({
   prepareHeaders(headers, { getState }) {
     const accessToken = (getState() as RootState).auth.accessToken;
     if (accessToken) {
-      headers.set("Authorization", accessToken); 
+      headers.set("Authorization", accessToken);
       console.log("Attached raw token:", accessToken);
     } else {
       console.log(" No access token in Redux state");
@@ -23,14 +23,13 @@ export const baseAPI = createApi({
     "category",
     "Sponsorship",
     "content",
-    "privacy-policy",
-    "terms",
-    "faq",
-    "contributor",
+    "protocol",
+    "Subscriber",
     "users",
-    "ad-management",
+    "admindashboard",
     "plan",
     "profile",
+    "UserDashboard",
   ],
   endpoints: () => ({}),
 });

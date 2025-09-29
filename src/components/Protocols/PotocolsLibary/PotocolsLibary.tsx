@@ -1,24 +1,13 @@
-import { useState } from "react";
 
-import FeaturedPotocals from "./FeaturedPotocals";
+import { useState, useMemo } from "react";
 import { Clock, Search, X } from "lucide-react";
-
-import SectionHeader from "../../../utils/SectionHeading";
 import { Link } from "react-router-dom";
 
-// Define types for protocols
-interface Protocol {
-  id: number;
-  title: string;
-  subtitle: string;
-  techniques: string[];
-  time: string;
-  level: string;
-  tags: string[];
-  buttonText: string;
-}
+import SectionHeader from "../../../utils/SectionHeading";
+import FeaturedPotocals from "./FeaturedPotocals";
+import { useGetAllProtocolsQuery } from "../../../redux/features/protocols/potocols.api";
 
-// Define types for filters
+
 interface FilterCategory {
   name: string;
   options: {
@@ -29,140 +18,6 @@ interface FilterCategory {
   }[];
 }
 
-const mockProtocols: Protocol[] = [
-  {
-    id: 1,
-    title: "CRISPR-Cas9 Gene Editing in Human iPSCs",
-    subtitle:
-      "A comprehensive protocol for precise gene editing in induced pluripotent stem cells using CRISPR-Cas9 technology with optimized...",
-    techniques: ["CRISPR", "Mammalian"],
-    time: "4-6 hours",
-    level: "Medium",
-    tags: ["Gene Editing", "Stem Cells", "Transfection"],
-    buttonText: "View Protocol",
-  },
-  {
-    id: 2,
-    title: "mRNA Vaccine Production",
-    subtitle:
-      "Step-by-step guide for synthesizing mRNA vaccines using in vitro transcription and lipid nanoparticle encapsulation.",
-    techniques: ["RNA", "Human"],
-    time: "8-12 hours",
-    level: "Hard",
-    tags: ["Vaccinology", "Synthesis", "Nanoparticles"],
-    buttonText: "View Protocol",
-  },
-  {
-    id: 3,
-    title: "Single-Cell RNA Sequencing",
-    subtitle:
-      "Detailed workflow for library preparation and sequencing of single-cell transcriptomes with high sensitivity.",
-    techniques: ["Sequencing", "Mammalian"],
-    time: "2-3 days",
-    level: "Medium",
-    tags: ["Genomics", "Single-Cell", "Transcriptomics"],
-    buttonText: "View Protocol",
-  },
-  {
-    id: 4,
-    title: "Protein Purification (His-Tag)",
-    subtitle:
-      "Optimized method for affinity purification of His-tagged recombinant proteins from bacterial lysates.",
-    techniques: ["Affinity", "Bacterial"],
-    time: "6-8 hours",
-    level: "Easy",
-    tags: ["Protein Chemistry", "Purification", "Affinity"],
-    buttonText: "View Protocol",
-  },
-  {
-    id: 5,
-    title: "Organoid Culture Protocol",
-    subtitle:
-      "Protocol for generating and maintaining 3D organoids from mammalian stem cells for disease modeling.",
-    techniques: ["3D Culture", "Mammalian"],
-    time: "7-14 days",
-    level: "Medium",
-    tags: ["Cell Culture", "Organoids", "Modeling"],
-    buttonText: "View Protocol",
-  },
-  {
-    id: 6,
-    title: "Flow Cytometry Immune Profiling",
-    subtitle:
-      "Multicolor flow cytometry protocol for analyzing immune cell populations in human samples.",
-    techniques: ["Flow", "Human"],
-    time: "4-6 hours",
-    level: "Hard",
-    tags: ["Cytometry", "Immune", "Profiling"],
-    buttonText: "View Protocol",
-  },
-];
-
-// Filter categories sample data
-const filterCategories: FilterCategory[] = [
-  {
-    name: "Technique",
-    options: [
-      { label: "CRISPR/Cas9", value: "crispr", count: 127, selected: true },
-      { label: "Prime Editing", value: "prime", count: 49, selected: false },
-      { label: "TALEN", value: "talen", count: 33, selected: false },
-      { label: "Base Editing", value: "base", count: 156, selected: false },
-      {
-        label: "Lipid Nanoparticles",
-        value: "lipid",
-        count: 80,
-        selected: false,
-      },
-    ],
-  },
-  {
-    name: "Organism / Cell Type",
-    options: [
-      { label: "HEK293", value: "hek293", count: 89, selected: false },
-      { label: "iPSCs", value: "ipscs", count: 54, selected: false },
-      { label: "Mouse", value: "mouse", count: 152, selected: false },
-      { label: "Primary Cells", value: "primary", count: 239, selected: false },
-      { label: "Clinical", value: "clinical", count: 91, selected: false },
-    ],
-  },
-  {
-    name: "Phase",
-    options: [
-      { label: "Research", value: "research", count: 289, selected: false },
-      {
-        label: "Preclinical",
-        value: "preclinical",
-        count: 156,
-        selected: false,
-      },
-    ],
-  },
-  {
-    name: "Difficulty",
-    options: [
-      { label: "Easy", value: "easy", count: 123, selected: false },
-      { label: "Medium", value: "medium", count: 145, selected: false },
-      { label: "Hard", value: "hard", count: 89, selected: false },
-    ],
-  },
-  {
-    name: "Estimated Time",
-    options: [
-      { label: "1-3 Days", value: "1-3", count: 145, selected: false },
-      { label: "3-5 Days", value: "3-5", count: 164, selected: false },
-      { label: "5+ Days", value: "5+", count: 38, selected: false },
-    ],
-  },
-  {
-    name: "Additional Options",
-    options: [
-      { label: "Has Files", value: "files", count: 347, selected: false },
-      { label: "Has DOI", value: "files", count: 37, selected: false },
-    ],
-  },
-];
-
-// ---------filter category----------
 const FilterCheckbox: React.FC<{
   label: string;
   value: string;
@@ -187,100 +42,217 @@ const FilterCheckbox: React.FC<{
 };
 
 const PotocolsLibary = () => {
-  const [activeFilters, setActiveFilters] = useState<{
-    [key: string]: string[];
-  }>({});
+  const [searchQuery, setSearchQuery] = useState("");
+  const [activeFilters, setActiveFilters] = useState<{ [key: string]: string[] }>({});
   const [currentPage, setCurrentPage] = useState(1);
   const protocolsPerPage = 6;
 
-  const filteredProtocols = mockProtocols
-    .filter(
-      (protocol) =>
-        protocol.tags.some((tag) =>
-          activeFilters["technique"]?.includes(tag.toLowerCase())
-        ) || Object.keys(activeFilters).length === 0
-    )
-    .slice(
-      (currentPage - 1) * protocolsPerPage,
-      currentPage * protocolsPerPage
-    );
+  // Prepare query parameters for API
+  const queryParams = useMemo(() => {
+    const params: { name: string; value: string }[] = [];
+    Object.entries(activeFilters).forEach(([category, values]) => {
+      values.forEach((value) => {
+        params.push({ name: category, value });
+      });
+    });
+    return params.length > 0 ? params : undefined;
+  }, [activeFilters]);
 
+  // Fetch protocols from API
+  const { data, isLoading, isError } = useGetAllProtocolsQuery(queryParams);
+  const protocols = data?.data || [];
+  const meta = data?.meta || { total: 0, page: 1, limit: protocolsPerPage };
+
+  // Filter protocols by search query (client-side)
+  const filteredProtocols = useMemo(() => {
+    return protocols
+      .filter((protocol) =>
+        protocol.protocolTitle.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+      .slice(
+        (currentPage - 1) * protocolsPerPage,
+        currentPage * protocolsPerPage
+      );
+  }, [protocols, searchQuery, currentPage]);
+
+  // Generate dynamic filter categories
+  const filterCategories: FilterCategory[] = useMemo(() => {
+    const categories: FilterCategory[] = [
+      {
+        name: "Technique",
+        options: [],
+      },
+      {
+        name: "Organism",
+        options: [],
+      },
+      {
+        name: "Phase",
+        options: [],
+      },
+      {
+        name: "Difficulty",
+        options: [],
+      },
+      {
+        name: "Estimated Time",
+        options: [],
+      },
+      {
+        name: "Additional Options",
+        options: [
+          { label: "Has Files", value: "attachment", count: 0, selected: false },
+          { label: "Has DOI", value: "doiLink", count: 0, selected: false },
+        ],
+      },
+    ];
+
+    // Count unique values for each filter category
+    const techniqueSet = new Set<string>();
+    const organismSet = new Set<string>();
+    const phaseSet = new Set<string>();
+    const difficultySet = new Set<string>();
+    const estimatedTimeSet = new Set<string>();
+    let attachmentCount = 0;
+    let doiLinkCount = 0;
+
+    protocols.forEach((protocol) => {
+      if (protocol.technique) techniqueSet.add(protocol.technique);
+      if (protocol.organism) organismSet.add(protocol.organism);
+      if (protocol.phase) phaseSet.add(protocol.phase);
+      if (protocol.difficulty) difficultySet.add(protocol.difficulty);
+      if (protocol.estimatedTime) estimatedTimeSet.add(protocol.estimatedTime);
+      if (protocol.attachment) attachmentCount++;
+      if (protocol.doiLink) doiLinkCount++;
+    });
+
+    categories[0].options = Array.from(techniqueSet).map((value) => ({
+      label: value,
+      value,
+      count: protocols.filter((p) => p.technique === value).length,
+      selected: activeFilters["technique"]?.includes(value) || false,
+    }));
+
+    categories[1].options = Array.from(organismSet).map((value) => ({
+      label: value,
+      value,
+      count: protocols.filter((p) => p.organism === value).length,
+      selected: activeFilters["organism"]?.includes(value) || false,
+    }));
+
+    categories[2].options = Array.from(phaseSet).map((value) => ({
+      label: value,
+      value,
+      count: protocols.filter((p) => p.phase === value).length,
+      selected: activeFilters["phase"]?.includes(value) || false,
+    }));
+
+    categories[3].options = Array.from(difficultySet).map((value) => ({
+      label: value,
+      value,
+      count: protocols.filter((p) => p.difficulty === value).length,
+      selected: activeFilters["difficulty"]?.includes(value) || false,
+    }));
+
+    categories[4].options = Array.from(estimatedTimeSet).map((value) => ({
+      label: value,
+      value,
+      count: protocols.filter((p) => p.estimatedTime === value).length,
+      selected: activeFilters["estimatedTime"]?.includes(value) || false,
+    }));
+
+    categories[5].options = [
+      { label: "Has Files", value: "attachment", count: attachmentCount, selected: activeFilters["attachment"]?.includes("true") || false },
+      { label: "Has DOI", value: "doiLink", count: doiLinkCount, selected: activeFilters["doiLink"]?.includes("true") || false },
+    ];
+
+    return categories;
+  }, [protocols, activeFilters]);
+
+  // Update filters
   const updateFilter = (category: string, value: string, selected: boolean) => {
     setActiveFilters((prev) => {
-      const current = prev[category] || [];
+      const current = prev[category.toLowerCase()] || [];
       if (selected) {
-        return { ...prev, [category]: [...current, value] };
+        return { ...prev, [category.toLowerCase()]: [...current, value] };
       } else {
-        return { ...prev, [category]: current.filter((v) => v !== value) };
+        return { ...prev, [category.toLowerCase()]: current.filter((v) => v !== value) };
       }
     });
+    setCurrentPage(1); // Reset to first page on filter change
   };
+
+  // Clear a specific filter
+  const clearFilter = (category: string, value: string) => {
+    setActiveFilters((prev) => {
+      const current = prev[category.toLowerCase()] || [];
+      return { ...prev, [category.toLowerCase()]: current.filter((v) => v !== value) };
+    });
+    setCurrentPage(1);
+  };
+
+  // Generate pagination buttons
+  const totalPages = Math.ceil((meta.total || protocols.length) / protocolsPerPage);
+  const paginationButtons = Array.from({ length: totalPages }, (_, i) => i + 1);
 
   return (
     <div className="min-h-screen bg-white py-40">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* -------heading serarch bar---- */}
-        <div className="max-w-2xl items-start ">
+        {/* Heading and Search Bar */}
+        <div className="max-w-2xl items-start">
           <SectionHeader
-            title=" Protocol Library"
-            subtitle="Browse peer-reviewed protocols by technique, modality, organism, and
-            phase."
-          ></SectionHeader>
+            title="Protocol Library"
+            subtitle="Browse peer-reviewed protocols by technique, modality, organism, and phase."
+          />
 
           {/* Search Bar */}
           <div className="mb-6 w-80 relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
             <input
               type="text"
-              placeholder="Search ..."
+              placeholder="Search by title..."
+              value={searchQuery}
+              onChange={(e) => {
+                setSearchQuery(e.target.value);
+                setCurrentPage(1);
+              }}
               className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              aria-label="Search protocols by title"
             />
           </div>
+
           {/* Active Filters */}
           <div className="flex flex-wrap items-center gap-3 bg-white p-3 rounded-lg">
-            {/* Label */}
-            <h3 className="font-medium text-gray-900 flex-shrink-0">
-              Active filters:
-            </h3>
-
-            {/* Filter pills */}
-            {["CRISPR/Cas9", "Gene Editing", "RNA-seq"].map((filter, idx) => (
-              <button
-                key={idx}
-                className="flex items-center gap-2 bg-[#DDE9E5] px-3 py-1 rounded-[16px] text-black hover:bg-blue-100"
-              >
-                <span>{filter}</span>
-                <X className="w-4 h-4" />
-              </button>
-            ))}
+            <h3 className="font-medium text-gray-900 flex-shrink-0">Active filters:</h3>
+            {Object.entries(activeFilters).flatMap(([category, values]) =>
+              values.map((value) => (
+                <button
+                  key={`${category}-${value}`}
+                  className="flex items-center gap-2 bg-[#DDE9E5] px-3 py-1 rounded-[16px] text-black hover:bg-blue-100"
+                  onClick={() => clearFilter(category, value)}
+                >
+                  <span>{value}</span>
+                  <X className="w-4 h-4" />
+                </button>
+              ))
+            )}
           </div>
         </div>
-        {/* ------------------filter content all here------------ */}
+
+        {/* Filter and Content Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           {/* Filters Sidebar */}
           <div className="lg:col-span-1 space-y-6">
             <h2 className="text-xl font-semibold text-gray-900">Filters</h2>
-
             {filterCategories.map((category) => (
-              <div
-                key={category.name}
-                className="bg-white p-4 rounded-lg shadow"
-              >
-                <h3 className="font-medium text-gray-900 mb-3">
-                  {category.name}
-                </h3>
+              <div key={category.name} className="bg-white p-4 rounded-lg shadow">
+                <h3 className="font-medium text-gray-900 mb-3">{category.name}</h3>
                 <div className="space-y-1">
                   {category.options.map((option) => (
                     <FilterCheckbox
                       key={option.value}
                       {...option}
-                      onChange={(value, selected) =>
-                        updateFilter(
-                          category.name.toLowerCase(),
-                          value,
-                          selected
-                        )
-                      }
+                      onChange={(value, selected) => updateFilter(category.name.toLowerCase(), value, selected)}
                     />
                   ))}
                 </div>
@@ -288,71 +260,68 @@ const PotocolsLibary = () => {
             ))}
           </div>
 
-          {/* ---------------------------------Main Content----------------- */}
+          {/* Main Content */}
           <div className="lg:col-span-3 space-y-8">
-            {/* ----------feature potocals----------- */}
             <FeaturedPotocals />
 
-            {/*------------ All Protocols -----------------*/}
+            {/* All Protocols */}
             <div>
               <SectionHeader
-                title=" All Protocols"
-                subtitle=" Browse peer-reviewed protocols by technique, modality, organism,
-                and phase."
-              ></SectionHeader>
+                title="All Protocols"
+                subtitle="Browse peer-reviewed protocols by technique, modality, organism, and phase."
+              />
+
+              {isLoading && <p className="text-gray-600">Loading protocols...</p>}
+              {isError && <p className="text-red-600">Error loading protocols. Please try again.</p>}
+              {!isLoading && !isError && filteredProtocols.length === 0 && (
+                <p className="text-gray-600">No protocols found.</p>
+              )}
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
                 {filteredProtocols.map((protocol) => (
                   <div
-                    key={protocol.id}
+                    key={protocol._id.toString()}
                     className="bg-[#F5F5F7] rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 border border-gray-200"
                   >
-                    {/* Header with techniques and BSL-2 */}
+                    {/* Header with techniques and BSL Level */}
                     <div className="p-4 flex justify-between items-center">
-                      {/* Techniques */}
                       <div className="flex flex-wrap gap-2">
-                        {protocol.techniques.map((tech, index) => (
-                          <span
-                            key={index}
-                            className="px-3 py-1 rounded-full text-xs font-medium bg-[#DDE9E5] text-black"
-                          >
-                            {tech}
+                        {protocol.technique && (
+                          <span className="px-3 py-1 rounded-full text-xs font-medium bg-[#DDE9E5] text-black">
+                            {protocol.technique}
                           </span>
-                        ))}
+                        )}
                       </div>
-
-                      {/* BSL-2 Badge */}
                       <div className="inline-block bg-[#F8E0DF] text-[#FF3B30] px-2 py-1 rounded-full text-xs font-medium">
-                        BSL-2
+                        {protocol.bslLevel || "Unknown"}
                       </div>
                     </div>
 
                     {/* Content */}
                     <div className="p-6">
                       <h3 className="text-2xl font-bold text-gray-800 mb-3 leading-tight">
-                        {protocol.title}
+                        {protocol.protocolTitle}
                       </h3>
                       <p className="text-lg text-gray-600 mb-4 leading-relaxed">
-                        {protocol.subtitle}
+                        {protocol.protocolDescription}
                       </p>
 
-                      {/* Time and Level */}
+                      {/* Time and Difficulty */}
                       <div className="flex items-center gap-2 mb-2">
                         <Clock className="w-4 h-4 text-gray-500" />
                         <span className="text-[#636363] text-xs font-medium">
-                          {protocol.time}
+                          {protocol.estimatedTime || "Unknown"}
                         </span>
-
                         <span
                           className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${
-                            protocol.level === "Medium"
+                            protocol.difficulty === "Medium"
                               ? "bg-yellow-100 text-yellow-800"
-                              : protocol.level === "Hard"
+                              : protocol.difficulty === "Hard"
                               ? "bg-red-100 text-red-800"
                               : "bg-green-100 text-green-800"
                           }`}
                         >
-                          {protocol.level}
+                          {protocol.difficulty || "Unknown"}
                         </span>
                       </div>
 
@@ -369,10 +338,10 @@ const PotocolsLibary = () => {
                     </div>
 
                     {/* Footer with button */}
-                    <div className="px-6 py-4 ">
-                      <Link to="/protocol-details">
+                    <div className="px-6 py-4">
+                      <Link to={`/protocol-details/${protocol._id}`}>
                         <button className="w-full py-3 px-4 bg-[#17AA80] hover:bg-[#148f68] text-white font-medium rounded-md transition-colors duration-200 text-sm">
-                          {protocol.buttonText}
+                          View Protocol
                         </button>
                       </Link>
                     </div>
@@ -380,16 +349,17 @@ const PotocolsLibary = () => {
                 ))}
               </div>
 
-              {/*------------ Pagination ----------------------*/}
+              {/* Pagination */}
               <div className="flex justify-center mt-8">
                 <div className="flex space-x-2">
                   <button
                     className="px-3 py-2 border border-gray-300 rounded disabled:opacity-50"
                     disabled={currentPage === 1}
+                    onClick={() => setCurrentPage((prev) => prev - 1)}
                   >
                     Previous
                   </button>
-                  {[1, 2, 3, 4, 5, 6].map((page) => (
+                  {paginationButtons.map((page) => (
                     <button
                       key={page}
                       className={`px-3 py-2 border border-gray-300 rounded ${
@@ -400,7 +370,11 @@ const PotocolsLibary = () => {
                       {page}
                     </button>
                   ))}
-                  <button className="px-3 py-2 border border-gray-300 rounded">
+                  <button
+                    className="px-3 py-2 border border-gray-300 rounded disabled:opacity-50"
+                    disabled={currentPage === totalPages}
+                    onClick={() => setCurrentPage((prev) => prev + 1)}
+                  >
                     Next
                   </button>
                 </div>

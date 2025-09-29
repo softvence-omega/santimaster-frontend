@@ -1,43 +1,25 @@
-const PriorityReviewQueue = () => {
-  const submissions = [
-    {
-      id: "1",
-      title: "CRISPR-Cas9 Gene Editing Protocol for Neurological Disorders",
-      author: "Dr. Michael Rodriguez",
-      submittedTime: "Submitted 2 days ago",
-      category: "Gene Therapy",
-      riskLevel: "IRB-2",
-      priority: "High Priority",
-      priorityColor: "bg-orange-100 text-orange-800",
-    },
-    {
-      id: "2",
-      title: "Synthetic Biology Approach to Cancer Immunotherapy",
-      author: "Dr. Lisa Zhang",
-      submittedTime: "Submitted 3 days ago",
-      category: "Synthetic Biology",
-      riskLevel: "IRB-3",
-      priority: "Standard",
-      priorityColor: "bg-gray-100 text-gray-800",
-    },
-    {
-      id: "3",
-      title: "Protein Folding Analysis using Machine Learning",
-      author: "Dr. James Wilson",
-      submittedTime: "Submitted 1 week ago",
-      category: "Computational Biology",
-      riskLevel: "IRB-1",
-      priority: "",
-      priorityColor: "",
-    },
-  ];
+import type { Protocol } from "../../../types/admindashboard.type";
+
+interface PriorityReviewQueueProps {
+  pendingProtocol?: Protocol[];
+}
+
+const PriorityReviewQueue: React.FC<PriorityReviewQueueProps> = ({ pendingProtocol }) => {
+  const submissions = pendingProtocol?.map((protocol) => ({
+    id: protocol._id,
+    title: protocol.protocolTitle,
+    author: protocol.authors,
+    submittedTime: new Date(protocol.createdAt).toLocaleDateString(),
+    category: protocol.category,
+    riskLevel: protocol.bslLevel,
+    priority: protocol.status === "PENDING" ? "High Priority" : "",
+    priorityColor: protocol.status === "PENDING" ? "bg-orange-100 text-orange-800" : "",
+  })) || [];
 
   const getRiskLevelStyle = (riskLevel: string) => {
     switch (riskLevel) {
       case "IRB-1":
-        return "bg-red-100 text-red-800";
       case "IRB-2":
-        return "bg-red-100 text-red-800";
       case "IRB-3":
         return "bg-red-100 text-red-800";
       default:
@@ -46,7 +28,7 @@ const PriorityReviewQueue = () => {
   };
 
   return (
-    <div className="py-16  p-6 max-w-7xl mx-auto">
+    <div className="py-16 p-6 max-w-7xl mx-auto">
       {/* Header */}
       <div className="flex justify-between items-start mb-6">
         <div>
@@ -121,7 +103,7 @@ const PriorityReviewQueue = () => {
       <div className="mt-6 pt-4 border-t border-gray-200">
         <div className="flex justify-between items-center">
           <div className="text-sm text-gray-600">
-            Showing 3 of 12 priority submissions
+            Showing {submissions.length} of {submissions.length} priority submissions
           </div>
           <div className="flex gap-2">
             <button className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors">

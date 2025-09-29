@@ -1,56 +1,39 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Search, Eye, Trash2 } from "lucide-react";
 
-const UserManagement = () => {
+interface User {
+  id: string;
+  name: string;
+  email: string;
+  role: string;
+  status: string;
+  lastLogin: string;
+  submissions: number;
+  avatar?: string;
+}
+
+interface UserManagementProps {
+  users?: User[]; // received from Redux query
+}
+
+const UserManagement: React.FC<UserManagementProps> = ({ users = [] }) => {
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
 
-  const users = [
-    {
-      id: "1",
-      name: "Dr. Sarah Chen",
-      email: "MIT Cancer Center",
-      role: "Administrator",
-      status: "Active",
-      lastLogin: "2 hours ago",
-      submissions: 23,
-      avatar: "/api/placeholder/32/32",
-    },
-    {
-      id: "2",
-      name: "Dr. Rodriguez",
-      email: "m.rodriguez@research.org",
-      role: "Reviewer",
-      status: "Active",
-      lastLogin: "1 day ago",
-      submissions: 45,
-      avatar: "/api/placeholder/32/32",
-    },
-    {
-      id: "3",
-      name: "Dr. Lisa Zhang",
-      email: "lisa.zhang@university.edu",
-      role: "Researcher",
-      status: "Active",
-      lastLogin: "3 days ago",
-      submissions: 12,
-      avatar: "/api/placeholder/32/32",
-    },
-    {
-      id: "4",
-      name: "Dr. James Wilson",
-      email: "jwilson@lab.com",
-      role: "Researcher",
-      status: "Inactive",
-      lastLogin: "2 weeks ago",
-      submissions: 7,
-      avatar: "/api/placeholder/32/32",
-    },
-  ];
+  // Filter users by search term
+  const filteredUsers = useMemo(
+    () =>
+      users.filter(
+        (user) =>
+          user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          user.email.toLowerCase().includes(searchTerm.toLowerCase())
+      ),
+    [users, searchTerm]
+  );
 
   const handleSelectAll = (checked: boolean) => {
     if (checked) {
-      setSelectedUsers(users.map((user) => user.id));
+      setSelectedUsers(filteredUsers.map((user) => user.id));
     } else {
       setSelectedUsers([]);
     }
@@ -88,12 +71,14 @@ const UserManagement = () => {
     }
   };
 
-  const isAllSelected = selectedUsers.length === users.length;
+  const isAllSelected =
+    filteredUsers.length > 0 &&
+    selectedUsers.length === filteredUsers.length;
   const isSomeSelected =
-    selectedUsers.length > 0 && selectedUsers.length < users.length;
+    selectedUsers.length > 0 && selectedUsers.length < filteredUsers.length;
 
   return (
-    <div className="rounded-xl shadow-sm  p-6 py-16">
+    <div className="rounded-xl shadow-sm p-6 py-16">
       {/* Header */}
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-gray-900 mb-2">
@@ -117,9 +102,7 @@ const UserManagement = () => {
           />
         </div>
         {selectedUsers.length > 0 && (
-          <div className="text-sm text-gray-600">
-            {selectedUsers.length} selected
-          </div>
+          <div className="text-sm text-gray-600">{selectedUsers.length} selected</div>
         )}
       </div>
 
@@ -160,7 +143,7 @@ const UserManagement = () => {
             </tr>
           </thead>
           <tbody>
-            {users.map((user) => (
+            {filteredUsers.map((user) => (
               <tr
                 key={user.id}
                 className="border-b border-gray-100 hover:bg-gray-50"
@@ -184,9 +167,7 @@ const UserManagement = () => {
                       </span>
                     </div>
                     <div>
-                      <div className="font-medium text-gray-900">
-                        {user.name}
-                      </div>
+                      <div className="font-medium text-gray-900">{user.name}</div>
                       <div className="text-sm text-gray-500">{user.email}</div>
                     </div>
                   </div>
@@ -234,8 +215,7 @@ const UserManagement = () => {
         <div className="mt-4 p-4 bg-gray-50 rounded-lg">
           <div className="flex items-center justify-between">
             <span className="text-sm text-gray-600">
-              {selectedUsers.length} user{selectedUsers.length !== 1 ? "s" : ""}{" "}
-              selected
+              {selectedUsers.length} user{selectedUsers.length !== 1 ? "s" : ""} selected
             </span>
             <div className="flex gap-2">
               <button className="px-3 py-1.5 text-sm font-medium text-emerald-700 bg-emerald-100 rounded-lg hover:bg-emerald-200 transition-colors">

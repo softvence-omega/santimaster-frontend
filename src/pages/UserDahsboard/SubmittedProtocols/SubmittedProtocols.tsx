@@ -13,7 +13,7 @@ interface ProtocolCardProps {
     label: string;
     type: "under-review" | "published" | "pending";
   };
-  reviewerNote: string;
+  reviewerNote?: string;
 }
 
 const StatusBadge: React.FC<{ status: ProtocolCardProps["status"] }> = ({
@@ -50,7 +50,7 @@ const ProtocolCard: React.FC<ProtocolCardProps> = ({
   reviewerNote,
 }) => {
   return (
-    <div className=" rounded-lg  p-6 mb-4 ">
+    <div className="rounded-lg p-6 mb-4 bg-white border shadow-sm hover:shadow-md transition">
       <h3 className="text-lg font-semibold text-gray-900 mb-2">{title}</h3>
       <p className="text-gray-600 text-sm mb-4">{description}</p>
 
@@ -78,66 +78,25 @@ const ProtocolCard: React.FC<ProtocolCardProps> = ({
         </div>
       </div>
 
-      <div className="bg-yellow-50 border border-yellow-200 rounded-md p-3">
-        <p className="text-sm">
-          <span className="font-medium text-gray-700">Reviewer Note:</span>{" "}
-          <span className="text-gray-600">{reviewerNote}</span>
-        </p>
-      </div>
+      {reviewerNote && reviewerNote.trim() !== "" && (
+        <div className="bg-yellow-50 border border-yellow-200 rounded-md p-3">
+          <p className="text-sm">
+            <span className="font-medium text-gray-700">Reviewer Note:</span>{" "}
+            <span className="text-gray-600">{reviewerNote}</span>
+          </p>
+        </div>
+      )}
     </div>
   );
 };
 
-const SubmittedProtocols: React.FC = () => {
-  const protocols: ProtocolCardProps[] = [
-    {
-      title: "Protein Purification Workflow",
-      description:
-        "Comprehensive protocol for purifying recombinant proteins using affinity chromatography...",
-      reviewer: {
-        name: "Dr. Maria Garcia",
-      },
-      submitted: "March 15, 2024",
-      status: {
-        label: "Under Review",
-        type: "under-review",
-      },
-      reviewerNote:
-        "Please provide more details on buffer composition and pH optimization steps. Overall structure is good.",
-    },
-    {
-      title: "CRISPR-Cas9 Gene Editing in E. coli",
-      description:
-        "Detailed protocol for targeted gene editing using CRISPR-Cas9 system in bacterial cells...",
-      reviewer: {
-        name: "Dr. David Thompson",
-      },
-      submitted: "March 10, 2024",
-      status: {
-        label: "Published",
-        type: "published",
-      },
-      reviewerNote:
-        "Excellent protocol with clear methodology and comprehensive troubleshooting section. Approved for publication.",
-    },
-    {
-      title: "Western Blot Analysis Protocol",
-      description:
-        "Standard protocol for protein detection using western blot technique with optimization tips...",
-      reviewer: {
-        name: "Unassigned",
-      },
-      submitted: "March 10, 2024",
-      status: {
-        label: "Pending Assignment",
-        type: "pending",
-      },
-      reviewerNote: "",
-    },
-  ];
+interface SubmittedProtocolsProps {
+  published: ProtocolCardProps[];
+}
 
+const SubmittedProtocols: React.FC<SubmittedProtocolsProps> = ({ published }) => {
   return (
-    <div className="mp-6 max-w-5xl mx-auto py-15">
+    <div className="px-6 max-w-5xl mx-auto py-10">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-gray-900">
           Submitted Protocols
@@ -149,9 +108,13 @@ const SubmittedProtocols: React.FC = () => {
       </div>
 
       <div className="space-y-4">
-        {protocols.map((protocol, index) => (
-          <ProtocolCard key={index} {...protocol} />
-        ))}
+        {published.length > 0 ? (
+          published.map((protocol, index) => (
+            <ProtocolCard key={index} {...protocol} />
+          ))
+        ) : (
+          <p className="text-sm text-gray-600">No submitted protocols found.</p>
+        )}
       </div>
     </div>
   );
