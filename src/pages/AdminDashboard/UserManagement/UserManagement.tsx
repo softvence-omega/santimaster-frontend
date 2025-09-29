@@ -1,5 +1,5 @@
-import { useState, useMemo } from "react";
-import { Search, Eye, Trash2 } from "lucide-react";
+import { Search, Trash2 } from "lucide-react";
+import { useMemo, useState } from "react";
 
 interface User {
   id: string;
@@ -17,7 +17,6 @@ interface UserManagementProps {
 }
 
 const UserManagement: React.FC<UserManagementProps> = ({ users = [] }) => {
-  const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
 
   // Filter users by search term
@@ -31,20 +30,9 @@ const UserManagement: React.FC<UserManagementProps> = ({ users = [] }) => {
     [users, searchTerm]
   );
 
-  const handleSelectAll = (checked: boolean) => {
-    if (checked) {
-      setSelectedUsers(filteredUsers.map((user) => user.id));
-    } else {
-      setSelectedUsers([]);
-    }
-  };
-
-  const handleSelectUser = (userId: string, checked: boolean) => {
-    if (checked) {
-      setSelectedUsers([...selectedUsers, userId]);
-    } else {
-      setSelectedUsers(selectedUsers.filter((id) => id !== userId));
-    }
+  const handleDelete = (id: string) => {
+    // Handle user deletion logic here
+    console.log(`Deleting user with ID: ${id}`);
   };
 
   const getRoleBadgeStyle = (role: string) => {
@@ -71,11 +59,6 @@ const UserManagement: React.FC<UserManagementProps> = ({ users = [] }) => {
     }
   };
 
-  const isAllSelected =
-    filteredUsers.length > 0 &&
-    selectedUsers.length === filteredUsers.length;
-  const isSomeSelected =
-    selectedUsers.length > 0 && selectedUsers.length < filteredUsers.length;
 
   return (
     <div className="rounded-xl shadow-sm p-6 py-16">
@@ -101,9 +84,6 @@ const UserManagement: React.FC<UserManagementProps> = ({ users = [] }) => {
             className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none w-64"
           />
         </div>
-        {selectedUsers.length > 0 && (
-          <div className="text-sm text-gray-600">{selectedUsers.length} selected</div>
-        )}
       </div>
 
       {/* Table */}
@@ -112,18 +92,7 @@ const UserManagement: React.FC<UserManagementProps> = ({ users = [] }) => {
           <thead>
             <tr className="border-b border-gray-200">
               <th className="text-left py-3 px-4 font-medium text-gray-900">
-                <div className="flex items-center gap-3">
-                  <input
-                    type="checkbox"
-                    checked={isAllSelected}
-                    ref={(el) => {
-                      if (el) el.indeterminate = isSomeSelected;
-                    }}
-                    onChange={(e) => handleSelectAll(e.target.checked)}
-                    className="w-4 h-4 text-emerald-600 border-gray-300 rounded focus:ring-emerald-500"
-                  />
-                  User
-                </div>
+                Name
               </th>
               <th className="text-left py-3 px-4 font-medium text-gray-900">
                 Role
@@ -150,14 +119,7 @@ const UserManagement: React.FC<UserManagementProps> = ({ users = [] }) => {
               >
                 <td className="py-4 px-4">
                   <div className="flex items-center gap-3">
-                    <input
-                      type="checkbox"
-                      checked={selectedUsers.includes(user.id)}
-                      onChange={(e) =>
-                        handleSelectUser(user.id, e.target.checked)
-                      }
-                      className="w-4 h-4 text-emerald-600 border-gray-300 rounded focus:ring-emerald-500"
-                    />
+
                     <div className="w-8 h-8 bg-emerald-100 rounded-full flex items-center justify-center">
                       <span className="text-emerald-600 font-medium text-sm">
                         {user.name
@@ -194,40 +156,16 @@ const UserManagement: React.FC<UserManagementProps> = ({ users = [] }) => {
                 <td className="py-4 px-4 text-gray-900 font-medium">
                   {user.submissions}
                 </td>
-                <td className="py-4 px-4">
-                  <div className="flex items-center gap-2">
-                    <button className="p-1 text-gray-400 hover:text-gray-600 transition-colors">
-                      <Eye size={16} />
-                    </button>
-                    <button className="p-1 text-gray-400 hover:text-red-600 transition-colors">
-                      <Trash2 size={16} />
-                    </button>
-                  </div>
+                <td className="text-center">
+                  <button onClick={() => handleDelete(user?.id)} className="p-1 text-gray-400 hover:text-red-600 transition-colors">
+                    <Trash2 size={16} />
+                  </button>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
-
-      {/* Bulk Actions */}
-      {selectedUsers.length > 0 && (
-        <div className="mt-4 p-4 bg-gray-50 rounded-lg">
-          <div className="flex items-center justify-between">
-            <span className="text-sm text-gray-600">
-              {selectedUsers.length} user{selectedUsers.length !== 1 ? "s" : ""} selected
-            </span>
-            <div className="flex gap-2">
-              <button className="px-3 py-1.5 text-sm font-medium text-emerald-700 bg-emerald-100 rounded-lg hover:bg-emerald-200 transition-colors">
-                Export Selected
-              </button>
-              <button className="px-3 py-1.5 text-sm font-medium text-red-700 bg-red-100 rounded-lg hover:bg-red-200 transition-colors">
-                Deactivate Selected
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

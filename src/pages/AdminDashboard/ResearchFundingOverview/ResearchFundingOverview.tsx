@@ -114,18 +114,18 @@ const ResearchFundingOverview: React.FC<ResearchFundingOverviewProps> = ({ donat
                   <div className="flex items-center space-x-3">
                     <img
                       src={`https://ui-avatars.com/api/?name=${encodeURIComponent(donar.donarName)}&background=6b7280&color=ffffff&size=40`}
-                      alt={donar.donarName}
+                      alt={donar?.donarName}
                       className="w-8 h-8 sm:w-10 sm:h-10 rounded-full object-cover flex-shrink-0"
                     />
                     <div className="min-w-0 flex-1">
                       <p className="text-sm sm:text-base font-medium text-gray-900 truncate">
-                        {donar.donarName}
+                        {donar?.donarName}
                       </p>
                     </div>
                   </div>
                   <div className="flex-shrink-0">
                     <span className="text-sm sm:text-base font-semibold text-gray-900">
-                      ${donar.amount.toLocaleString()}
+                      ${donar?.amount}
                     </span>
                   </div>
                 </div>

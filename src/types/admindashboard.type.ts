@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // --------------------- Overview ---------------------
 export interface Overview {
   pendingProtocol: number;
@@ -40,7 +41,7 @@ export interface Protocol {
   stepProcedure: string;
   attachment: string;
   license: string;
-  authors: string;
+  authors: any;
   coAuthors: string[];
   isConfirmed: boolean;
   isAcknowledged: boolean;

@@ -10,17 +10,16 @@ import UserManagement from "./UserManagement/UserManagement";
 
 const AdminDashboard = () => {
   // Correct usage: use object destructuring
-  const { data: adminDashboard, isLoading, error } = useGetAdminDashboardQuery();
+  const { data: adminDashboard, isLoading } = useGetAdminDashboardQuery();
 
-  if (isLoading) return <p>Loading...</p>;
-  if (error) return <p>Error loading dashboard</p>;
+
 
   return (
     <ContainerWrapper>
       <AdminNavbar />
       {/* Pass data as props if needed */}
-      <AdminOverview overview={adminDashboard?.data.overview} />
-      <PriorityReviewQueue pendingProtocol={adminDashboard?.data.pendingProtocol} />
+      <AdminOverview isLoading={isLoading} overview={adminDashboard?.data.overview} />
+      <PriorityReviewQueue isLoading={isLoading} pendingProtocol={adminDashboard?.data.pendingProtocol} />
       <ActivityTrendsSection recentActivity={adminDashboard?.data.recentActivity} />
       <ResearchFundingOverview donation={adminDashboard?.data.donation} />
       <UserManagement users={adminDashboard?.data.users?.map(user => ({

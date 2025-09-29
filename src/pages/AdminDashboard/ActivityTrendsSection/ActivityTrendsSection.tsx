@@ -1,13 +1,13 @@
 import {
-  Chart as ChartJS,
   CategoryScale,
+  Chart as ChartJS,
+  Filler,
+  Legend,
   LinearScale,
-  PointElement,
   LineElement,
+  PointElement,
   Title,
   Tooltip,
-  Legend,
-  Filler,
 } from "chart.js";
 import { Line } from "react-chartjs-2";
 
@@ -113,10 +113,10 @@ const ActivityTrendsSection: React.FC<ActivityTrendsSectionProps> = ({
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm text-gray-900 font-medium leading-5">
-                      {activity.name}
+                      {activity?.name}
                     </p>
                     <p className="text-xs text-gray-500 mt-1">
-                      {activity.time}
+                      {activity?.time}
                     </p>
                   </div>
                 </div>

@@ -10,7 +10,25 @@ export const adminDashboardAPI = baseAPI.injectEndpoints({
       }),
       providesTags: ["admindashboard", "users", "protocol", "donation"],
     }),
+
+    updateProtocolStatus: builder.mutation({
+      query: (payload) => ({
+        url: `/protocol/${payload?.protocolId}`,
+        method: "PATCH",
+        body: payload?.data,
+      }),
+      invalidatesTags: ["protocol"],
+    }),
+
+    deleteUser: builder.mutation({
+      query: (id) => ({
+        url: `/user/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["users"],
+    }),
+
   }),
 });
 
-export const { useGetAdminDashboardQuery } = adminDashboardAPI;
+export const { useGetAdminDashboardQuery, useUpdateProtocolStatusMutation } = adminDashboardAPI;
