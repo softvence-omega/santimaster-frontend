@@ -3,10 +3,18 @@ import { Link } from "react-router-dom";
 import { useGetAllProtocolsQuery } from "../../../redux/features/protocols/potocols.api";
 import type { Protocol } from "../../../types/potocols.type";
 import SectionHeader from "../../../utils/SectionHeading";
+import Loading from "../../../utils/Loading";
 
 const LatestProtocols = () => {
-  const { data, isLoading } = useGetAllProtocolsQuery(undefined);
+  const { data, isLoading, isError } = useGetAllProtocolsQuery(undefined);
   const protocols: Protocol[] = data?.data?.slice(0, 6) || [];
+  if (isError)
+    return (
+      <div className="text-red-600 grid text-center">
+        <Loading></Loading>
+        <p>Error loading protocols. Please try again.</p>
+      </div>
+    );
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">
@@ -69,12 +77,13 @@ const LatestProtocols = () => {
                   </span>
 
                   <span
-                    className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${protocol.difficulty === "Intermediate"
+                    className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${
+                      protocol.difficulty === "Intermediate"
                         ? "bg-yellow-100 text-yellow-800"
                         : protocol.difficulty === "Hard"
-                          ? "bg-red-100 text-red-800"
-                          : "bg-green-100 text-green-800"
-                      }`}
+                        ? "bg-red-100 text-red-800"
+                        : "bg-green-100 text-green-800"
+                    }`}
                   >
                     {protocol.difficulty}
                   </span>

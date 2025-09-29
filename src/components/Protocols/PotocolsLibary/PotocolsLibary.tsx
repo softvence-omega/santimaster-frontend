@@ -1,4 +1,3 @@
-
 import { useState, useMemo } from "react";
 import { Clock, Search, X } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -6,7 +5,7 @@ import { Link } from "react-router-dom";
 import SectionHeader from "../../../utils/SectionHeading";
 import FeaturedPotocals from "./FeaturedPotocals";
 import { useGetAllProtocolsQuery } from "../../../redux/features/protocols/potocols.api";
-
+import Loading from "../../../utils/Loading";
 
 interface FilterCategory {
   name: string;
@@ -43,7 +42,9 @@ const FilterCheckbox: React.FC<{
 
 const PotocolsLibary = () => {
   const [searchQuery, setSearchQuery] = useState("");
-  const [activeFilters, setActiveFilters] = useState<{ [key: string]: string[] }>({});
+  const [activeFilters, setActiveFilters] = useState<{
+    [key: string]: string[];
+  }>({});
   const [currentPage, setCurrentPage] = useState(1);
   const protocolsPerPage = 6;
 
@@ -101,7 +102,12 @@ const PotocolsLibary = () => {
       {
         name: "Additional Options",
         options: [
-          { label: "Has Files", value: "attachment", count: 0, selected: false },
+          {
+            label: "Has Files",
+            value: "attachment",
+            count: 0,
+            selected: false,
+          },
           { label: "Has DOI", value: "doiLink", count: 0, selected: false },
         ],
       },
@@ -162,8 +168,18 @@ const PotocolsLibary = () => {
     }));
 
     categories[5].options = [
-      { label: "Has Files", value: "attachment", count: attachmentCount, selected: activeFilters["attachment"]?.includes("true") || false },
-      { label: "Has DOI", value: "doiLink", count: doiLinkCount, selected: activeFilters["doiLink"]?.includes("true") || false },
+      {
+        label: "Has Files",
+        value: "attachment",
+        count: attachmentCount,
+        selected: activeFilters["attachment"]?.includes("true") || false,
+      },
+      {
+        label: "Has DOI",
+        value: "doiLink",
+        count: doiLinkCount,
+        selected: activeFilters["doiLink"]?.includes("true") || false,
+      },
     ];
 
     return categories;
@@ -176,7 +192,10 @@ const PotocolsLibary = () => {
       if (selected) {
         return { ...prev, [category.toLowerCase()]: [...current, value] };
       } else {
-        return { ...prev, [category.toLowerCase()]: current.filter((v) => v !== value) };
+        return {
+          ...prev,
+          [category.toLowerCase()]: current.filter((v) => v !== value),
+        };
       }
     });
     setCurrentPage(1); // Reset to first page on filter change
@@ -186,17 +205,22 @@ const PotocolsLibary = () => {
   const clearFilter = (category: string, value: string) => {
     setActiveFilters((prev) => {
       const current = prev[category.toLowerCase()] || [];
-      return { ...prev, [category.toLowerCase()]: current.filter((v) => v !== value) };
+      return {
+        ...prev,
+        [category.toLowerCase()]: current.filter((v) => v !== value),
+      };
     });
     setCurrentPage(1);
   };
 
   // Generate pagination buttons
-  const totalPages = Math.ceil((meta.total || protocols.length) / protocolsPerPage);
+  const totalPages = Math.ceil(
+    (meta.total || protocols.length) / protocolsPerPage
+  );
   const paginationButtons = Array.from({ length: totalPages }, (_, i) => i + 1);
 
   return (
-    <div className="min-h-screen bg-white py-40">
+    <div className="min-h-screen py-40">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Heading and Search Bar */}
         <div className="max-w-2xl items-start">
@@ -223,7 +247,9 @@ const PotocolsLibary = () => {
 
           {/* Active Filters */}
           <div className="flex flex-wrap items-center gap-3 bg-white p-3 rounded-lg">
-            <h3 className="font-medium text-gray-900 flex-shrink-0">Active filters:</h3>
+            <h3 className="font-medium text-gray-900 flex-shrink-0">
+              Active filters:
+            </h3>
             {Object.entries(activeFilters).flatMap(([category, values]) =>
               values.map((value) => (
                 <button
@@ -245,14 +271,25 @@ const PotocolsLibary = () => {
           <div className="lg:col-span-1 space-y-6">
             <h2 className="text-xl font-semibold text-gray-900">Filters</h2>
             {filterCategories.map((category) => (
-              <div key={category.name} className="bg-white p-4 rounded-lg shadow">
-                <h3 className="font-medium text-gray-900 mb-3">{category.name}</h3>
+              <div
+                key={category.name}
+                className="bg-white p-4 rounded-lg shadow"
+              >
+                <h3 className="font-medium text-gray-900 mb-3">
+                  {category.name}
+                </h3>
                 <div className="space-y-1">
                   {category.options.map((option) => (
                     <FilterCheckbox
                       key={option.value}
                       {...option}
-                      onChange={(value, selected) => updateFilter(category.name.toLowerCase(), value, selected)}
+                      onChange={(value, selected) =>
+                        updateFilter(
+                          category.name.toLowerCase(),
+                          value,
+                          selected
+                        )
+                      }
                     />
                   ))}
                 </div>
@@ -271,8 +308,17 @@ const PotocolsLibary = () => {
                 subtitle="Browse peer-reviewed protocols by technique, modality, organism, and phase."
               />
 
-              {isLoading && <p className="text-gray-600">Loading protocols...</p>}
-              {isError && <p className="text-red-600">Error loading protocols. Please try again.</p>}
+              {isLoading && (
+                <p className="text-gray-600">
+                  <Loading />
+                </p>
+              )}
+              {isError && (
+                <div className="text-red-600 grid text-center">
+                  <Loading></Loading>
+                  <p>Error loading protocols. Please try again.</p>
+                </div>
+              )}
               {!isLoading && !isError && filteredProtocols.length === 0 && (
                 <p className="text-gray-600">No protocols found.</p>
               )}

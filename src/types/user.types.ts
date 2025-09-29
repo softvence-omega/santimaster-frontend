@@ -4,5 +4,6 @@ export type TUser = {
   password: string;
   affiliation: string;
   orcid: string;
+  role?: string;
   profileImage?: string;
 };

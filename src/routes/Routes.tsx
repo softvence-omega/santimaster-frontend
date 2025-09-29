@@ -26,6 +26,7 @@ import SubmittedProtocols from "../pages/UserDahsboard/SubmittedProtocols/Submit
 import UserDashboard from "../pages/UserDahsboard/userDashboard";
 import UserDashboardOverview from "../pages/UserDahsboard/UserDashboardOverview/UserDashboardOverview";
 import ProtectedRoute from "./ProtectedRoute";
+import AdminRoute from "./AdminRoute";
 
 // Wrapper component to extract id from URL params
 // eslint-disable-next-line react-refresh/only-export-components
@@ -144,7 +145,11 @@ const router = createBrowserRouter([
     children: [
       {
         path: "dashboard",
-        element: <AdminDashboard />,
+        element: (
+          <AdminRoute>
+            <AdminDashboard />
+          </AdminRoute>
+        ),
       },
     ],
   },

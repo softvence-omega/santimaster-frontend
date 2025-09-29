@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import SectionHeader from "../../../utils/SectionHeading";
 import { useGetAllProtocolsQuery } from "../../../redux/features/protocols/potocols.api";
+import Loading from "../../../utils/Loading";
 
 // ------------------ API INTERFACE ------------------
 export interface ApiProtocol {
@@ -79,10 +80,10 @@ const FeaturedProtocols = () => {
   // Use API if available, else fallback
   const protocols = apiProtocols.length > 0 ? apiProtocols : featuredProtocols;
 
-  if (isLoading) return <p className="text-center">Loading protocols...</p>;
+  if (isLoading) return <p className="text-center"><Loading/></p>;
   if (isError)
     return (
-      <p className="text-center text-red-500">Failed to load protocols.</p>
+      <p className="text-center text-red-500"><Loading/></p>
     );
 
   return (
