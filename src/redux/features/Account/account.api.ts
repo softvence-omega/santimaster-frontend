@@ -79,6 +79,8 @@ export const accountApi = baseAPI.injectEndpoints({
       query: (id) => ({ url: `/message/${id}`, method: "DELETE" }),
     }),
 
+
+    // 
     updateAccount: builder.mutation<
       TAccount,
       { data: Partial<AccountPayload>; image?: File }

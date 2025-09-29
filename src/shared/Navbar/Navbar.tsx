@@ -130,7 +130,7 @@ const Navbar = () => {
                 )}
               </div>
             ) : (
-              <Link to="/register">
+              <Link to="/login">
                 <button className="bg-green-900 text-white px-4 py-2 rounded-lg">
                   Sign Up
                 </button>
@@ -169,7 +169,7 @@ const Navbar = () => {
                 )}
               </div>
             ) : (
-              <Link to="/register">
+              <Link to="/login">
                 <button className="bg-green-900 text-white px-3 py-2 rounded-lg">
                   Sign Up
                 </button>
