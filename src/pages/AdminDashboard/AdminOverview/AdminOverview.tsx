@@ -17,8 +17,8 @@ const AdminOverview = ({ overview, isLoading }: AdminOverviewProps) => {
       icon: FileText,
       value: overview?.pendingProtocol ?? 0,
       label: "Pending Submissions",
-      sublabel: "Requires review", // you can customize
-      change: "+12%", // optional: compute dynamically
+      sublabel: "Requires review", 
+      change: "+12%",
       changeType: "positive",
     },
     {

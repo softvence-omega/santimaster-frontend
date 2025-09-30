@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import SectionHeader from "../../../utils/SectionHeading";
 
 interface GetInvolvedProps {
@@ -7,6 +8,7 @@ interface GetInvolvedProps {
   author?: string;
   level?: string;
   icon?: React.ReactNode;
+  link?: string;
 }
 
 const protocols: GetInvolvedProps[] = [
@@ -14,7 +16,7 @@ const protocols: GetInvolvedProps[] = [
     title: "Apply to Join",
     description:
       "Become a contributor and help shape thefuture of protocol sharing",
-
+ link: "/gene-application",
     icon: (
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -34,6 +36,7 @@ const protocols: GetInvolvedProps[] = [
     title: "HSubmit a Protocol",
     description:
       "Share your research protocols with theglobal scientific community",
+      link:'/submit-protocol',
 
     icon: (
       <svg
@@ -60,6 +63,7 @@ const protocols: GetInvolvedProps[] = [
   {
     title: "Support Our Mission ",
     description: "Help us maintain and grow this open science platform",
+    link:"/donation",
 
     icon: (
       <svg
@@ -118,9 +122,12 @@ const GetInvolved: React.FC = () => {
 
             {/* Footer with button */}
             <div className="flex justify-center items-center w-full mt-auto">
-              <button className="flex justify-center items-center gap-2 px-6 py-3 text-[#F5F5F7] rounded-lg bg-[#17AA80]">
+              <Link
+                to={protocol.link || "#"}
+                className="flex justify-center items-center gap-2 px-6 py-3 text-[#F5F5F7] rounded-lg bg-[#17AA80] hover:bg-[#149970] transition"
+              >
                 Start Application
-              </button>
+              </Link>
             </div>
           </div>
         ))}

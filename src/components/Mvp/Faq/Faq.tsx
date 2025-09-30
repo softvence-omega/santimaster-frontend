@@ -1,30 +1,41 @@
 import { useState } from "react";
 import SectionHeader from "../../../utils/SectionHeading";
 
-export default function Faq() {
+export default function FaqMvp() {
   const [isOpen, setIsOpen] = useState<number | null>(null);
-  const dataArr = [
-    {
-      title: "How do I create an account?",
-      description:
-        'To create an account, click on the "Sign Up" button and fill out the required information. Once done, you can enjoy the benefits of being a registered member.',
-    },
-    {
-      title: "What is your return policy?",
-      description:
-        "Our return policy allows you to return items within 30 days of purchase. Please visit our returns page for detailed instructions and to initiate a return.",
-    },
-    {
-      title: "Can I change my shipping address?",
-      description:
-        "Yes, you can change your shipping address before your order is shipped. Go to your account settings and update the shipping information accordingly.",
-    },
-    {
-      title: "Are there any discounts for loyal customers?",
-      description:
-        "We appreciate our loyal customers! Stay tuned for exclusive discounts, promotions, and special offers available to members of our loyalty program.",
-    },
-  ];
+const dataArr = [
+  {
+    title: "Who can submit protocols to Open Gene?",
+    description:
+      "Any registered researcher, student, or contributor with relevant scientific protocols can submit. Submissions should meet our community guidelines and include enough detail for reproducibility.",
+  },
+  {
+    title: "How long does the review process take?",
+    description:
+      "On average, the initial review takes 2–3 weeks, depending on complexity and reviewer availability. Some protocols may require revisions, which can extend the timeline. We provide status updates throughout the process.",
+  },
+  {
+    title: "What file types and formats are allowed?",
+    description:
+      "We currently accept protocols in text-based formats (Markdown, DOCX, PDF) and support associated data files such as CSV, XLSX, or images (PNG, JPG). Large datasets can be linked externally if needed.",
+  },
+  {
+    title: "How can I donate to support Open Gene?",
+    description:
+      "You can donate securely via our donations page using credit card, PayPal, or bank transfer. Monthly and one-time contributions are available, and all funds go directly toward platform development and community support.",
+  },
+  {
+    title: "Will there be API access for institutional integration?",
+    description:
+      "Yes. We are developing an API for institutions to integrate submissions, reviews, and protocol data directly into their systems. Early access will be available to partners, with full documentation at launch.",
+  },
+  {
+    title: "What are the next steps after MVP launch?",
+    description:
+      "Following MVP launch, we plan to expand protocol categories, introduce collaborative tools, release API access, and roll out advanced search and recommendation features. Feedback from early users will guide the roadmap.",
+  },
+];
+  
 
   const toggle = (idx: number) => {
     setIsOpen((prevIdx) => (prevIdx === idx ? null : idx));

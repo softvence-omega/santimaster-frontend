@@ -9,10 +9,8 @@ import ResearchFundingOverview from "./ResearchFundingOverview/ResearchFundingOv
 import UserManagement from "./UserManagement/UserManagement";
 
 const AdminDashboard = () => {
-  // Correct usage: use object destructuring
-  const { data: adminDashboard, isLoading } = useGetAdminDashboardQuery();
 
-
+  const { data: adminDashboard, isLoading } = useGetAdminDashboardQuery()
 
   return (
     <ContainerWrapper>

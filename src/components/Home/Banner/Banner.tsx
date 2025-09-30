@@ -1,4 +1,4 @@
-import { Search, Menu, X, User } from "lucide-react";
+import {  Menu, X, User } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import Bannerimg from "../../../assets/Homeimg/Bannerimg.png";
 import VirusImg from "../../../assets/Homeimg/virus.png";
@@ -51,6 +51,15 @@ export default function Banner() {
     navigate("/login");
   };
 
+  const handleDashboardRedirect = () => {
+    setDropdownOpen(false);
+    setMenuOpen(false);
+    if (user?.role === "ADMIN") {
+      navigate("/admin/dashboard");
+    } else {
+      navigate("/user/dashboard");
+    }
+  };
   const links = [
     { name: "Home", path: "/" },
     { name: "MVP", path: "/mvp" },
@@ -96,7 +105,7 @@ export default function Banner() {
                     to={link.path}
                     onClick={() => {
                       setActive(link.name);
-                      setDropdownOpen(false); // Close dropdown on nav link click
+                      setDropdownOpen(false);
                     }}
                     className={`relative text-[#1D6953] text-[16px] sm:text-[18px] font-normal leading-normal hover:text-green-700 ${
                       active === link.name ? "font-medium" : ""
@@ -112,14 +121,14 @@ export default function Banner() {
 
               {/*------------- Search & Auth (Desktop: md and above) ----------------*/}
               <div className="hidden md:flex items-center space-x-3">
-                <div className="flex items-center border border-gray-400 rounded-lg px-3 py-2">
+                {/* <div className="flex items-center border border-gray-400 rounded-lg px-3 py-2">
                   <Search className="h-4 w-4 text-gray-500 mr-2" />
                   <input
                     type="text"
                     placeholder="Search"
                     className="outline-none text-black text-sm w-24 sm:w-40"
                   />
-                </div>
+                </div> */}
                 {user ? (
                   <div className="relative" ref={desktopDropdownRef}>
                     <button
@@ -129,13 +138,27 @@ export default function Banner() {
                       aria-label="User menu"
                       aria-expanded={dropdownOpen}
                     >
-                      <User className="h-5 w-5 text-green-900" />
+                      {user?.profileImage ? (
+                        <img
+                          src={user.profileImage}
+                          alt={user.fullName || "User"}
+                          className="h-8 w-8 rounded-full object-cover"
+                        />
+                      ) : (
+                        <User className="h-5 w-5 text-green-900" />
+                      )}
                     </button>
                     {dropdownOpen && (
                       <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
                         <div className="px-4 py-2 text-sm text-gray-700 border-b">
                           {user?.fullName || user?.fullName || "User"}
                         </div>
+                        <button
+                          onClick={handleDashboardRedirect}
+                          className="w-full text-left px-4 py-2 text-sm text-[#1D6953] hover:bg-gray-100"
+                        >
+                          Dashboard
+                        </button>
                         <button
                           onClick={handleLogout}
                           className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
@@ -162,19 +185,33 @@ export default function Banner() {
                       type="button"
                       onClick={() => {
                         setDropdownOpen(!dropdownOpen);
-                        setMenuOpen(false); // Close mobile menu when opening dropdown
+                        setMenuOpen(false);
                       }}
                       className="flex items-center space-x-2 px-3 py-2 rounded-lg border border-gray-300 hover:bg-gray-100"
                       aria-label="User menu"
                       aria-expanded={dropdownOpen}
                     >
-                      <User className="h-5 w-5 text-green-900" />
+                      {user?.profileImage ? (
+                        <img
+                          src={user.profileImage}
+                          alt={user.fullName || "User"}
+                          className="h-8 w-8 rounded-full object-cover"
+                        />
+                      ) : (
+                        <User className="h-5 w-5 text-green-900" />
+                      )}
                     </button>
                     {dropdownOpen && (
                       <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
                         <div className="px-4 py-2 text-sm text-gray-700 border-b">
                           {user?.fullName || user?.fullName || "User"}
                         </div>
+                        <button
+                          onClick={handleDashboardRedirect}
+                          className="w-full text-left px-4 py-2 text-sm text-[#1D6953] hover:bg-gray-100"
+                        >
+                          Dashboard
+                        </button>
                         <button
                           onClick={handleLogout}
                           className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
@@ -235,14 +272,14 @@ export default function Banner() {
                     )}
                   </Link>
                 ))}
-                <div className="flex items-center border border-gray-400 rounded-lg px-3 py-2">
+                {/* <div className="flex items-center border border-gray-400 rounded-lg px-3 py-2">
                   <Search className="h-4 w-4 text-gray-500 mr-2" />
                   <input
                     type="text"
                     placeholder="Search"
                     className="outline-none text-black text-sm w-full"
                   />
-                </div>
+                </div> */}
               </div>
             </div>
           </div>

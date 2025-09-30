@@ -1,4 +1,6 @@
-const TableMaterials = () => {
+import type { Material } from "../../../types/potocols.type";
+
+const TableMaterials = ({ materials }: { materials: Material[] }) => {
   return (
     <div>
       {/* ------------Materials & Reagents------------ */}
@@ -17,55 +19,28 @@ const TableMaterials = () => {
                 <th className="border px-4 py-2 text-left">Amount</th>
                 <th className="border px-4 py-2 text-left">Catalog #</th>
                 <th className="border px-4 py-2 text-left">Supplier</th>
-                <th className="border px-4 py-2 text-left">Notes</th>
               </tr>
             </thead>
             <tbody>
-              {[
-                [
-                  "CRISPR-Cas9 Plasmid",
-                  "2µg",
-                  "48978",
-                  "Addgene",
-                  "Store at -20°C",
-                ],
-                [
-                  "Dulbecco’s Media (DMEM)",
-                  "50 mL",
-                  "Custom",
-                  "Gibco",
-                  "Tissue specific",
-                ],
-                [
-                  "Lipofectamine 3000",
-                  "1.5 mL",
-                  "L3000015",
-                  "Thermo Fisher",
-                  "Transfection reagent",
-                ],
-                [
-                  "DMEM Medium",
-                  "500 mL",
-                  "11965092",
-                  "Thermo Fisher",
-                  "With L-glutamine",
-                ],
-                [
-                  "Fetal Bovine Serum",
-                  "60 mL",
-                  "26140079",
-                  "Thermo Fisher",
-                  "Heat inactivated",
-                ],
-              ].map(([item, amount, catalog, supplier, notes]) => (
-                <tr key={item}>
-                  <td className="border px-4 py-2">{item}</td>
-                  <td className="border px-4 py-2">{amount}</td>
-                  <td className="border px-4 py-2">{catalog}</td>
-                  <td className="border px-4 py-2">{supplier}</td>
-                  <td className="border px-4 py-2">{notes}</td>
+              {materials?.length > 0 ? (
+                materials.map((mat, index) => (
+                  <tr key={index}>
+                    <td className="border px-4 py-2">{mat.itemName}</td>
+                    <td className="border px-4 py-2">{mat.quantity}</td>
+                    <td className="border px-4 py-2">{mat.catalog}</td>
+                    <td className="border px-4 py-2">{mat.supplier}</td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td
+                    colSpan={4}
+                    className="border px-4 py-2 text-center text-gray-500"
+                  >
+                    No materials provided.
+                  </td>
                 </tr>
-              ))}
+              )}
             </tbody>
           </table>
         </div>

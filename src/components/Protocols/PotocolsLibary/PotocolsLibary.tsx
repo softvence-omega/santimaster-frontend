@@ -48,6 +48,59 @@ const PotocolsLibary = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const protocolsPerPage = 6;
 
+  // Static filter options
+  const staticFilterCategories: FilterCategory[] = [
+    {
+      name: "Technique",
+      options: [
+        { label: "PCR", value: "PCR", count: 0, selected: false },
+        { label: "Western Blot", value: "Western Blot", count: 0, selected: false },
+        { label: "Flow Cytometry", value: "Flow Cytometry", count: 0, selected: false },
+        { label: "ELISA", value: "ELISA", count: 0, selected: false },
+      ],
+    },
+    {
+      name: "Organism",
+      options: [
+        { label: "Human", value: "Human", count: 0, selected: false },
+        { label: "Mouse", value: "Mouse", count: 0, selected: false },
+        { label: "Rat", value: "Rat", count: 0, selected: false },
+        { label: "Zebrafish", value: "Zebrafish", count: 0, selected: false },
+      ],
+    },
+    {
+      name: "Phase",
+      options: [
+        { label: "Phase I", value: "Phase I", count: 0, selected: false },
+        { label: "Phase II", value: "Phase II", count: 0, selected: false },
+        { label: "Phase III", value: "Phase III", count: 0, selected: false },
+      ],
+    },
+    {
+      name: "Difficulty",
+      options: [
+        { label: "Easy", value: "Easy", count: 0, selected: false },
+        { label: "Medium", value: "Medium", count: 0, selected: false },
+        { label: "Hard", value: "Hard", count: 0, selected: false },
+      ],
+    },
+    {
+      name: "Estimated Time",
+      options: [
+        { label: "< 1 hour", value: "< 1 hour", count: 0, selected: false },
+        { label: "1-3 hours", value: "1-3 hours", count: 0, selected: false },
+        { label: "> 3 hours", value: "> 3 hours", count: 0, selected: false },
+      ],
+    },
+    {
+      name: "Additional Options",
+      options: [
+        { label: "Has Files", value: "attachment", count: 0, selected: false },
+        { label: "Has DOI", value: "doiLink", count: 0, selected: false },
+      ],
+    },
+  ];
+
   // Prepare query parameters for API
   const queryParams = useMemo(() => {
     const params: { name: string; value: string }[] = [];
@@ -60,11 +113,13 @@ const PotocolsLibary = () => {
   }, [activeFilters]);
 
   // Fetch protocols from API
-  const { data, isLoading, isError } = useGetAllProtocolsQuery(queryParams);
+  const { data, isLoading, isError } = useGetAllProtocolsQuery(queryParams, {
+    refetchOnMountOrArgChange: true, 
+  });
   const protocols = data?.data || [];
   const meta = data?.meta || { total: 0, page: 1, limit: protocolsPerPage };
 
-  // Filter protocols by search query (client-side)
+ 
   const filteredProtocols = useMemo(() => {
     return protocols
       .filter((protocol) =>
@@ -76,113 +131,31 @@ const PotocolsLibary = () => {
       );
   }, [protocols, searchQuery, currentPage]);
 
-  // Generate dynamic filter categories
+  // Update filter counts dynamically
   const filterCategories: FilterCategory[] = useMemo(() => {
-    const categories: FilterCategory[] = [
-      {
-        name: "Technique",
-        options: [],
-      },
-      {
-        name: "Organism",
-        options: [],
-      },
-      {
-        name: "Phase",
-        options: [],
-      },
-      {
-        name: "Difficulty",
-        options: [],
-      },
-      {
-        name: "Estimated Time",
-        options: [],
-      },
-      {
-        name: "Additional Options",
-        options: [
-          {
-            label: "Has Files",
-            value: "attachment",
-            count: 0,
-            selected: false,
-          },
-          { label: "Has DOI", value: "doiLink", count: 0, selected: false },
-        ],
-      },
-    ];
-
-    // Count unique values for each filter category
-    const techniqueSet = new Set<string>();
-    const organismSet = new Set<string>();
-    const phaseSet = new Set<string>();
-    const difficultySet = new Set<string>();
-    const estimatedTimeSet = new Set<string>();
-    let attachmentCount = 0;
-    let doiLinkCount = 0;
-
-    protocols.forEach((protocol) => {
-      if (protocol.technique) techniqueSet.add(protocol.technique);
-      if (protocol.organism) organismSet.add(protocol.organism);
-      if (protocol.phase) phaseSet.add(protocol.phase);
-      if (protocol.difficulty) difficultySet.add(protocol.difficulty);
-      if (protocol.estimatedTime) estimatedTimeSet.add(protocol.estimatedTime);
-      if (protocol.attachment) attachmentCount++;
-      if (protocol.doiLink) doiLinkCount++;
-    });
-
-    categories[0].options = Array.from(techniqueSet).map((value) => ({
-      label: value,
-      value,
-      count: protocols.filter((p) => p.technique === value).length,
-      selected: activeFilters["technique"]?.includes(value) || false,
+    const updatedCategories = staticFilterCategories.map((category) => ({
+      ...category,
+      options: category.options.map((option) => {
+        let count = 0;
+        if (category.name === "Additional Options") {
+          if (option.value === "attachment") {
+            count = protocols.filter((p) => p.attachment).length;
+          } else if (option.value === "doiLink") {
+            count = protocols.filter((p) => p.doiLink).length;
+          }
+        } else {
+          count = protocols.filter(
+            (p) => (p as any)[category.name.toLowerCase()] === option.value
+          ).length;
+        }
+        return {
+          ...option,
+          count,
+          selected: activeFilters[category.name.toLowerCase()]?.includes(option.value) || false,
+        };
+      }),
     }));
-
-    categories[1].options = Array.from(organismSet).map((value) => ({
-      label: value,
-      value,
-      count: protocols.filter((p) => p.organism === value).length,
-      selected: activeFilters["organism"]?.includes(value) || false,
-    }));
-
-    categories[2].options = Array.from(phaseSet).map((value) => ({
-      label: value,
-      value,
-      count: protocols.filter((p) => p.phase === value).length,
-      selected: activeFilters["phase"]?.includes(value) || false,
-    }));
-
-    categories[3].options = Array.from(difficultySet).map((value) => ({
-      label: value,
-      value,
-      count: protocols.filter((p) => p.difficulty === value).length,
-      selected: activeFilters["difficulty"]?.includes(value) || false,
-    }));
-
-    categories[4].options = Array.from(estimatedTimeSet).map((value) => ({
-      label: value,
-      value,
-      count: protocols.filter((p) => p.estimatedTime === value).length,
-      selected: activeFilters["estimatedTime"]?.includes(value) || false,
-    }));
-
-    categories[5].options = [
-      {
-        label: "Has Files",
-        value: "attachment",
-        count: attachmentCount,
-        selected: activeFilters["attachment"]?.includes("true") || false,
-      },
-      {
-        label: "Has DOI",
-        value: "doiLink",
-        count: doiLinkCount,
-        selected: activeFilters["doiLink"]?.includes("true") || false,
-      },
-    ];
-
-    return categories;
+    return updatedCategories;
   }, [protocols, activeFilters]);
 
   // Update filters
@@ -385,7 +358,7 @@ const PotocolsLibary = () => {
 
                     {/* Footer with button */}
                     <div className="px-6 py-4">
-                      <Link to={`/protocol-details/${protocol._id}`}>
+                      <Link to={`/protocol/${protocol._id}`}>
                         <button className="w-full py-3 px-4 bg-[#17AA80] hover:bg-[#148f68] text-white font-medium rounded-md transition-colors duration-200 text-sm">
                           View Protocol
                         </button>

@@ -22,8 +22,8 @@ const ProtocolDeatils = ({ id }: { id: string }) => {
 
   return (
     <ContainerWrapper>
-       <CrisprDeatils protocol={singleProtocol} />
-      <TableMaterials  />
+      <CrisprDeatils protocol={singleProtocol} />
+     <TableMaterials materials={singleProtocol.materials} />
       <Equipment  />
       <ProtocalStapper  />
       <FilesAttachments  />

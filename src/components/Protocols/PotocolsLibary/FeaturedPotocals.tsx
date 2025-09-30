@@ -164,7 +164,7 @@ const FeaturedProtocols = () => {
             </div>
 
             {/* Button */}
-            <Link to={`/protocol-details/${protocol.id}`}>
+            <Link to={`/protocol/${protocol.id}`}>
               <button className="cursor-pointer w-full bg-[#17AA80] text-white py-2 px-4 rounded hover:bg-green-700 transition">
                 View Protocol
               </button>
