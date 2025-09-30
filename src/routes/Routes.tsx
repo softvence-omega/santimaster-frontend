@@ -27,6 +27,8 @@ import UserDashboard from "../pages/UserDahsboard/userDashboard";
 import UserDashboardOverview from "../pages/UserDahsboard/UserDashboardOverview/UserDashboardOverview";
 import ProtectedRoute from "./ProtectedRoute";
 import AdminRoute from "./AdminRoute";
+import ResetPassword from "../pages/Authentication/RestPassword";
+import ForgotPassword from "../pages/Authentication/ForgotPassword";
 
 // Wrapper component to extract id from URL params
 // eslint-disable-next-line react-refresh/only-export-components
@@ -64,6 +66,14 @@ const router = createBrowserRouter([
       {
         path: "/register",
         element: <RegisterForm />,
+      },
+      {
+        path: "/reset-password",
+        element: <ResetPassword />,
+      },
+      {
+        path: "/forgot-password",
+        element: <ForgotPassword />,
       },
       {
         path: "/contract",

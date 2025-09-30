@@ -54,8 +54,18 @@ const PotocolsLibary = () => {
       name: "Technique",
       options: [
         { label: "PCR", value: "PCR", count: 0, selected: false },
-        { label: "Western Blot", value: "Western Blot", count: 0, selected: false },
-        { label: "Flow Cytometry", value: "Flow Cytometry", count: 0, selected: false },
+        {
+          label: "Western Blot",
+          value: "Western Blot",
+          count: 0,
+          selected: false,
+        },
+        {
+          label: "Flow Cytometry",
+          value: "Flow Cytometry",
+          count: 0,
+          selected: false,
+        },
         { label: "ELISA", value: "ELISA", count: 0, selected: false },
       ],
     },
@@ -114,12 +124,11 @@ const PotocolsLibary = () => {
 
   // Fetch protocols from API
   const { data, isLoading, isError } = useGetAllProtocolsQuery(queryParams, {
-    refetchOnMountOrArgChange: true, 
+    refetchOnMountOrArgChange: true,
   });
   const protocols = data?.data || [];
   const meta = data?.meta || { total: 0, page: 1, limit: protocolsPerPage };
 
- 
   const filteredProtocols = useMemo(() => {
     return protocols
       .filter((protocol) =>
@@ -151,7 +160,10 @@ const PotocolsLibary = () => {
         return {
           ...option,
           count,
-          selected: activeFilters[category.name.toLowerCase()]?.includes(option.value) || false,
+          selected:
+            activeFilters[category.name.toLowerCase()]?.includes(
+              option.value
+            ) || false,
         };
       }),
     }));
@@ -293,7 +305,9 @@ const PotocolsLibary = () => {
                 </div>
               )}
               {!isLoading && !isError && filteredProtocols.length === 0 && (
-                <p className="text-gray-600">No protocols found.</p>
+                <p className="text-red-500 text-center">
+                  No protocols found. here
+                </p>
               )}
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">

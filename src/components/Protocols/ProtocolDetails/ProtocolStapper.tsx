@@ -1,6 +1,5 @@
 import { useState } from "react";
 
-// Define TypeScript interface
 interface Step {
   id: number;
   title: string;
@@ -15,91 +14,35 @@ interface Step {
   }[];
 }
 
-// JSON data for steps
-const protocolSteps: Step[] = [
-  {
-    id: 1,
-    title: "Cell Preparation and Seeding",
-    duration: "~2 hours",
-    details: [
-      {
-        subtitle: "1.1 Cell Culture Maintenance",
-        description:
-          "Maintain HEK293T cells in DMEM supplemented with 10% FBS and 1% penicillin/streptomycin at 37°C with 5% CO₂.",
-        note: {
-          type: "success",
-          text: "✅ Ensure cells are healthy and in log-phase growth before proceeding.",
-        },
-      },
-      {
-        subtitle: "1.2 Cell Seeding",
-        description:
-          "Seed cells at 60% per well in 6-well plates 24 hours before transfection.",
-        note: {
-          type: "warning",
-          text: "⚠️ BSL-2 Required",
-        },
-      },
-    ],
-  },
-  {
-    id: 2,
-    title: "CRISPR Transfection",
-    duration: "~1 hour",
-    details: [
-      {
-        subtitle: "1.1 Cell Culture Maintenance",
-        description:
-          "Maintain HEK293T cells in DMEM supplemented with 10% FBS and 1% penicillin/streptomycin at 37°C with 5% CO₂.",
-        note: {
-          type: "success",
-          text: "✅ Ensure cells are healthy and in log-phase growth before proceeding.",
-        },
-      },
-      {
-        subtitle: "1.2 Cell Seeding",
-        description:
-          "Seed cells at 60% per well in 6-well plates 24 hours before transfection.",
-        note: {
-          type: "warning",
-          text: "⚠️ BSL-2 Required",
-        },
-      },
-    ],
-  },
-  {
-    id: 3,
-    title: "Analysis and Validation",
-    duration: "~2 days",
-    details: [
-      {
-        subtitle: "1.1 Cell Culture Maintenance",
-        description:
-          "Maintain HEK293T cells in DMEM supplemented with 10% FBS and 1% penicillin/streptomycin at 37°C with 5% CO₂.",
-        note: {
-          type: "success",
-          text: "✅ Ensure cells are healthy and in log-phase growth before proceeding.",
-        },
-      },
-      {
-        subtitle: "1.2 Cell Seeding",
-        description:
-          "Seed cells at 60% per well in 6-well plates 24 hours before transfection.",
-        note: {
-          type: "warning",
-          text: "⚠️ BSL-2 Required",
-        },
-      },
-    ],
-  },
-];
-
-export default function ProtocalStapper() {
+export default function ProtocalStapper({
+  stepProcedure,
+}: {
+  stepProcedure: string;
+}) {
   const [openStep, setOpenStep] = useState<number | null>(null);
+
+  // Parse JSON safely
+  let steps: Step[] = [];
+  try {
+    steps = stepProcedure ? JSON.parse(stepProcedure) : [];
+  } catch (error) {
+    console.error("Invalid stepProcedure format:", error);
+  }
 
   const toggleStep = (id: number) => {
     setOpenStep(openStep === id ? null : id);
   };
+
+  if (!steps.length) {
+    return (
+      <section>
+        <h2 className="text-2xl font-semibold mb-6 text-gray-900">
+          Protocol Steps
+        </h2>
+        <p className="text-gray-500">No steps provided.</p>
+      </section>
+    );
+  }
 
   return (
     <section>
@@ -107,8 +50,8 @@ export default function ProtocalStapper() {
         Protocol Steps
       </h2>
       <div className="space-y-4">
-        {protocolSteps.map((step) => (
-          <div key={step.id} className="p-5  rounded-xl  bg-[#FAFAFA]">
+        {steps.map((step) => (
+          <div key={step.id} className="p-5 rounded-xl bg-[#FAFAFA]">
             <h3 className="flex items-center gap-3 font-semibold text-green-700">
               <span className="w-8 h-8 flex items-center justify-center bg-green-100 text-green-700 rounded-full">
                 {step.id}
@@ -117,7 +60,6 @@ export default function ProtocalStapper() {
               <span className="ml-auto text-gray-500 text-sm">
                 {step.duration}
               </span>
-              {/* Toggle Icon */}
               <button
                 className="cursor-pointer"
                 onClick={() => toggleStep(step.id)}
@@ -140,7 +82,6 @@ export default function ProtocalStapper() {
               </button>
             </h3>
 
-            {/* Show details when expanded */}
             {openStep === step.id && (
               <div className="mt-3 space-y-3 text-gray-700">
                 {step.details?.map((detail, i) => (

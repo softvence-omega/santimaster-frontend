@@ -25,8 +25,10 @@ const ProtocolDeatils = ({ id }: { id: string }) => {
       <CrisprDeatils protocol={singleProtocol} />
      <TableMaterials materials={singleProtocol.materials} />
       <Equipment  />
-      <ProtocalStapper  />
-      <FilesAttachments  />
+    <ProtocalStapper stepProcedure={singleProtocol.stepProcedure} />
+
+      <FilesAttachments attachment={singleProtocol.attachment} />
+
       <TroubleshootingTips  />
       <AuthorInfo  />
       <PeerReviewSection  />
