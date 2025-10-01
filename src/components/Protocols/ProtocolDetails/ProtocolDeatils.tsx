@@ -13,8 +13,11 @@ import TableMaterials from "./TableMaterials";
 import TroubleshootingTips from "./TroubleshootingTips";
 
 const ProtocolDeatils = ({ id }: { id: string }) => {
- 
-  const { data: singleProtocol, isLoading, error } = useGetProtocolByIdQuery(id);
+  const {
+    data: singleProtocol,
+    isLoading,
+    error,
+  } = useGetProtocolByIdQuery(id);
 
   if (isLoading) return <p>Loading...</p>;
   if (error) return <p>Failed to load protocol.</p>;
@@ -23,17 +26,15 @@ const ProtocolDeatils = ({ id }: { id: string }) => {
   return (
     <ContainerWrapper>
       <CrisprDeatils protocol={singleProtocol} />
-     <TableMaterials materials={singleProtocol.materials} />
-      <Equipment  />
-    <ProtocalStapper stepProcedure={singleProtocol.stepProcedure} />
-
+      <TableMaterials materials={singleProtocol.materials} />
+      <Equipment equipment={singleProtocol.equipment} />
+      <ProtocalStapper stepProcedure={singleProtocol.stepProcedure} />
       <FilesAttachments attachment={singleProtocol.attachment} />
-
-      <TroubleshootingTips  />
-      <AuthorInfo  />
-      <PeerReviewSection  />
-      <RelatedProtocols  />
-      <References  />
+      <TroubleshootingTips />
+      <AuthorInfo />
+      <PeerReviewSection />
+      <RelatedProtocols />
+      <References />
     </ContainerWrapper>
   );
 };

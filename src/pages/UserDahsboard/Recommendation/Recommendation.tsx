@@ -85,7 +85,7 @@ const RecommendedForYou: React.FC = () => {
   ];
 
   return (
-    <div className="max-w-5xl mx-auto p-6 py-15 ">
+    <div className="max-w-5xl mx-auto p-6 py-6 ">
       <h1 className="text-2xl font-bold text-gray-900 mb-6">
         Recommended for You
       </h1>

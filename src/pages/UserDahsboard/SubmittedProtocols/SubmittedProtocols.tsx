@@ -1,5 +1,5 @@
-import React from "react";
-import { ChevronDown, User } from "lucide-react";
+import React, { useState } from "react";
+import { User } from "lucide-react";
 
 interface ProtocolCardProps {
   title: string;
@@ -9,10 +9,7 @@ interface ProtocolCardProps {
     avatar?: string;
   };
   submitted: string;
-  status: {
-    label: string;
-    type: "under-review" | "published" | "pending";
-  };
+  status: "PUBLISHED" | "DRAFT" | "REJECTED" | "PENDING";
   reviewerNote?: string;
 }
 
@@ -20,12 +17,14 @@ const StatusBadge: React.FC<{ status: ProtocolCardProps["status"] }> = ({
   status,
 }) => {
   const getStatusStyles = () => {
-    switch (status.type) {
-      case "under-review":
-        return "bg-blue-100 text-blue-700 border-blue-200";
-      case "published":
+    switch (status) {
+      case "PUBLISHED":
         return "bg-green-100 text-green-700 border-green-200";
-      case "pending":
+      case "DRAFT":
+        return "bg-gray-100 text-gray-700 border-gray-200";
+      case "REJECTED":
+        return "bg-red-100 text-red-700 border-red-200";
+      case "PENDING":
         return "bg-yellow-100 text-yellow-700 border-yellow-200";
       default:
         return "bg-gray-100 text-gray-700 border-gray-200";
@@ -36,7 +35,7 @@ const StatusBadge: React.FC<{ status: ProtocolCardProps["status"] }> = ({
     <span
       className={`px-3 py-1 rounded-full text-sm font-medium border ${getStatusStyles()}`}
     >
-      {status.label}
+      {status}
     </span>
   );
 };
@@ -94,22 +93,51 @@ interface SubmittedProtocolsProps {
   published: ProtocolCardProps[];
 }
 
-const SubmittedProtocols: React.FC<SubmittedProtocolsProps> = ({ published }) => {
+const SubmittedProtocols: React.FC<SubmittedProtocolsProps> = ({
+  published,
+}) => {
+  const [filter, setFilter] = useState<
+    "ALL" | "PUBLISHED" | "DRAFT" | "REJECTED" | "PENDING"
+  >("ALL");
+
+  const filteredProtocols =
+    filter === "ALL"
+      ? published
+      : published.filter((protocol) => protocol.status === filter);
+
   return (
-    <div className="px-6 max-w-5xl mx-auto py-10">
+    <div className="px-6 max-w-5xl mx-auto py-16">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-gray-900">
           Submitted Protocols
         </h1>
-        <div className="flex items-center space-x-2 bg-white border border-gray-300 rounded-md px-3 py-2 cursor-pointer hover:bg-gray-50">
-          <span className="text-sm text-gray-700">All Statuses</span>
-          <ChevronDown className="w-4 h-4 text-gray-500" />
-        </div>
+
+        {/* Dropdown filter */}
+        <select
+          value={filter}
+          onChange={(e) =>
+            setFilter(
+              e.target.value as
+                | "ALL"
+                | "PUBLISHED"
+                | "DRAFT"
+                | "REJECTED"
+                | "PENDING"
+            )
+          }
+          className="border border-gray-300 rounded-md px-3 py-2 text-sm text-gray-700 cursor-pointer bg-white"
+        >
+          <option value="ALL">All Statuses</option>
+          <option value="PUBLISHED">Published</option>
+          <option value="DRAFT">Draft</option>
+          <option value="REJECTED">Rejected</option>
+          <option value="PENDING">Pending</option>
+        </select>
       </div>
 
       <div className="space-y-4">
-        {published.length > 0 ? (
-          published.map((protocol, index) => (
+        {filteredProtocols.length > 0 ? (
+          filteredProtocols.map((protocol, index) => (
             <ProtocolCard key={index} {...protocol} />
           ))
         ) : (

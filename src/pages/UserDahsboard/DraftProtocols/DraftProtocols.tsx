@@ -30,7 +30,7 @@ export default function DraftProtocols({ drafts = [] }: DraftProtocolsProps) {
   };
 
   return (
-    <div className="p-6 py-15">
+    <div className="p-6 py-15 max-w-5xl mx-auto">
       {/* Header */}
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">
@@ -93,7 +93,9 @@ export default function DraftProtocols({ drafts = [] }: DraftProtocolsProps) {
       {/* Footer */}
       <div className="flex justify-between items-center mt-6 text-sm text-gray-600">
         <p>Showing {drafts.length} draft(s)</p>
-        <button className="text-[#4A7BFF] hover:underline">View All Drafts</button>
+        <button className="text-[#4A7BFF] hover:underline">
+          View All Drafts
+        </button>
       </div>
     </div>
   );

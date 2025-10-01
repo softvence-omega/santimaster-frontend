@@ -15,26 +15,25 @@ interface RecentNotificationProps {
 }
 
 const RecentNotification = ({ protocols }: RecentNotificationProps) => {
-  const notifications =
-    [
-      ...(protocols?.published?.map((p) => ({
-        id: p._id,
-        type: "approved" as const,
-        title: "Protocol Approved",
-        description: `Your protocol "${p.protocolTitle}" has been approved and published.`,
-        time: new Date(p.createdAt).toLocaleString(),
-      })) || []),
-      ...(protocols?.pending?.map((p) => ({
-        id: p._id,
-        type: "review" as const,
-        title: "Review Required",
-        description: `Your protocol "${p.protocolTitle}" is pending review.`,
-        time: new Date(p.createdAt).toLocaleString(),
-      })) || []),
-    ].slice(0, 5); // show only 5 latest
+  const notifications = [
+    ...(protocols?.published?.map((p) => ({
+      id: p._id,
+      type: "approved" as const,
+      title: "Protocol Approved",
+      description: `Your protocol "${p.protocolTitle}" has been approved and published.`,
+      time: new Date(p.createdAt).toLocaleString(),
+    })) || []),
+    ...(protocols?.pending?.map((p) => ({
+      id: p._id,
+      type: "review" as const,
+      title: "Review Required",
+      description: `Your protocol "${p.protocolTitle}" is pending review.`,
+      time: new Date(p.createdAt).toLocaleString(),
+    })) || []),
+  ].slice(0, 5);
 
   return (
-    <div className="p-6">
+    <div className="p-6 max-w-6xl mx-auto">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-lg font-semibold">Recent Notifications</h2>
         <button className="text-emerald-600 text-sm hover:underline">

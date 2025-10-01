@@ -17,6 +17,7 @@ export const userAPI = baseAPI.injectEndpoints({
       }),
       invalidatesTags: [],
     }),
+
     verifyOTP: build.mutation({
       query: (data) => ({
         url: "/auth/signup-verify-otp",
@@ -25,7 +26,13 @@ export const userAPI = baseAPI.injectEndpoints({
       }),
       invalidatesTags: [],
     }),
-
+forgotPassword: build.mutation({
+      query: (data) => ({
+        url: "/auth/forgot-password",
+        method: "POST",
+        body: data,
+      }),
+    }),
     updatePassword: build.mutation({
       query: (payload) => ({
         url: "/user/update-password",
@@ -34,19 +41,40 @@ export const userAPI = baseAPI.injectEndpoints({
       }),
     }),
 
+    resetPassword: build.mutation({
+      query: (data) => ({
+        url: "/auth/reset-password",
+        method: "POST",
+        body: data,
+      }),
+    }),
+    
     getMe: build.query({
       query: () => ({
         url: "/auth/me",
         method: "GET",
       }),
     }),
+    
+    updateProfileSetting: build.mutation({
+      query: (payload) => ({
+        url: "/auth/update-profile",
+        method: "PATCH",
+        body: payload,
+      }),
+    }),
   }),
 });
 
+
+
 export const {
+  useForgotPasswordMutation,
   useLoginMutation,
   useVerifyOTPMutation,
   useRegisterMutation,
   useUpdatePasswordMutation,
-  useGetMeQuery
+  useGetMeQuery,
+  useUpdateProfileSettingMutation,
+  useResetPasswordMutation
 } = userAPI;

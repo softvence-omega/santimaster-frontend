@@ -13,172 +13,200 @@ interface CrisprDeatilsProps {
 const CrisprDeatils = ({ protocol }: CrisprDeatilsProps) => {
   const [isDownloading, setIsDownloading] = useState(false);
 
-  const generatePDF = () => {
-    setIsDownloading(true);
-    try {
-      const doc = new jsPDF();
-      let yOffset = 20;
+const generatePDF = () => {
+  setIsDownloading(true);
+  try {
+    const doc = new jsPDF({
+      orientation: "portrait",
+      unit: "mm",
+      format: "a4",
+    });
+    const pageHeight = doc.internal.pageSize.height;
+    const margin = 20;
+    let yOffset = margin;
 
-      // Title
-      doc.setFontSize(18);
-      doc.text(protocol.protocolTitle || "Untitled Protocol", 20, yOffset);
-      yOffset += 10;
-
-      // Description
-      doc.setFontSize(12);
-      doc.text("Description:", 20, yOffset);
-      yOffset += 5;
-      doc.setFontSize(10);
-      doc.text(
-        doc.splitTextToSize(
-          protocol.protocolDescription || "No description available",
-          170
-        ),
-        20,
-        yOffset
-      );
-      yOffset += 10 + (protocol.protocolDescription?.length || 0) / 50;
-
-      // Tags
-      doc.setFontSize(12);
-      doc.text("Tags:", 20, yOffset);
-      yOffset += 5;
-      doc.setFontSize(10);
-      doc.text(protocol.tags?.join(", ") || "No tags", 20, yOffset);
-      yOffset += 10;
-
-      // Meta Info
-      doc.setFontSize(12);
-      doc.text("Meta Information:", 20, yOffset);
-      yOffset += 5;
-      doc.setFontSize(10);
-      doc.text(`Published: ${protocol.createdAt || "Unknown"}`, 20, yOffset);
-      yOffset += 5;
-
-      yOffset += 5;
-      doc.text(`DOI: ${protocol.doiLink || "Not available"}`, 20, yOffset);
-      yOffset += 5;
-      doc.text(`Status: ${protocol.status || "Unknown"}`, 20, yOffset);
-      yOffset += 10;
-
-      // Materials
-      doc.setFontSize(12);
-      doc.text("Materials:", 20, yOffset);
-      yOffset += 5;
-      doc.setFontSize(10);
-      protocol.materials?.forEach((material, index) => {
-        doc.text(
-          `${index + 1}. ${material.itemName} (Quantity: ${
-            material.quantity
-          }, Catalog: ${material.catalog}, Supplier: ${material.supplier})`,
-          20,
-          yOffset
-        );
-        yOffset += 5;
-      });
-      yOffset += 10;
-
-      // Equipment
-      doc.setFontSize(12);
-      doc.text("Equipment:", 20, yOffset);
-      yOffset += 5;
-      doc.setFontSize(10);
-      protocol.equipment?.forEach((equip, index) => {
-        doc.text(
-          `${index + 1}. ${equip.equipmentName} (Note: ${
-            equip.note || "None"
-          })`,
-          20,
-          yOffset
-        );
-        yOffset += 5;
-      });
-      yOffset += 10;
-
-      // Authors
-      doc.setFontSize(12);
-      doc.text("Authors:", 20, yOffset);
-      yOffset += 5;
-      doc.setFontSize(10);
-      doc.text(protocol.authors?.join(", ") || "No authors", 20, yOffset);
-      yOffset += 5;
-      doc.text(
-        `Co-Authors: ${protocol.coAuthors?.join(", ") || "None"}`,
-        20,
-        yOffset
-      );
-      yOffset += 10;
-
-      // Other Details
-      doc.setFontSize(12);
-      doc.text("Additional Details:", 20, yOffset);
-      yOffset += 5;
-      doc.setFontSize(10);
-      doc.text(`Category: ${protocol.category || "Unknown"}`, 20, yOffset);
-      yOffset += 5;
-      doc.text(`Technique: ${protocol.technique || "Unknown"}`, 20, yOffset);
-      yOffset += 5;
-      doc.text(`Modality: ${protocol.modality || "Unknown"}`, 20, yOffset);
-      yOffset += 5;
-      doc.text(`Organism: ${protocol.organism || "Unknown"}`, 20, yOffset);
-      yOffset += 5;
-      doc.text(`Phase: ${protocol.phase || "Unknown"}`, 20, yOffset);
-      yOffset += 5;
-      doc.text(`BSL Level: ${protocol.bslLevel || "Unknown"}`, 20, yOffset);
-      yOffset += 5;
-      doc.text(`Difficulty: ${protocol.difficulty || "Unknown"}`, 20, yOffset);
-      yOffset += 5;
-      doc.text(
-        `Estimated Time: ${protocol.estimatedTime || "Unknown"}`,
-        20,
-        yOffset
-      );
-      yOffset += 5;
-      doc.text(`License: ${protocol.license || "Unknown"}`, 20, yOffset);
-      yOffset += 5;
-      doc.text(
-        `Additional Reference: ${protocol.additionalReference || "None"}`,
-        20,
-        yOffset
-      );
-      yOffset += 5;
-      doc.text(
-        `Confidential: ${protocol.isConfidential ? "Yes" : "No"}`,
-        20,
-        yOffset
-      );
-      yOffset += 5;
-      doc.text(
-        `Confirmed: ${protocol.isConfirmed ? "Yes" : "No"}`,
-        20,
-        yOffset
-      );
-      yOffset += 5;
-      doc.text(
-        `Acknowledged: ${protocol.isAcknowledged ? "Yes" : "No"}`,
-        20,
-        yOffset
-      );
-      yOffset += 10;
-
-      // Procedure
-      if (protocol.stepProcedure) {
-        doc.setFontSize(12);
-        doc.text("Procedure:", 20, yOffset);
-        yOffset += 5;
-        doc.setFontSize(10);
-        doc.text(doc.splitTextToSize(protocol.stepProcedure, 170), 20, yOffset);
+    // Helper function to check for page overflow and add new page if needed
+    const checkPageOverflow = (additionalHeight: number) => {
+      if (yOffset + additionalHeight > pageHeight - margin) {
+        doc.addPage();
+        yOffset = margin;
       }
+    };
 
-      // Save the PDF
-      doc.save(`${protocol.protocolTitle || "protocol"}.pdf`);
-    } catch (error) {
-      console.error("Error generating PDF:", error);
-    toast("Failed to generate PDF. Please try again.");
-    } finally {
-      setIsDownloading(false);
+    // Set font
+    doc.setFont("helvetica", "normal");
+
+    // Title
+    doc.setFontSize(18);
+    doc.setFont("helvetica", "bold");
+    doc.text(protocol.protocolTitle || "Untitled Protocol", margin, yOffset);
+    yOffset += 10;
+
+    // Description
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "bold");
+    doc.text("Description:", margin, yOffset);
+    yOffset += 5;
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    const descriptionLines = doc.splitTextToSize(
+      protocol.protocolDescription || "No description available",
+      170
+    );
+    checkPageOverflow(descriptionLines.length * 5);
+    doc.text(descriptionLines, margin, yOffset);
+    yOffset += descriptionLines.length * 5 + 10;
+
+    // Tags
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "bold");
+    doc.text("Tags:", margin, yOffset);
+    yOffset += 5;
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    const tagsText = protocol.tags?.length ? protocol.tags.join(", ") : "No tags";
+    const tagLines = doc.splitTextToSize(tagsText, 170);
+    checkPageOverflow(tagLines.length * 5);
+    doc.text(tagLines, margin, yOffset);
+    yOffset += tagLines.length * 5 + 10;
+
+    // Meta Info
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "bold");
+    doc.text("Meta Information:", margin, yOffset);
+    yOffset += 5;
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    const metaInfo = [
+      `Published: ${protocol.createdAt || "Unknown"}`,
+      `DOI: ${protocol.doiLink || "Not available"}`,
+      `Status: ${protocol.status || "Unknown"}`,
+    ];
+    metaInfo.forEach((info) => {
+      checkPageOverflow(5);
+      doc.text(info, margin, yOffset);
+      yOffset += 5;
+    });
+    yOffset += 10;
+
+    // Materials
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "bold");
+    doc.text("Materials:", margin, yOffset);
+    yOffset += 5;
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    if (protocol.materials?.length) {
+      protocol.materials.forEach((material, index) => {
+        const materialText = `${index + 1}. ${material.itemName || "Unknown"} (Quantity: ${
+          material.quantity || "N/A"
+        }, Catalog: ${material.catalog || "N/A"}, Supplier: ${
+          material.supplier || "N/A"
+        })`;
+        const materialLines = doc.splitTextToSize(materialText, 170);
+        checkPageOverflow(materialLines.length * 5);
+        doc.text(materialLines, margin, yOffset);
+        yOffset += materialLines.length * 5;
+      });
+    } else {
+      doc.text("No materials listed", margin, yOffset);
+      yOffset += 5;
     }
-  };
+    yOffset += 10;
+
+    // Equipment
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "bold");
+    doc.text("Equipment:", margin, yOffset);
+    yOffset += 5;
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    if (protocol.equipment?.length) {
+      protocol.equipment.forEach((equip, index) => {
+        const equipText = `${index + 1}. ${equip.equipmentName || "Unknown"} (Note: ${
+          equip.note || "None"
+        })`;
+        const equipLines = doc.splitTextToSize(equipText, 170);
+        checkPageOverflow(equipLines.length * 5);
+        doc.text(equipLines, margin, yOffset);
+        yOffset += equipLines.length * 5;
+      });
+    } else {
+      doc.text("No equipment listed", margin, yOffset);
+      yOffset += 5;
+    }
+    yOffset += 10;
+
+    // Authors
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "bold");
+    doc.text("Authors:", margin, yOffset);
+    yOffset += 5;
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    const authorsText = protocol.authors?.length ? protocol.authors.join(", ") : "No authors";
+    const coAuthorsText = protocol.coAuthors?.length ? protocol.coAuthors.join(", ") : "None";
+    const authorLines = doc.splitTextToSize(authorsText, 170);
+    checkPageOverflow(authorLines.length * 5);
+    doc.text(authorLines, margin, yOffset);
+    yOffset += authorLines.length * 5;
+    checkPageOverflow(5);
+    doc.text(`Co-Authors: ${coAuthorsText}`, margin, yOffset);
+    yOffset += 10;
+
+    // Other Details
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "bold");
+    doc.text("Additional Details:", margin, yOffset);
+    yOffset += 5;
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    const details = [
+      `Category: ${protocol.category || "Unknown"}`,
+      `Technique: ${protocol.technique || "Unknown"}`,
+      `Modality: ${protocol.modality || "Unknown"}`,
+      `Organism: ${protocol.organism || "Unknown"}`,
+      `Phase: ${protocol.phase || "Unknown"}`,
+      `BSL Level: ${protocol.bslLevel || "Unknown"}`,
+      `Difficulty: ${protocol.difficulty || "Unknown"}`,
+      `Estimated Time: ${protocol.estimatedTime || "Unknown"}`,
+      `License: ${protocol.license || "Unknown"}`,
+      `Additional Reference: ${protocol.additionalReference || "None"}`,
+      `Confidential: ${protocol.isConfidential ? "Yes" : "No"}`,
+      `Confirmed: ${protocol.isConfirmed ? "Yes" : "No"}`,
+      `Acknowledged: ${protocol.isAcknowledged ? "Yes" : "No"}`,
+    ];
+    details.forEach((detail) => {
+      checkPageOverflow(5);
+      doc.text(detail, margin, yOffset);
+      yOffset += 5;
+    });
+    yOffset += 10;
+
+    // Procedure
+    if (protocol.stepProcedure) {
+      doc.setFontSize(12);
+      doc.setFont("helvetica", "bold");
+      doc.text("Procedure:", margin, yOffset);
+      yOffset += 5;
+      doc.setFontSize(10);
+      doc.setFont("helvetica", "normal");
+      const procedureLines = doc.splitTextToSize(protocol.stepProcedure, 170);
+      checkPageOverflow(procedureLines.length * 5);
+      doc.text(procedureLines, margin, yOffset);
+      yOffset += procedureLines.length * 5;
+    }
+
+    // Save the PDF
+    doc.save(`${protocol.protocolTitle || "protocol"}.pdf`);
+    toast.success("PDF generated successfully!");
+  } catch (error:any) {
+    console.error("Error generating PDF:", error);
+    toast.error(`Failed to generate PDF: ${error.message || "Unknown error"}`);
+  } finally {
+    setIsDownloading(false);
+  }
+};
 
   return (
     <div className="w-full px-6 py-32 grid grid-cols-1 lg:grid-cols-4 gap-8">

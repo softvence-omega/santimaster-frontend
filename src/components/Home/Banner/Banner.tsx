@@ -1,4 +1,4 @@
-import {  Menu, X, User } from "lucide-react";
+import { Menu, X, User } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import Bannerimg from "../../../assets/Homeimg/Bannerimg.png";
 import VirusImg from "../../../assets/Homeimg/virus.png";
@@ -134,7 +134,7 @@ export default function Banner() {
                     <button
                       type="button"
                       onClick={() => setDropdownOpen(!dropdownOpen)}
-                      className="flex items-center space-x-2 px-3 py-2 rounded-lg border border-gray-300 hover:bg-gray-100"
+                      className="flex cursor-pointer space-x-2 w-12 h-12 rounded-full border border-gray-300 hover:bg-gray-100"
                       aria-label="User menu"
                       aria-expanded={dropdownOpen}
                     >

@@ -1,6 +1,8 @@
 import { baseAPI } from "../../api/baseApi";
 import type { ApiResponse } from "../../../types/api.response";
 import type { Protocol } from "../../../types/potocols.type";
+import type { MyProtocol } from "../../../types/myprotocols.type";
+
 
 
 const protocolsApi = baseAPI.injectEndpoints({
@@ -76,7 +78,40 @@ const protocolsApi = baseAPI.injectEndpoints({
       }),
       invalidatesTags: ["protocol"],
     }),
+// -----get my protocols-------
+getmyProtocols: builder.query<
+      { data: MyProtocol[]; meta?: any },
+      { name: string; value: string }[] | void
+    >({
+      query: (args) => {
+        const params = new URLSearchParams();
+        if (args) {
+          args.forEach((item) => {
+            params.append(item.name, item.value);
+          });
+        }
+        return {
+          url: "/protocol/my-protocols",
+          method: "GET",
+          params,
+        };
+      },
+      transformResponse: (response: ApiResponse<Protocol[]>) => {
+        return {
+          data: response.data.map(protocol => ({
+            ...protocol,
+            status: protocol.status as any
+          })) as MyProtocol[],
+          meta: response.meta,
+        };
+      },
+      providesTags: ["protocol"],
+    }),
+
+
   }),
+
+  
 });
 
 export const {
@@ -85,4 +120,5 @@ export const {
   useAddProtocolMutation,
   useUpdateProtocolMutation,
   useDeleteProtocolMutation,
+  useGetmyProtocolsQuery
 } = protocolsApi;

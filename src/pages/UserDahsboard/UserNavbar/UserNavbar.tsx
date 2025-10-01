@@ -6,7 +6,6 @@ import {
   LayoutDashboard,
   FileText,
   Send,
-  ListChecks,
   Settings,
 } from "lucide-react";
 import logo from "../../../assets/logo.png";
@@ -56,7 +55,6 @@ const UserNavbar = () => {
     { to: "/user/overview", label: "Overview", icon: LayoutDashboard },
     { to: "/user/my-drafts", label: "My Drafts", icon: FileText },
     { to: "/user/submitted", label: "Submitted", icon: Send },
-    { to: "/user/review-queue", label: "Review Queue", icon: ListChecks },
     { to: "/user/settings", label: "Settings", icon: Settings },
   ];
 

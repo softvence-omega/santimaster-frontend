@@ -21,7 +21,6 @@ import Roadmap from "../pages/Roadmap/Roadmap";
 import RolesPage from "../pages/Roles/RolesPage";
 import DraftProtocols from "../pages/UserDahsboard/DraftProtocols/DraftProtocols";
 import ProfileSettings from "../pages/UserDahsboard/ProfileSettings/ProfileSettings";
-import ReviewQueue from "../pages/UserDahsboard/ReviewQueue/ReviewQueue";
 import SubmittedProtocols from "../pages/UserDahsboard/SubmittedProtocols/SubmittedProtocols";
 import UserDashboard from "../pages/UserDahsboard/userDashboard";
 import UserDashboardOverview from "../pages/UserDahsboard/UserDashboardOverview/UserDashboardOverview";
@@ -119,12 +118,10 @@ const router = createBrowserRouter([
     ),
     children: [
       {
+        index: true,
         path: "dashboard",
-        element: (
-          <ProtectedRoute>
+        element:
             <UserDashboard />
-          </ProtectedRoute>
-        ),
       },
       {
         path: "overview",
@@ -138,10 +135,7 @@ const router = createBrowserRouter([
         path: "submitted",
         element: <SubmittedProtocols published={[]} />,
       },
-      {
-        path: "review-queue",
-        element: <ReviewQueue />,
-      },
+      
       {
         path: "settings",
         element: <ProfileSettings />,
