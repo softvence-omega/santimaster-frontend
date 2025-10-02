@@ -1,7 +1,8 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Search, Trash2 } from "lucide-react";
 import { useMemo, useState } from "react";
-import { useDeleteUserAdminMutation } from "../../../redux/features/auth/auth.api";
 import toast from "react-hot-toast";
+import { useDeleteUserAdminMutation } from "../../../redux/features/auth/auth.api";
 import SectionHeader from "../../../utils/SectionHeading";
 
 interface User {

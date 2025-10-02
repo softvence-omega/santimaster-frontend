@@ -1,5 +1,6 @@
-import React, { useState } from "react";
 import { User } from "lucide-react";
+import React, { useState } from "react";
+import type { Protocol } from "../../../types/potocols.type";
 
 interface ProtocolCardProps {
   title: string;
@@ -40,18 +41,11 @@ const StatusBadge: React.FC<{ status: ProtocolCardProps["status"] }> = ({
   );
 };
 
-const ProtocolCard: React.FC<ProtocolCardProps> = ({
-  title,
-  description,
-  reviewer,
-  submitted,
-  status,
-  reviewerNote,
-}) => {
+const ProtocolCard = ({ protocol }: { protocol: Protocol }) => {
   return (
     <div className="rounded-lg p-6 mb-4 bg-white border shadow-sm hover:shadow-md transition">
-      <h3 className="text-lg font-semibold text-gray-900 mb-2">{title}</h3>
-      <p className="text-gray-600 text-sm mb-4">{description}</p>
+      <h3 className="text-lg font-semibold text-gray-900 mb-2">{protocol?.protocolTitle}</h3>
+      <p className="text-gray-600 text-sm mb-4">{protocol?.protocolDescription}</p>
 
       <div className="flex justify-between items-start mb-4">
         <div className="flex space-x-8">
@@ -61,41 +55,27 @@ const ProtocolCard: React.FC<ProtocolCardProps> = ({
               <div className="w-6 h-6 bg-orange-400 rounded-full flex items-center justify-center">
                 <User className="w-4 h-4 text-white" />
               </div>
-              <span className="text-sm text-gray-900">{reviewer.name}</span>
+              <span className="text-sm text-gray-900">{protocol?.authors}</span>
             </div>
           </div>
 
           <div>
             <p className="text-sm font-medium text-gray-700 mb-1">Submitted:</p>
-            <p className="text-sm text-gray-900">{submitted}</p>
+            <p className="text-sm text-gray-900">{protocol?.createdAt}</p>
           </div>
         </div>
 
         <div>
           <p className="text-sm font-medium text-gray-700 mb-1">Status:</p>
-          <StatusBadge status={status} />
+          <StatusBadge status={protocol?.status as ProtocolCardProps["status"]} />
         </div>
       </div>
-
-      {reviewerNote && reviewerNote.trim() !== "" && (
-        <div className="bg-yellow-50 border border-yellow-200 rounded-md p-3">
-          <p className="text-sm">
-            <span className="font-medium text-gray-700">Reviewer Note:</span>{" "}
-            <span className="text-gray-600">{reviewerNote}</span>
-          </p>
-        </div>
-      )}
     </div>
   );
 };
 
-interface SubmittedProtocolsProps {
-  published: ProtocolCardProps[];
-}
 
-const SubmittedProtocols: React.FC<SubmittedProtocolsProps> = ({
-  published,
-}) => {
+const SubmittedProtocols = ({ published }: { published: Protocol[] }) => {
   const [filter, setFilter] = useState<
     "ALL" | "PUBLISHED" | "DRAFT" | "REJECTED" | "PENDING"
   >("ALL");
@@ -104,6 +84,7 @@ const SubmittedProtocols: React.FC<SubmittedProtocolsProps> = ({
     filter === "ALL"
       ? published
       : published.filter((protocol) => protocol.status === filter);
+
 
   return (
     <div className="px-6 max-w-5xl mx-auto py-16">
@@ -118,11 +99,11 @@ const SubmittedProtocols: React.FC<SubmittedProtocolsProps> = ({
           onChange={(e) =>
             setFilter(
               e.target.value as
-                | "ALL"
-                | "PUBLISHED"
-                | "DRAFT"
-                | "REJECTED"
-                | "PENDING"
+              | "ALL"
+              | "PUBLISHED"
+              | "DRAFT"
+              | "REJECTED"
+              | "PENDING"
             )
           }
           className="border border-gray-300 rounded-md px-3 py-2 text-sm text-gray-700 cursor-pointer bg-white"
@@ -137,8 +118,8 @@ const SubmittedProtocols: React.FC<SubmittedProtocolsProps> = ({
 
       <div className="space-y-4">
         {filteredProtocols.length > 0 ? (
-          filteredProtocols.map((protocol, index) => (
-            <ProtocolCard key={index} {...protocol} />
+          filteredProtocols?.map((protocol, index) => (
+            <ProtocolCard key={index} protocol={protocol as Protocol} />
           ))
         ) : (
           <p className="text-sm text-gray-600">No submitted protocols found.</p>

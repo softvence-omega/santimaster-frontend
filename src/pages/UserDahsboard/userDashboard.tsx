@@ -42,21 +42,12 @@ const UserDashboard = () => {
       <DraftProtocols drafts={userDashboard?.data?.protocols?.draft || []} />
 
       <SubmittedProtocols
-        published={
-          userDashboard?.data?.protocols?.published?.map((protocol) => ({
-            title: protocol.protocolTitle,
-            description: protocol.protocolDescription,
-            reviewer: {
-              name: "Dr. Reviewer",
-            },
-            submitted: new Date(protocol.createdAt).toLocaleDateString(),
-            status: protocol.status as
-              | "PUBLISHED"
-              | "DRAFT"
-              | "REJECTED"
-              | "PENDING",
-          })) || []
-        }
+        published={[
+          ...userDashboard?.data?.protocols?.published as [],
+          ...userDashboard?.data?.protocols?.rejected as [],
+          ...userDashboard?.data?.protocols?.pending as [],
+          ...userDashboard?.data?.protocols?.draft as [],
+        ]}
       />
       <ReviewQueue queue={userDashboard?.data?.protocols?.pending || []} />
 

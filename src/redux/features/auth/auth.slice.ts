@@ -20,11 +20,11 @@ const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
-    setAuth: (state, action: PayloadAction<{ token: string; user: TUser | null }>) => {
-      state.accessToken = action.payload.token;
+    setAuth: (state, action: PayloadAction<{ token?: string; user: TUser | null }>) => {
+      state.accessToken = action?.payload?.token as string || localStorage.getItem("accessToken") as string;
       state.user = action.payload.user;
 
-      localStorage.setItem("accessToken", action.payload.token);
+      localStorage.setItem("accessToken", action?.payload?.token as string);
       if (action.payload.user) {
         localStorage.setItem("user", JSON.stringify(action.payload.user));
       }

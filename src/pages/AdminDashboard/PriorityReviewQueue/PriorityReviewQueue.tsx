@@ -1,8 +1,8 @@
+import { Edit } from "lucide-react";
 import toast from "react-hot-toast";
+import { Link } from "react-router-dom";
 import { useUpdateProtocolStatusMutation } from "../../../redux/admindashboard/admindashboard";
 import type { Protocol } from "../../../types/admindashboard.type";
-import { Edit, Edit2Icon } from "lucide-react";
-import { Link } from "react-router-dom";
 
 interface PriorityReviewQueueProps {
   pendingProtocol?: Protocol[];

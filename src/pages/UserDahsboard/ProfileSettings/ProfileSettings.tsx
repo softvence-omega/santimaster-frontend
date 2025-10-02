@@ -1,9 +1,11 @@
-import React, { useState, type ChangeEvent } from "react";
 import { Camera, ChevronRight } from "lucide-react";
+import React, { useState, type ChangeEvent } from "react";
 
 import toast from "react-hot-toast";
-import { useUpdateAccountMutation } from "../../../redux/features/Account/account.api";
 import { Link } from "react-router-dom";
+import { useUpdateAccountMutation } from "../../../redux/features/Account/account.api";
+import { setAuth } from "../../../redux/features/auth/auth.slice";
+import { useAppDispatch } from "../../../redux/hook";
 
 // Types
 interface TAccount {
@@ -15,6 +17,7 @@ interface TAccount {
 }
 
 const ProfileSettings: React.FC = () => {
+  const dispatch = useAppDispatch();
   const [updateAccount, { isLoading: isUpdatingProfile }] =
     useUpdateAccountMutation();
 
@@ -71,8 +74,11 @@ const ProfileSettings: React.FC = () => {
 
       const payload = { ...formState };
       const imageFile = selectedFile || undefined;
+      const result = await updateAccount({ data: payload, image: imageFile }).unwrap();
 
-      await updateAccount({ data: payload, image: imageFile }).unwrap();
+      if (result) {
+        dispatch(setAuth({ user: result }));
+      }
       toast.success("Profile updated successfully!");
 
       setSelectedFile(null);
@@ -192,8 +198,8 @@ const ProfileSettings: React.FC = () => {
                   {isUploadingImage
                     ? "Uploading Image..."
                     : isUpdatingProfile
-                    ? "Saving Profile..."
-                    : "Save Changes"}
+                      ? "Saving Profile..."
+                      : "Save Changes"}
                 </button>
               </div>
             )}
@@ -228,42 +234,39 @@ const ProfileSettings: React.FC = () => {
                   {["email", "review", "siteNews"].map((key) => (
                     <div
                       key={key}
-                      className={`flex items-center justify-between py-4 ${
-                        key !== "email" ? "border-t border-gray-100" : ""
-                      }`}
+                      className={`flex items-center justify-between py-4 ${key !== "email" ? "border-t border-gray-100" : ""
+                        }`}
                     >
                       <div>
                         <h4 className="font-semibold text-gray-900 mb-1">
                           {key === "email"
                             ? "Email Notifications"
                             : key === "review"
-                            ? "Review Notifications"
-                            : "Site News"}
+                              ? "Review Notifications"
+                              : "Site News"}
                         </h4>
                         <p className="text-sm text-gray-600">
                           {key === "email"
                             ? "Receive updates via email"
                             : key === "review"
-                            ? "New reviews and comments"
-                            : "Updates and announcements"}
+                              ? "New reviews and comments"
+                              : "Updates and announcements"}
                         </p>
                       </div>
                       <button
                         onClick={() =>
                           toggleNotification(key as keyof typeof notifications)
                         }
-                        className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                          notifications[key as keyof typeof notifications]
-                            ? "bg-green-500"
-                            : "bg-gray-300"
-                        }`}
+                        className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${notifications[key as keyof typeof notifications]
+                          ? "bg-green-500"
+                          : "bg-gray-300"
+                          }`}
                       >
                         <span
-                          className={`inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform ${
-                            notifications[key as keyof typeof notifications]
-                              ? "translate-x-6"
-                              : "translate-x-1"
-                          }`}
+                          className={`inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform ${notifications[key as keyof typeof notifications]
+                            ? "translate-x-6"
+                            : "translate-x-1"
+                            }`}
                         />
                       </button>
                     </div>
