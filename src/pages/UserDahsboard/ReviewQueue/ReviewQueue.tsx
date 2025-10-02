@@ -136,7 +136,7 @@ const ReviewQueue: React.FC<ReviewQueueProps> = ({ queue }) => {
   }, [queue, protocolType, bslFilter, difficulty]);
 
   return (
-    <div className="max-w-5xl mx-auto p-6 bg-gray-50 min-h-screen">
+    <div className="max-w-5xl mx-auto py-10 p-6 ">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-gray-900">Review Queue</h1>
         <div className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-medium">

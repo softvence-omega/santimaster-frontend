@@ -7,6 +7,7 @@ import RecentNotification from "./RecentNotification/RecentNotification";
 import RecommendedForYou from "./Recommendation/Recommendation";
 import ReviewQueue from "./ReviewQueue/ReviewQueue";
 import SubmittedProtocols from "./SubmittedProtocols/SubmittedProtocols";
+
 import UserDashboardOverview from "./UserDashboardOverview/UserDashboardOverview";
 
 const UserDashboard = () => {
@@ -39,16 +40,9 @@ const UserDashboard = () => {
       {/* Pass protocols to notifications */}
       <RecentNotification protocols={userDashboard?.data?.protocols} />
 
-      <DraftProtocols drafts={userDashboard?.data?.protocols?.draft || []} />
+      <DraftProtocols />
 
-      <SubmittedProtocols
-        published={[
-          ...userDashboard?.data?.protocols?.published as [],
-          ...userDashboard?.data?.protocols?.rejected as [],
-          ...userDashboard?.data?.protocols?.pending as [],
-          ...userDashboard?.data?.protocols?.draft as [],
-        ]}
-      />
+      <SubmittedProtocols />
       <ReviewQueue queue={userDashboard?.data?.protocols?.pending || []} />
 
       <RecommendedForYou />

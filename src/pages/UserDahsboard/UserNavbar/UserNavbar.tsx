@@ -2,11 +2,8 @@ import { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
   Menu,
-  X,
-  LayoutDashboard,
-  FileText,
-  Send,
-  Settings,
+  X
+  
 } from "lucide-react";
 import logo from "../../../assets/logo.png";
 import { useAppSelector } from "../../../redux/hook";
@@ -50,13 +47,6 @@ const UserNavbar = () => {
     toast.success("Logged out successfully!");
     navigate("/login");
   };
-
-  const navItems = [
-    { to: "/user/overview", label: "Overview", icon: LayoutDashboard },
-    { to: "/user/my-drafts", label: "My Drafts", icon: FileText },
-    { to: "/user/submitted", label: "Submitted", icon: Send },
-    { to: "/user/settings", label: "Settings", icon: Settings },
-  ];
 
   // Get user initials if no profileImage is available
   const getInitials = (name: string | undefined) => {
@@ -163,77 +153,6 @@ const UserNavbar = () => {
           className="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-600"
           placeholder="Search users..."
         />
-      </div>
-
-      {/*. ---------------  Navigation -------------- */}
-      <div
-        className={`${
-          isOpen ? "block" : "hidden"
-        } md:block rounded-xl border border-black/25 bg-white shadow-md backdrop-blur-md`}
-      >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py10">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-center lg:gap-10 gap-4 py-4">
-            {navItems.map((item, idx) => (
-              <Link
-                key={idx}
-                to={item.to}
-                className="flex items-center gap-2 text-gray-700 hover:text-green-600 text-sm sm:text-base transition"
-                onClick={() => {
-                  setIsOpen(false); 
-                }}
-              >
-                <item.icon size={18} />
-                {item.label}
-              </Link>
-            ))}
-            {user && (
-              <div className="md:hidden relative" ref={mobileDropdownRef}>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setDropdownOpen(!dropdownOpen);
-                    setIsOpen(false); 
-                  }}
-                  className="flex items-center space-x-2 px-3 py-2 rounded-lg border border-gray-300 hover:bg-gray-100 w-full"
-                  aria-label="User menu"
-                  aria-expanded={dropdownOpen}
-                >
-                  {user.profileImage ? (
-                    <img
-                      src={user.profileImage}
-                      alt="User Profile"
-                      className="w-8 h-8 rounded-full object-cover"
-                    />
-                  ) : (
-                    <div className="w-8 h-8 bg-gray-200 rounded-full flex justify-center items-center">
-                      <span className="font-medium text-gray-700 text-sm">
-                        {getInitials(
-                          user.fullName || user.fullName || user.email
-                        )}
-                      </span>
-                    </div>
-                  )}
-                  <span className="text-gray-700 text-sm">
-                    {user.fullName || user.fullName || user.email || "User"}
-                  </span>
-                </button>
-                {dropdownOpen && (
-                  <div className="mt-2 w-full bg-white border border-gray-200 rounded-lg shadow-lg z-50">
-                    <div className="px-4 py-2 text-sm text-gray-700 border-b">
-                      {user.fullName || user.fullName || user.email || "User"}
-                    </div>
-                    <button
-                      onClick={handleLogout}
-                      className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
-                    >
-                      Logout
-                    </button>
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-        </div>
       </div>
     </nav>
   );

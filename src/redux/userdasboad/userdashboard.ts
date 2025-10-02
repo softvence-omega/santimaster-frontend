@@ -1,4 +1,3 @@
-
 import type { UserDashboardResponse } from "../../types/userdashboard.type";
 import { baseAPI } from "../api/baseApi";
 
@@ -11,7 +10,16 @@ export const userDashboardApi = baseAPI.injectEndpoints({
       }),
       providesTags: ["UserDashboard"],
     }),
+
+    deleteProtocol: builder.mutation({
+      query: (id) => ({
+        url: `/protocol/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["UserDashboard"],
+    }),
+    // ------delete protocol---
   }),
 });
 
-export const { useGetUserDashboardQuery } = userDashboardApi;
+export const { useGetUserDashboardQuery , useDeleteProtocolMutation} = userDashboardApi;

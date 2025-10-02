@@ -24,7 +24,6 @@ import DraftProtocols from "../pages/UserDahsboard/DraftProtocols/DraftProtocols
 import ProfileSettings from "../pages/UserDahsboard/ProfileSettings/ProfileSettings";
 import SubmittedProtocols from "../pages/UserDahsboard/SubmittedProtocols/SubmittedProtocols";
 import UserDashboard from "../pages/UserDahsboard/userDashboard";
-import UserDashboardOverview from "../pages/UserDahsboard/UserDashboardOverview/UserDashboardOverview";
 import ProtectedRoute from "./ProtectedRoute";
 import AdminRoute from "./AdminRoute";
 import ResetPassword from "../pages/Authentication/RestPassword";
@@ -142,13 +141,12 @@ const router = createBrowserRouter([
     ),
     children: [
       {
-        index: true,
         path: "dashboard",
         element: <UserDashboard />,
       },
       {
         path: "overview",
-        element: <UserDashboardOverview />,
+        element: <UserDashboard />,
       },
       {
         path: "my-drafts",
@@ -156,7 +154,7 @@ const router = createBrowserRouter([
       },
       {
         path: "submitted",
-        element: <SubmittedProtocols published={[]} />,
+        element: <SubmittedProtocols />,
       },
 
       {

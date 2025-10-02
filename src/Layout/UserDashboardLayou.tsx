@@ -7,12 +7,14 @@ import UserNavbar from "../pages/UserDahsboard/UserNavbar/UserNavbar";
 export default function UserDashboardLayout() {
   return (
     <div className="min-h-screen bg-gray-50  md:mt-5">
-      <UserNavbar />
+      <div>
+        <UserNavbar />
 
-      <UserDahboardTab />
+        <UserDahboardTab />
 
-      <Outlet></Outlet>
-      <Footer />
+        <Outlet></Outlet>
+        <Footer />
+      </div>
     </div>
   );
 }
