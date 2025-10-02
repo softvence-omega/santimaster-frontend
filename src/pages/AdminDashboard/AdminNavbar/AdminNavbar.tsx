@@ -45,11 +45,7 @@ const AdminNavbar = () => {
     navigate("/login");
   };
 
-  const handleDashboardRedirect = () => {
-    setDropdownOpen(false);
-    setIsOpen(false);
-    navigate("/admin/dashboard");
-  };
+
 
   return (
     <nav className="w-full max-w-7xl mx-auto">

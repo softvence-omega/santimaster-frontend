@@ -8,6 +8,7 @@ import Mvp from "../pages/Mvp/Mvp";
 import OpenGeneApplicationForm from "../Common/ApplicationFrom/ApplicationFrom";
 import Donation from "../Common/Donation/Donation";
 import SubmitProtocol from "../Common/SubmitProtocol/SubmitProtocol";
+import UpdateProtocol from "../Common/UpdateProtocol/UpdateProtocol";
 import ProtocolDeatils from "../components/Protocols/ProtocolDetails/ProtocolDeatils";
 import AdminDashboardLayout from "../Layout/AdminDashboardLayout";
 import UserDashboardLayout from "../Layout/UserDashboardLayou";
@@ -28,6 +29,9 @@ import ProtectedRoute from "./ProtectedRoute";
 import AdminRoute from "./AdminRoute";
 import ResetPassword from "../pages/Authentication/RestPassword";
 import ForgotPassword from "../pages/Authentication/ForgotPassword";
+import ResearchFundingOverview from "../pages/AdminDashboard/ResearchFundingOverview/ResearchFundingOverview";
+import MessagesTable from "../pages/AdminDashboard/Message/Massage";
+import ChangePassword from "../pages/Authentication/ChangePassword";
 
 // Wrapper component to extract id from URL params
 // eslint-disable-next-line react-refresh/only-export-components
@@ -35,6 +39,14 @@ const ProtocolDetails = () => {
   const { id } = useParams<{ id: string }>();
   if (!id) return <div>Protocol ID not found</div>;
   return <ProtocolDeatils id={id} />;
+};
+
+// Wrapper component for UpdateProtocol
+// eslint-disable-next-line react-refresh/only-export-components
+const UpdateProtocolWrapper = () => {
+  const { id } = useParams<{ id: string }>();
+  if (!id) return <div>Protocol ID not found</div>;
+  return <UpdateProtocol protocolId={id} />;
 };
 
 const router = createBrowserRouter([
@@ -75,6 +87,10 @@ const router = createBrowserRouter([
         element: <ForgotPassword />,
       },
       {
+        path: "/change-password",
+        element: <ChangePassword />,
+      },
+      {
         path: "/contract",
         element: <Contact />,
       },
@@ -103,6 +119,14 @@ const router = createBrowserRouter([
         ),
       },
       {
+        path: "update-protocol/:id",
+        element: (
+          <ProtectedRoute>
+            <UpdateProtocolWrapper />
+          </ProtectedRoute>
+        ),
+      },
+      {
         path: "/donation",
         element: <Donation />,
       },
@@ -120,8 +144,7 @@ const router = createBrowserRouter([
       {
         index: true,
         path: "dashboard",
-        element:
-            <UserDashboard />
+        element: <UserDashboard />,
       },
       {
         path: "overview",
@@ -135,7 +158,7 @@ const router = createBrowserRouter([
         path: "submitted",
         element: <SubmittedProtocols published={[]} />,
       },
-      
+
       {
         path: "settings",
         element: <ProfileSettings />,
@@ -154,6 +177,14 @@ const router = createBrowserRouter([
             <AdminDashboard />
           </AdminRoute>
         ),
+      },
+      {
+        path: "research-funding-overview",
+        element: <ResearchFundingOverview />,
+      },
+      {
+        path: "messages",
+        element: <MessagesTable />,
       },
     ],
   },

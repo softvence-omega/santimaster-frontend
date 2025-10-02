@@ -1,18 +1,19 @@
 import { Outlet } from "react-router-dom";
 import Footer from "../shared/Footer/Footer";
-
+import AdminDahboardTab from "../pages/AdminDashboard/AdminTabs";
+import AdminNavbar from "../pages/AdminDashboard/AdminNavbar/AdminNavbar";
 
 const AdminDashboardLayout = () => {
   return (
-     <div className="min-h-screen bg-gray-50  md:mt-5">
-      {/* <Navbar /> */}
+    <div className="min-h-screen md:mt-5">
       <div className="">
-    
-          <Outlet></Outlet>
-          <Footer />
+        <AdminNavbar />
+        <AdminDahboardTab />
+        <Outlet></Outlet>
+        <Footer />
       </div>
     </div>
-  )
-}
+  );
+};
 
 export default AdminDashboardLayout;

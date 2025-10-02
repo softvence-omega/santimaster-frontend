@@ -8,7 +8,7 @@ export const adminDashboardAPI = baseAPI.injectEndpoints({
         url: "/protocol/admin-overview",
         method: "GET",
       }),
-      providesTags: ["admindashboard", "users", "protocol", "donation"],
+      providesTags: ["admindashboard", "Users", "protocol", "donation"],
     }),
 
     updateProtocolStatus: builder.mutation({
@@ -27,8 +27,8 @@ export const adminDashboardAPI = baseAPI.injectEndpoints({
       }),
       invalidatesTags: ["users"],
     }),
-
   }),
 });
 
-export const { useGetAdminDashboardQuery, useUpdateProtocolStatusMutation } = adminDashboardAPI;
+export const { useGetAdminDashboardQuery, useUpdateProtocolStatusMutation } =
+  adminDashboardAPI;

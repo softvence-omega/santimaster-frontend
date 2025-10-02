@@ -3,13 +3,11 @@ import type { ApiResponse } from "../../../types/api.response";
 import type { Protocol } from "../../../types/potocols.type";
 import type { MyProtocol } from "../../../types/myprotocols.type";
 
-
-
 const protocolsApi = baseAPI.injectEndpoints({
   endpoints: (builder) => ({
     // ---------- Get all protocols -------------------
     getAllProtocols: builder.query<
-      { data: Protocol[]; meta?: any }, 
+      { data: Protocol[]; meta?: any },
       { name: string; value: string }[] | void
     >({
       query: (args) => {
@@ -56,10 +54,13 @@ const protocolsApi = baseAPI.injectEndpoints({
     }),
 
     // ------------- Update protocol --------------
-    updateProtocol: builder.mutation<Protocol, { id: string } & Partial<Protocol>>({
+    updateProtocol: builder.mutation<
+      Protocol,
+      { id: string } & Partial<Protocol>
+    >({
       query: ({ id, ...data }) => ({
         url: `/protocol/${id}`,
-        method: "GET",
+        method: "PATCH",
         body: data,
       }),
       transformResponse: (response: ApiResponse<Protocol>) => response.data,
@@ -67,7 +68,10 @@ const protocolsApi = baseAPI.injectEndpoints({
     }),
 
     // ---------------- Delete protocol -------------
-    deleteProtocol: builder.mutation<{ success: boolean; message: string }, string>({
+    deleteProtocol: builder.mutation<
+      { success: boolean; message: string },
+      string
+    >({
       query: (id) => ({
         url: `/protocol/${id}`,
         method: "DELETE",
@@ -78,8 +82,8 @@ const protocolsApi = baseAPI.injectEndpoints({
       }),
       invalidatesTags: ["protocol"],
     }),
-// -----get my protocols-------
-getmyProtocols: builder.query<
+    // -----get my protocols-------
+    getmyProtocols: builder.query<
       { data: MyProtocol[]; meta?: any },
       { name: string; value: string }[] | void
     >({
@@ -98,20 +102,16 @@ getmyProtocols: builder.query<
       },
       transformResponse: (response: ApiResponse<Protocol[]>) => {
         return {
-          data: response.data.map(protocol => ({
+          data: response.data.map((protocol) => ({
             ...protocol,
-            status: protocol.status as any
+            status: protocol.status as any,
           })) as MyProtocol[],
           meta: response.meta,
         };
       },
       providesTags: ["protocol"],
     }),
-
-
   }),
-
-  
 });
 
 export const {
@@ -120,5 +120,5 @@ export const {
   useAddProtocolMutation,
   useUpdateProtocolMutation,
   useDeleteProtocolMutation,
-  useGetmyProtocolsQuery
+  useGetmyProtocolsQuery,
 } = protocolsApi;

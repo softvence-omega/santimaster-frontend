@@ -21,6 +21,7 @@ export const baseAPI = createApi({
   tagTypes: [
     "donation",
     "category",
+    "Users",
     "Sponsorship",
     "content",
     "protocol",

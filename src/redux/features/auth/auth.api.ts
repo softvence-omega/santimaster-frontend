@@ -55,6 +55,16 @@ forgotPassword: build.mutation({
         method: "GET",
       }),
     }),
+
+  // ------ delete user ---
+
+   deleteUserAdmin: build.mutation({
+      query: (id) => ({
+        url: `/auth/delete-account/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["Users"], // ✅ auto refresh users
+    }),
     
     updateProfileSetting: build.mutation({
       query: (payload) => ({
@@ -76,5 +86,6 @@ export const {
   useUpdatePasswordMutation,
   useGetMeQuery,
   useUpdateProfileSettingMutation,
-  useResetPasswordMutation
+  useResetPasswordMutation,
+  useDeleteUserAdminMutation
 } = userAPI;

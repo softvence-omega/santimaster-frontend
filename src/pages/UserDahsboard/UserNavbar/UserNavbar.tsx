@@ -105,7 +105,7 @@ const UserNavbar = () => {
               >
                 {user.profileImage ? (
                   <img
-                    src={user.profileImage}
+                    src={user?.profileImage}
                     alt="User Profile"
                     className="w-10 h-10 rounded-full object-cover"
                   />
@@ -165,7 +165,7 @@ const UserNavbar = () => {
         />
       </div>
 
-      {/*.  Navigation */}
+      {/*. ---------------  Navigation -------------- */}
       <div
         className={`${
           isOpen ? "block" : "hidden"
@@ -179,7 +179,7 @@ const UserNavbar = () => {
                 to={item.to}
                 className="flex items-center gap-2 text-gray-700 hover:text-green-600 text-sm sm:text-base transition"
                 onClick={() => {
-                  setIsOpen(false); // Close mobile menu on link click
+                  setIsOpen(false); 
                 }}
               >
                 <item.icon size={18} />
@@ -192,7 +192,7 @@ const UserNavbar = () => {
                   type="button"
                   onClick={() => {
                     setDropdownOpen(!dropdownOpen);
-                    setIsOpen(false); // Close mobile menu when opening dropdown
+                    setIsOpen(false); 
                   }}
                   className="flex items-center space-x-2 px-3 py-2 rounded-lg border border-gray-300 hover:bg-gray-100 w-full"
                   aria-label="User menu"

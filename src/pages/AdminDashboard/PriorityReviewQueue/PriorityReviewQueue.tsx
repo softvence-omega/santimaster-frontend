@@ -1,24 +1,31 @@
 import toast from "react-hot-toast";
 import { useUpdateProtocolStatusMutation } from "../../../redux/admindashboard/admindashboard";
 import type { Protocol } from "../../../types/admindashboard.type";
+import { Edit, Edit2Icon } from "lucide-react";
+import { Link } from "react-router-dom";
 
 interface PriorityReviewQueueProps {
   pendingProtocol?: Protocol[];
-  isLoading: boolean
+  isLoading: boolean;
 }
 
-const PriorityReviewQueue: React.FC<PriorityReviewQueueProps> = ({ pendingProtocol, isLoading }) => {
-  const [updateProtocol] = useUpdateProtocolStatusMutation()
-  const submissions = pendingProtocol?.map((protocol) => ({
-    id: protocol._id,
-    title: protocol.protocolTitle,
-    author: protocol.authors,
-    submittedTime: new Date(protocol.createdAt).toLocaleDateString(),
-    category: protocol.category,
-    riskLevel: protocol.bslLevel,
-    priority: protocol.status === "PENDING" ? "High Priority" : "",
-    priorityColor: protocol.status === "PENDING" ? "bg-orange-100 text-orange-800" : "",
-  })) || [];
+const PriorityReviewQueue: React.FC<PriorityReviewQueueProps> = ({
+  pendingProtocol,
+  isLoading,
+}) => {
+  const [updateProtocol] = useUpdateProtocolStatusMutation();
+  const submissions =
+    pendingProtocol?.map((protocol) => ({
+      id: protocol._id,
+      title: protocol.protocolTitle,
+      author: protocol.authors,
+      submittedTime: new Date(protocol.createdAt).toLocaleDateString(),
+      category: protocol.category,
+      riskLevel: protocol.bslLevel,
+      priority: protocol.status === "PENDING" ? "High Priority" : "",
+      priorityColor:
+        protocol.status === "PENDING" ? "bg-orange-100 text-orange-800" : "",
+    })) || [];
 
   const getRiskLevelStyle = (riskLevel: string) => {
     switch (riskLevel) {
@@ -35,14 +42,16 @@ const PriorityReviewQueue: React.FC<PriorityReviewQueueProps> = ({ pendingProtoc
     const id = toast.loading("Updating...");
     const formData = new FormData();
     formData.append("data", JSON.stringify({ status: "PUBLISHED" }));
-    const result = await updateProtocol({ data: formData, protocolId, })?.unwrap();
+    const result = await updateProtocol({
+      data: formData,
+      protocolId,
+    })?.unwrap();
     if (result?.success) {
       toast.success(result?.message, { id });
-    }
-    else {
+    } else {
       toast.error(result?.message, { id });
     }
-  }
+  };
 
   return (
     <div className="py-16 p-6 max-w-7xl mx-auto">
@@ -66,7 +75,10 @@ const PriorityReviewQueue: React.FC<PriorityReviewQueueProps> = ({ pendingProtoc
       {isLoading ? (
         <div className="">
           {Array.from({ length: 6 }).map((_, i) => (
-            <div key={i} className="rounded-lg p-4 bg-gray-200 animate-pulse w-full mx-auto mt-4">
+            <div
+              key={i}
+              className="rounded-lg p-4 bg-gray-200 animate-pulse w-full mx-auto mt-4"
+            >
               <div className="flex space-x-4 py-4">
                 {/* Text lines */}
                 <div className="flex-1 space-y-4 py-1">
@@ -80,7 +92,7 @@ const PriorityReviewQueue: React.FC<PriorityReviewQueueProps> = ({ pendingProtoc
             </div>
           ))}
         </div>
-      ) :
+      ) : (
         <div className="space-y-4 shadow-sm">
           {submissions.map((submission) => (
             <div
@@ -126,21 +138,33 @@ const PriorityReviewQueue: React.FC<PriorityReviewQueueProps> = ({ pendingProtoc
                     {submission?.category}
                   </span>
                 </div>
-
-                <button onClick={() => updateStatus(submission?.id)} className="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg font-medium text-sm transition-colors">
-                  Approve
-                </button>
+                {/* ----action button ---- */}
+                <div className="flex items-center gap-4">
+                  <Link
+                    to={`/update-protocol/${submission.id}`}
+                    title="Edit Protocol"
+                  >
+                    <Edit className="w-5 h-5 text-blue-600 hover:text-blue-800" />
+                  </Link>
+                  <button
+                    onClick={() => updateStatus(submission?.id)}
+                    className="bg-emerald-600 cursor-pointer hover:bg-emerald-700 text-white px-4 py-2 rounded-lg font-medium text-sm transition-colors"
+                  >
+                    Approve
+                  </button>
+                </div>
               </div>
             </div>
           ))}
         </div>
-      }
+      )}
 
       {/* Footer Actions */}
       <div className="mt-6 pt-4 border-t border-gray-200">
         <div className="flex justify-between items-center">
           <div className="text-sm text-gray-600">
-            Showing {submissions.length} of {submissions.length} priority submissions
+            Showing {submissions.length} of {submissions.length} priority
+            submissions
           </div>
           <div className="flex gap-2">
             <button className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors">

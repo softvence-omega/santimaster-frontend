@@ -79,8 +79,7 @@ export const accountApi = baseAPI.injectEndpoints({
       query: (id) => ({ url: `/message/${id}`, method: "DELETE" }),
     }),
 
-
-    // 
+    //
     updateAccount: builder.mutation<
       TAccount,
       { data: Partial<AccountPayload>; image?: File }
@@ -88,9 +87,7 @@ export const accountApi = baseAPI.injectEndpoints({
       query: ({ data, image }) => {
         const formData = new FormData();
         formData.append("data", JSON.stringify(data));
-        if (image) {
-          formData.append("image", image);
-        }
+        if (image) formData.append("image", image);
 
         return {
           url: "auth/update-profile",
@@ -100,6 +97,7 @@ export const accountApi = baseAPI.injectEndpoints({
       },
       transformResponse: (response: AccountResponseSingle) => response.data,
     }),
+    
   }),
 });
 

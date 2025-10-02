@@ -2,6 +2,7 @@ import { useState } from "react";
 import { ChevronDown, Lock } from "lucide-react";
 import SectionHeader from "../../utils/SectionHeading";
 import { useCreateDonationMutation } from "../../redux/features/donation/donation.api";
+import toast from "react-hot-toast";
 
 const DonationPaymentForm = () => {
   const [frequency, setFrequency] = useState<"one-time" | "monthly" | "annual">(
@@ -78,11 +79,11 @@ const DonationPaymentForm = () => {
       if (response.data.stripeCheckout?.url) {
         window.location.href = response.data.stripeCheckout.url;
       } else {
-        alert("Donation saved, but Stripe URL missing");
+        toast.error("Donation saved, but Stripe URL missing");
       }
     } catch (err) {
       console.error(err);
-      alert(" Donation failed");
+      toast.error(" Donation failed");
     }
   };
 

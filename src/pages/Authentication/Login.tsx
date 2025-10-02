@@ -6,15 +6,16 @@ import { toast } from "react-hot-toast";
 import { useLoginMutation, userAPI } from "../../redux/features/auth/auth.api";
 import { useAppDispatch } from "../../redux/hook";
 import { setAuth } from "../../redux/features/auth/auth.slice";
+import SectionHeader from "../../utils/SectionHeading";
 
 export default function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isNotRobot, setIsNotRobot] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false); // Combined loading state
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const [login] = useLoginMutation(); // No need for isLoading; use local state
+  const [login] = useLoginMutation();
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
@@ -33,7 +34,6 @@ export default function LoginForm() {
     setIsSubmitting(true);
 
     try {
-      // 1️⃣ Login
       const loginResponse = await login({ email, password }).unwrap();
 
       if (!loginResponse?.success || !loginResponse?.data?.accessToken) {
@@ -43,10 +43,8 @@ export default function LoginForm() {
 
       const token = loginResponse.data.accessToken;
 
-      // 2️⃣ Set token in Redux (headers will now include it for getMe)
       dispatch(setAuth({ token, user: null }));
 
-      // 3️⃣ Manually fetch user profile
       const userResponse = await dispatch(
         userAPI.endpoints.getMe.initiate(undefined)
       ).unwrap();
@@ -56,11 +54,10 @@ export default function LoginForm() {
         return;
       }
 
-      // 4️⃣ Update Redux with full user data
       dispatch(setAuth({ token, user: userResponse.data }));
 
       toast.success("Logged in successfully!");
-      navigate("/"); // Redirect to dashboard
+      navigate("/");
     } catch (err: any) {
       console.error("Login error:", err);
       const errorMessage =
@@ -77,12 +74,11 @@ export default function LoginForm() {
         <div className="bg-white rounded-lg shadow-md p-8">
           {/* Header */}
           <div className="text-center mb-8">
-            <h2 className="text-2xl font-semibold text-gray-900 mb-2">
-              Welcome back
-            </h2>
-            <p className="text-gray-600 text-sm">
-              Access your account to submit and manage protocols
-            </p>
+           
+            <SectionHeader
+              title="Welcome back"
+              subtitle="Access your account to submit and manage protocols"
+            ></SectionHeader>
           </div>
 
           {/* Form */}

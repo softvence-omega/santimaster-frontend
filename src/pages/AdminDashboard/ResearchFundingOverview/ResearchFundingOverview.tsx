@@ -1,4 +1,8 @@
+import React from "react";
 import SectionHeader from "../../../utils/SectionHeading";
+
+import Loading from "../../../utils/Loading";
+import { useGetDonationsQuery } from "../../../redux/features/donation/donation.api";
 
 interface RecentDonar {
   _id: string;
@@ -13,126 +17,172 @@ interface RecentDonar {
   updatedAt: string;
 }
 
-interface Donation {
-  totalDonar: number;
-  avgDonation: string;
-  recentDonar: RecentDonar[];
+interface DonationOverview {
+  totalDonation: number;
+  averageDonation: string;
+  donationCount: number;
+  donations: RecentDonar[];
 }
 
-interface ResearchFundingOverviewProps {
-  donation?: Donation;
-}
+const ResearchFundingOverview: React.FC = () => {
+  const { data, isLoading, error } = useGetDonationsQuery();
 
-const ResearchFundingOverview: React.FC<ResearchFundingOverviewProps> = ({ donation }) => {
-  const currentAmount = donation?.recentDonar.reduce((acc, d) => acc + d.amount, 0) || 0;
-  const targetAmount = 15000;
+  const donations = data?.data?.donations || [];
+  const totalDonation = donations.reduce((acc, d) => acc + d.amount, 0);
+  const averageDonation =
+    donations.length > 0 ? (totalDonation / donations.length).toFixed(0) : "0";
+  const donationCount = donations.length;
+
+  const donation: DonationOverview | undefined = data?.data
+    ? {
+        totalDonation,
+        averageDonation,
+        donationCount,
+        donations,
+      }
+    : undefined;
+
+  const currentAmount =
+    donation?.donations.reduce((acc, d) => acc + d.amount, 0) || 0;
+  const targetAmount = 15000; // Example target
   const progressPercentage = Math.round((currentAmount / targetAmount) * 100);
 
+  if (isLoading)
+    return (
+      <div>
+        {" "}
+        <Loading />
+      </div>
+    );
+  if (error) return <p className="text-red-500">Error loading donations.</p>;
+
   return (
-    <div className="py-15 p-6">
+    <div className="py-6 px-4 sm:px-6 lg:px-8">
       {/* Header */}
-      <div className="mb-8 mx-w-2xl justify-items-start">
-        <SectionHeader
-          title="Research Funding Overview"
-          subtitle="Community support and donation tracking"
-        />
+      <SectionHeader
+        title="Research Funding Overview"
+        subtitle="Community support and donation tracking"
+      />
+
+      {/* Stats and Progress */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8 mb-8">
+        {/* Stats Cards */}
+        <div className="lg:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+          <div className="bg-gray-50 rounded-lg p-4 sm:p-6">
+            <div className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-1">
+              {donation?.donationCount || 0}
+            </div>
+            <div className="text-sm sm:text-base text-gray-600 mb-2">
+              Active Donors
+            </div>
+            <div className="flex items-center text-xs sm:text-sm">
+              <span className="inline-flex items-center px-2 py-1 rounded-full text-black bg-[#DDE9E5] font-medium">
+                +12% this month
+              </span>
+            </div>
+          </div>
+
+          <div className="bg-gray-50 rounded-lg p-4 sm:p-6">
+            <div className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-1">
+              ${donation?.averageDonation || 0}
+            </div>
+            <div className="text-sm sm:text-base text-gray-600 mb-2">
+              Avg Donation
+            </div>
+            <div className="flex items-center text-xs sm:text-sm">
+              <span className="inline-flex items-center px-2 py-1 rounded-full text-black bg-[#DDE9E5] font-medium">
+                +8% this month
+              </span>
+            </div>
+          </div>
+
+          {/* Monthly Progress Bar */}
+          <div className="sm:col-span-2">
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">
+              Monthly Goal Progress
+            </h3>
+            <div className="w-full bg-gray-200 rounded-full h-3 sm:h-4">
+              <div
+                className="bg-green-600 h-3 sm:h-4 rounded-full transition-all duration-500 ease-in-out"
+                style={{ width: `${progressPercentage}%` }}
+              />
+            </div>
+            <p className="text-sm text-gray-600 mt-2">
+              ${currentAmount.toLocaleString()} / $
+              {targetAmount.toLocaleString()} ({progressPercentage}% of target)
+            </p>
+          </div>
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 lg:gap-8 shadow-sm p-4">
-        {/* Left Section - Monthly Goal Progress */}
-        <div className="xl:col-span-2 space-y-6">
-          <div>
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4">
-              <h2 className="text-lg sm:text-xl font-semibold text-gray-900 mb-2 sm:mb-0">
-                Monthly Goal Progress
-              </h2>
-              <div className="text-right">
-                <span className="text-lg sm:text-xl font-semibold text-gray-900">
-                  ${currentAmount.toLocaleString()} / ${targetAmount.toLocaleString()}
-                </span>
-              </div>
-            </div>
+      {/* Donation Table */}
+      <div className="bg-white shadow-sm rounded-lg overflow-x-auto">
+        <table className="min-w-full divide-y divide-gray-200">
+          <thead className="bg-gray-50">
+            <tr>
+              <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">
+                Donor Name
+              </th>
+              <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">
+                Email
+              </th>
+              <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">
+                Country
+              </th>
+              <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">
+                Tribute
+              </th>
+              <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">
+                Donation Type
+              </th>
+              <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">
+                Amount
+              </th>
+              <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">
+                Status
+              </th>
+              <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">
+                Date
+              </th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-gray-100">
+            {donation?.donations.map((d) => (
+              <tr key={d._id} className="hover:bg-gray-50 transition">
+                <td className="px-4 py-3">{d.donarName}</td>
+                <td className="px-4 py-3">{d.donarEmail}</td>
+                <td className="px-4 py-3">{d.country}</td>
+                <td className="px-4 py-3">{d.tribute || "-"}</td>
+                <td className="px-4 py-3">{d.donationType}</td>
+                <td className="px-4 py-3 font-semibold">${d.amount}</td>
+                <td className="px-4 py-3">
+                  <span
+                    className={`px-2 py-1 rounded-full text-xs font-medium ${
+                      d.paymentStatus === "SUCCESS"
+                        ? "bg-emerald-100 text-emerald-700"
+                        : d.paymentStatus === "PENDING"
+                        ? "bg-yellow-100 text-yellow-700"
+                        : "bg-gray-200 text-gray-700"
+                    }`}
+                  >
+                    {d.paymentStatus}
+                  </span>
+                </td>
+                <td className="px-4 py-3">
+                  {new Date(d.createdAt).toLocaleDateString()}
+                </td>
+              </tr>
+            ))}
 
-            {/* Progress Bar */}
-            <div className="relative">
-              <div className="w-full bg-gray-200 rounded-full h-3 sm:h-4">
-                <div
-                  className="bg-green-600 h-3 sm:h-4 rounded-full transition-all duration-500 ease-in-out"
-                  style={{ width: `${progressPercentage}%` }}
-                />
-              </div>
-              <p className="text-sm text-gray-600 mt-2">
-                {progressPercentage}% of monthly target reached
-              </p>
-            </div>
-          </div>
-
-          {/* Stats Cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
-            <div className="bg-gray-50 rounded-lg p-4 sm:p-6">
-              <div className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-1">
-                {donation?.totalDonar || 0}
-              </div>
-              <div className="text-sm sm:text-base text-gray-600 mb-2">Active Donors</div>
-              <div className="flex items-center text-xs sm:text-sm">
-                <span className="inline-flex items-center px-2 py-1 rounded-full text-black bg-[#DDE9E5] font-medium">
-                  +12% this month
-                </span>
-              </div>
-            </div>
-
-            <div className="bg-gray-50 rounded-lg p-4 sm:p-6">
-              <div className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-1">
-                ${donation?.avgDonation || 0}
-              </div>
-              <div className="text-sm sm:text-base text-gray-600 mb-2">Avg Donation</div>
-              <div className="flex items-center text-xs sm:text-sm">
-                <span className="inline-flex items-center px-2 py-1 rounded-full text-black bg-[#DDE9E5] font-medium">
-                  +8% this month
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Right Section - Recent Donations */}
-        <div className="xl:col-span-1">
-          <div className="bg-white">
-            <div className="flex items-center justify-between mb-6 p-2">
-              <h2 className="text-lg sm:text-xl font-semibold text-gray-900">Recent Donations</h2>
-              <button className="text-blue-600 hover:text-blue-700 text-sm font-medium transition-colors">
-                View All
-              </button>
-            </div>
-
-            <div className="space-y-4">
-              {donation?.recentDonar.map((donar) => (
-                <div
-                  key={donar._id}
-                  className="flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg transition-colors"
-                >
-                  <div className="flex items-center space-x-3">
-                    <img
-                      src={`https://ui-avatars.com/api/?name=${encodeURIComponent(donar.donarName)}&background=6b7280&color=ffffff&size=40`}
-                      alt={donar?.donarName}
-                      className="w-8 h-8 sm:w-10 sm:h-10 rounded-full object-cover flex-shrink-0"
-                    />
-                    <div className="min-w-0 flex-1">
-                      <p className="text-sm sm:text-base font-medium text-gray-900 truncate">
-                        {donar?.donarName}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex-shrink-0">
-                    <span className="text-sm sm:text-base font-semibold text-gray-900">
-                      ${donar?.amount}
-                    </span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
+            {!donation?.donations.length && (
+              <tr>
+                <td colSpan={8} className="px-4 py-4 text-center text-gray-500">
+                  No donations available.
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
       </div>
     </div>
   );

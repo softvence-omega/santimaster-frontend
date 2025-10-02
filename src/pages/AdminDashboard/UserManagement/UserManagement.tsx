@@ -1,5 +1,8 @@
 import { Search, Trash2 } from "lucide-react";
 import { useMemo, useState } from "react";
+import { useDeleteUserAdminMutation } from "../../../redux/features/auth/auth.api";
+import toast from "react-hot-toast";
+import SectionHeader from "../../../utils/SectionHeading";
 
 interface User {
   id: string;
@@ -13,11 +16,25 @@ interface User {
 }
 
 interface UserManagementProps {
-  users?: User[]; // received from Redux query
+  users?: User[];
 }
 
 const UserManagement: React.FC<UserManagementProps> = ({ users = [] }) => {
   const [searchTerm, setSearchTerm] = useState("");
+  const [deleteUser, { isLoading: isDeleting }] = useDeleteUserAdminMutation();
+
+  // ✅ Fixed: only one delete handler
+  const handleDelete = async (id: string) => {
+    if (toast.custom("Are you sure you want to delete this user?")) {
+      try {
+        await deleteUser(id).unwrap();
+        toast.success("User deleted successfully!");
+      } catch (error: any) {
+        console.error("Failed to delete user:", error);
+        toast.error("Failed to delete user. Please try again.");
+      }
+    }
+  };
 
   // Filter users by search term
   const filteredUsers = useMemo(
@@ -29,11 +46,6 @@ const UserManagement: React.FC<UserManagementProps> = ({ users = [] }) => {
       ),
     [users, searchTerm]
   );
-
-  const handleDelete = (id: string) => {
-    // Handle user deletion logic here
-    console.log(`Deleting user with ID: ${id}`);
-  };
 
   const getRoleBadgeStyle = (role: string) => {
     switch (role) {
@@ -59,20 +71,17 @@ const UserManagement: React.FC<UserManagementProps> = ({ users = [] }) => {
     }
   };
 
-
   return (
     <div className="rounded-xl shadow-sm p-6 py-16">
       {/* Header */}
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">
-          User Management
-        </h1>
-        <p className="text-gray-600">
-          Manage researchers, reviewers, and administrators
-        </p>
+        <SectionHeader
+          title="  User Management"
+          subtitle="Manage researchers, reviewers, and administrators"
+        ></SectionHeader>
       </div>
 
-      {/* Search and Selection Info */}
+      {/* Search */}
       <div className="flex items-center justify-between mb-6">
         <div className="relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
@@ -119,7 +128,6 @@ const UserManagement: React.FC<UserManagementProps> = ({ users = [] }) => {
               >
                 <td className="py-4 px-4">
                   <div className="flex items-center gap-3">
-
                     <div className="w-8 h-8 bg-emerald-100 rounded-full flex items-center justify-center">
                       <span className="text-emerald-600 font-medium text-sm">
                         {user.name
@@ -129,7 +137,9 @@ const UserManagement: React.FC<UserManagementProps> = ({ users = [] }) => {
                       </span>
                     </div>
                     <div>
-                      <div className="font-medium text-gray-900">{user.name}</div>
+                      <div className="font-medium text-gray-900">
+                        {user.name}
+                      </div>
                       <div className="text-sm text-gray-500">{user.email}</div>
                     </div>
                   </div>
@@ -157,7 +167,11 @@ const UserManagement: React.FC<UserManagementProps> = ({ users = [] }) => {
                   {user.submissions}
                 </td>
                 <td className="text-center">
-                  <button onClick={() => handleDelete(user?.id)} className="p-1 text-gray-400 hover:text-red-600 transition-colors">
+                  <button
+                    disabled={isDeleting}
+                    onClick={() => handleDelete(user.id)}
+                    className="p-1 text-gray-400 hover:text-red-600 transition-colors disabled:opacity-50"
+                  >
                     <Trash2 size={16} />
                   </button>
                 </td>
