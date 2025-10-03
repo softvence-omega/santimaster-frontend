@@ -1,4 +1,4 @@
-import { useGetAdminDashboardQuery } from "../../redux/admindashboard/admindashboard";
+import { useGetAdminDashboardQuery } from "../../redux/features/admindashboard/admindashboard";
 import ContainerWrapper from "../../utils/ContainerWrapper";
 import ActivityTrendsSection from "./ActivityTrendsSection/ActivityTrendsSection";
 
@@ -26,7 +26,7 @@ const AdminDashboard = () => {
       <ActivityTrendsSection
         recentActivity={adminDashboard?.data.recentActivity}
       />
-      <ResearchFundingOverview  />
+      <ResearchFundingOverview />
       <UserManagement
         users={adminDashboard?.data.users?.map((user) => ({
           id: user._id,

@@ -3,7 +3,7 @@ import { Eye, Trash2 } from "lucide-react";
 import {
   useGetUserDashboardQuery,
   useDeleteProtocolMutation,
-} from "../../../redux/userdasboad/userdashboard";
+} from "../../../redux/features/userdasboad/userdashboard";
 import SkeletonLoader from "../../../shared/SkeletonLoader";
 import { Link } from "react-router-dom";
 

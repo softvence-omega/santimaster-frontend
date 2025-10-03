@@ -1,5 +1,5 @@
-import type { UserDashboardResponse } from "../../types/admindashboard.type";
-import { baseAPI } from "../api/baseApi";
+import type { UserDashboardResponse } from "../../../types/admindashboard.type";
+import { baseAPI } from "../../api/baseApi";
 
 export const adminDashboardAPI = baseAPI.injectEndpoints({
   endpoints: (builder) => ({

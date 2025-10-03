@@ -6,8 +6,81 @@ import {
   Edit,
   Trash2,
 } from "lucide-react";
+import { useGetAdminDashboardQuery } from "../../../redux/features/admindashboard/admindashboard";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 
 const DataExportManagement = () => {
+  const { data: adminDashboardData } = useGetAdminDashboardQuery();
+
+  // 🔹 Function to generate PDF
+  const handleDownloadPDF = (type: string) => {
+    if (!adminDashboardData) return;
+
+    const doc = new jsPDF();
+
+    doc.setFontSize(18);
+    doc.text("Admin Dashboard Report", 14, 20);
+
+    if (type === "user-data") {
+      doc.setFontSize(14);
+      doc.text("👥 Users", 14, 30);
+      autoTable(doc, {
+        startY: 35,
+        head: [["Name", "Email", "Role", "Status"]],
+        body:
+          adminDashboardData?.data?.users?.map((user) => [
+            user.fullName,
+            user.email,
+            user.role,
+            user.accountStatus,
+          ]) || [],
+      });
+    }
+
+    if (type === "analytics-report") {
+      doc.setFontSize(14);
+      doc.text("📊 Overview Analytics", 14, 30);
+      autoTable(doc, {
+        startY: 35,
+        head: [
+          [
+            "Pending Protocol",
+            "Draft Protocol",
+            "Total Users",
+            "Total Donations",
+          ],
+        ],
+        body: [
+          [
+            adminDashboardData?.data?.overview?.pendingProtocol || 0,
+            adminDashboardData?.data?.overview?.draftProtocol || 0,
+            adminDashboardData?.data?.overview?.totalUser || 0,
+            adminDashboardData?.data?.overview?.totalDonation || 0,
+          ],
+        ],
+      });
+    }
+
+    if (type === "protocol-submissions") {
+      doc.setFontSize(14);
+      doc.text("📄 Protocol Submissions", 14, 30);
+      autoTable(doc, {
+        startY: 35,
+        head: [["Title", "Category", "Status"]],
+        body:
+          adminDashboardData?.data?.pendingProtocol?.map((protocol) => [
+            protocol.protocolTitle,
+            protocol.category,
+            protocol.status,
+          ]) || [],
+      });
+    }
+
+    // Save File
+    doc.save(`${type}.pdf`);
+  };
+
   const recentExports = [
     {
       icon: FileText,
@@ -79,7 +152,10 @@ const DataExportManagement = () => {
                       <p className="text-sm text-gray-500">{item.subtitle}</p>
                     </div>
                   </div>
-                  <button className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg font-medium transition-colors">
+                  <button
+                    onClick={() => handleDownloadPDF(item.id)}
+                    className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+                  >
                     <Download size={16} />
                     Download
                   </button>

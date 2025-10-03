@@ -1,5 +1,5 @@
-import type { UserDashboardResponse } from "../../types/userdashboard.type";
-import { baseAPI } from "../api/baseApi";
+import type { UserDashboardResponse } from "../../../types/userdashboard.type";
+import { baseAPI } from "../../api/baseApi";
 
 export const userDashboardApi = baseAPI.injectEndpoints({
   endpoints: (builder) => ({
@@ -22,4 +22,5 @@ export const userDashboardApi = baseAPI.injectEndpoints({
   }),
 });
 
-export const { useGetUserDashboardQuery , useDeleteProtocolMutation} = userDashboardApi;
+export const { useGetUserDashboardQuery, useDeleteProtocolMutation } =
+  userDashboardApi;

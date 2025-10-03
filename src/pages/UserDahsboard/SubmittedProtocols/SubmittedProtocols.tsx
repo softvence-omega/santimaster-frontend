@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from "react";
 import type { Protocol } from "../../../types/userdashboard.type";
 import { User } from "lucide-react";
-import { useGetUserDashboardQuery } from "../../../redux/userdasboad/userdashboard"; // Use working API hook
+import { useGetUserDashboardQuery } from "../../../redux/features/userdasboad/userdashboard"; // Use working API hook
 import SkeletonLoader from "../../../shared/SkeletonLoader";
 
 interface ProtocolCardProps {
@@ -40,25 +40,34 @@ const StatusBadge: React.FC<{ status: ProtocolCardProps["status"] }> = ({
 const ProtocolCard: React.FC<{ protocol: Protocol }> = ({ protocol }) => {
   return (
     <div className="rounded-lg p-6 mb-4 bg-white border shadow-sm hover:shadow-md transition">
-      <h3 className="text-lg font-semibold text-gray-900 mb-2">
+      {/* Title */}
+      <h3 className="text-lg font-semibold text-gray-900 mb-2 break-words">
         {protocol.protocolTitle || "Untitled Protocol"}
       </h3>
-      <p className="text-gray-600 text-sm mb-4">
+
+      {/* Description */}
+      <p className="text-gray-600 text-sm mb-4 line-clamp-3">
         {protocol.protocolDescription || "No description available"}
       </p>
-      <div className="flex justify-between items-start mb-4">
-        <div className="flex space-x-8">
+
+      {/* Info Section */}
+      <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-4">
+        {/* Left Info */}
+        <div className="flex flex-col sm:flex-row sm:space-x-8 gap-4 sm:gap-0">
+          {/* Reviewer */}
           <div>
             <p className="text-sm font-medium text-gray-700 mb-1">Reviewer:</p>
             <div className="flex items-center space-x-2">
               <div className="w-6 h-6 bg-orange-400 rounded-full flex items-center justify-center">
                 <User className="w-4 h-4 text-white" />
               </div>
-              <span className="text-sm text-gray-900">
+              <span className="text-sm text-gray-900 truncate max-w-[150px]">
                 {protocol.authors || "Unknown"}
               </span>
             </div>
           </div>
+
+          {/* Submitted Date */}
           <div>
             <p className="text-sm font-medium text-gray-700 mb-1">Submitted:</p>
             <p className="text-sm text-gray-900">
@@ -68,6 +77,8 @@ const ProtocolCard: React.FC<{ protocol: Protocol }> = ({ protocol }) => {
             </p>
           </div>
         </div>
+
+        {/* Right Info (Status) */}
         <div>
           <p className="text-sm font-medium text-gray-700 mb-1">Status:</p>
           <StatusBadge
@@ -135,29 +146,38 @@ const SubmittedProtocols: React.FC = () => {
   return (
     <div className="px-6 max-w-5xl mx-auto py-16">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">
-          Submitted Protocols
-        </h1>
-        <select
-          value={filter}
-          onChange={(e) =>
-            setFilter(
-              e.target.value as
-                | "ALL"
-                | "PUBLISHED"
-                | "DRAFT"
-                | "REJECTED"
-                | "PENDING"
-            )
-          }
-          className="border border-gray-300 rounded-md px-3 py-2 text-sm text-gray-700 cursor-pointer bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-        >
-          <option value="ALL">All Statuses</option>
-          <option value="PUBLISHED">Published</option>
-          <option value="DRAFT">Draft</option>
-          <option value="REJECTED">Rejected</option>
-          <option value="PENDING">Pending</option>
-        </select>
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          {/* Title */}
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900">
+              Submitted Protocols
+            </h1>
+          </div>
+
+          {/* Filter Dropdown */}
+          <div>
+            <select
+              value={filter}
+              onChange={(e) =>
+                setFilter(
+                  e.target.value as
+                    | "ALL"
+                    | "PUBLISHED"
+                    | "DRAFT"
+                    | "REJECTED"
+                    | "PENDING"
+                )
+              }
+              className="border border-gray-300 rounded-md px-3 py-2 text-sm text-gray-700 cursor-pointer bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="ALL">All Statuses</option>
+              <option value="PUBLISHED">Published</option>
+              <option value="DRAFT">Draft</option>
+              <option value="REJECTED">Rejected</option>
+              <option value="PENDING">Pending</option>
+            </select>
+          </div>
+        </div>
       </div>
       <div className="space-y-4">
         {filteredProtocols.length > 0 ? (
@@ -168,7 +188,7 @@ const SubmittedProtocols: React.FC = () => {
             />
           ))
         ) : (
-          <p className="text-sm text-gray-600 text-center">
+          <p className="text-sm text-red-600 text-center">
             No protocols found for the selected filter.
           </p>
         )}

@@ -18,6 +18,7 @@
     "axios": "^1.12.2",
     "chart.js": "^4.5.0",
     "jspdf": "^3.0.3",
+    "jspdf-autotable": "^5.0.2",
     "lucide-react": "^0.544.0",
     "markdown-it": "^14.1.0",
     "mdast2docx": "^1.6.0",

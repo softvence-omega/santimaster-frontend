@@ -1,5 +1,5 @@
 import { useGetMeQuery } from "../../../redux/features/auth/auth.api";
-import { useGetUserDashboardQuery } from "../../../redux/userdasboad/userdashboard";
+import { useGetUserDashboardQuery } from "../../../redux/features/userdasboad/userdashboard";
 import SectionHeader from "../../../utils/SectionHeading";
 import { toast } from "react-hot-toast";
 import { useEffect } from "react";
@@ -7,7 +7,6 @@ import { Link } from "react-router-dom";
 import Loading from "../../../utils/Loading";
 
 export default function UserDashboardOverview() {
-  // Fetch user
   const {
     data: userData,
     isLoading: isLoadingUser,
@@ -70,23 +69,26 @@ export default function UserDashboardOverview() {
     },
   ];
 
-  if (isLoadingProtocol || isLoadingUser) return;
-  <div className="grid text-center">
-    <Loading></Loading>
-    <p>Loading...</p>
-  </div>;
+  if (isLoadingProtocol || isLoadingUser) {
+    return (
+      <div className="flex flex-col items-center justify-center py-20">
+        <Loading />
+        <p className="mt-4 text-gray-600">Loading your dashboard...</p>
+      </div>
+    );
+  }
 
   return (
-    <div className="pt-40 mx-auto max-w-6xl">
+    <div className="pt-40 mx-auto max-w-6xl px-4 sm:px-6">
       {/* Header Section */}
-      <div className="bg-gradient-to-r from-[#E8F0EE] via-[#80AB9E] to-[#1D6953] text-white rounded-xl shadow p-6 flex flex-col sm:flex-row justify-between items-center">
-        <div className="mb-4 sm:mb-0">
+      <div className="bg-gradient-to-r from-[#E8F0EE] via-[#80AB9E] to-[#1D6953] text-white rounded-xl shadow p-6 flex flex-col sm:flex-row justify-between items-center gap-6">
+        <div className="text-center sm:text-left">
           <SectionHeader
             title={`Welcome back, ${userName}!`}
             subtitle="You have protocols pending review and new notifications."
           />
           <Link to="/protocol">
-            <button className="mt-4 px-4 py-2 bg-[#17AA80] text-white font-medium rounded-lg shadow hover:bg-[#13996F] transition">
+            <button className="mt-4 px-4 py-2 bg-[#17AA80] text-white font-medium rounded-lg shadow hover:bg-[#13996F] transition w-full sm:w-auto">
               Browse Protocols
             </button>
           </Link>
@@ -103,7 +105,7 @@ export default function UserDashboardOverview() {
             </div>
           </div>
         ) : (
-          <div className="grid items-center gap-4 sm:ml-3">
+          <div className="flex flex-col sm:flex-row items-center gap-4">
             <img
               src={userImage}
               alt={userName}
@@ -120,7 +122,7 @@ export default function UserDashboardOverview() {
       </div>
 
       {/* Stats Section */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-6 p-4 sm:p-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 p-4 sm:p-6">
         {stats.map((item, i) => (
           <div
             key={i}

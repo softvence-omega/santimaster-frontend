@@ -1,4 +1,4 @@
-import { useGetUserDashboardQuery } from "../../redux/userdasboad/userdashboard";
+import { useGetUserDashboardQuery } from "../../redux/features/userdasboad/userdashboard";
 import SkeletonLoader from "../../shared/SkeletonLoader";
 import ContainerWrapper from "../../utils/ContainerWrapper";
 
