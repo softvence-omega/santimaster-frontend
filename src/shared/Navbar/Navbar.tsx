@@ -67,7 +67,7 @@ const Navbar = () => {
   ];
 
   return (
-    <div className="w-full p-2 fixed top-0 left-0 z-50">
+    <div className="w-full p-2 fixed top-0 left-0 z-100">
       <div className="rounded-[12px] border border-black/25 bg-white shadow-[0_4px_15px_0_rgba(0,0,0,0.15)] backdrop-blur-[10px]">
         <div className="px-4 sm:px-6 py-3 flex items-center justify-between">
           {/*------------- Logo ------------------------*/}

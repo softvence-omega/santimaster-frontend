@@ -1,6 +1,6 @@
-import SectionHeader from "../../../utils/SectionHeading";
-import roleimg from "../../../assets/roles/rolesimg.png";
 import { Link } from "react-router-dom";
+import roleimg from "../../../assets/roles/rolesimg.png";
+import SectionHeader from "../../../utils/SectionHeading";
 interface RoleCardProps {
   icon: React.ReactNode;
   title: string;
@@ -50,14 +50,9 @@ const RoleCard = ({ icon, title, description, items }: RoleCardProps) => {
 
 export default function ChooseYourRole() {
   return (
-    <section className="py-36 px-6 max-w-7xl mx-auto text-center">
+    <section className="py-36 px-6 text-center">
       {/* ---------top heading------------- */}
-      <div className="max-w-xl">
-        <SectionHeader
-          title="Roles & How to Get Involved"
-          subtitle="Join our mission to democratize genetic research and accelerate scientific discovery through collaborative protocol development."
-        ></SectionHeader>
-      </div>
+
       {/* ----card header--------------- */}
       <div>
         <SectionHeader
@@ -95,32 +90,34 @@ export default function ChooseYourRole() {
           />
         </div>
         {/* -------2nd card */}
-        <div className="translate-y-4">
-          <RoleCard
-            icon={
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-              >
-                <path
-                  d="M12.021 12C8.712 12 6.021 9.309 6.021 6C6.021 2.691 8.713 0 12.021 0C15.329 0 18.021 2.691 18.021 6C18.021 9.309 15.33 12 12.021 12ZM14 18.184V14H8.979V18.277C9.574 18.623 9.979 19.261 9.979 20C9.979 20.5304 9.76829 21.0391 9.39321 21.4142C9.01814 21.7893 8.50943 22 7.979 22C7.44857 22 6.93986 21.7893 6.56479 21.4142C6.18971 21.0391 5.979 20.5304 5.979 20C5.979 19.262 6.384 18.624 6.979 18.277V14.002C5.65731 14.0089 4.392 14.5382 3.45919 15.4746C2.52639 16.411 2.00183 17.6783 2 19V24H12V21C12 19.698 12.839 18.598 14 18.184ZM17 14H16V18.184C17.161 18.598 18 19.698 18 21V24H22V19C22 16.243 19.757 14 17 14ZM15 20C14.7348 20 14.4804 20.1054 14.2929 20.2929C14.1054 20.4804 14 20.7348 14 21V24H16V21C16 20.7348 15.8946 20.4804 15.7071 20.2929C15.5196 20.1054 15.2652 20 15 20Z"
-                  fill="#F5F5F7"
-                />
-              </svg>
-            }
-            title="Clinician"
-            description="Provide clinical perspectives and help move protocols toward clinical relevance"
-            items={[
-              "Review clinical feasibility",
-              "Advise safety & ethics",
-              "Pilot protocols",
-            ]}
-          />
+        <div className="relative">
+          <div className="md:absolute md:top-8">
+            <RoleCard
+              icon={
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                >
+                  <path
+                    d="M12.021 12C8.712 12 6.021 9.309 6.021 6C6.021 2.691 8.713 0 12.021 0C15.329 0 18.021 2.691 18.021 6C18.021 9.309 15.33 12 12.021 12ZM14 18.184V14H8.979V18.277C9.574 18.623 9.979 19.261 9.979 20C9.979 20.5304 9.76829 21.0391 9.39321 21.4142C9.01814 21.7893 8.50943 22 7.979 22C7.44857 22 6.93986 21.7893 6.56479 21.4142C6.18971 21.0391 5.979 20.5304 5.979 20C5.979 19.262 6.384 18.624 6.979 18.277V14.002C5.65731 14.0089 4.392 14.5382 3.45919 15.4746C2.52639 16.411 2.00183 17.6783 2 19V24H12V21C12 19.698 12.839 18.598 14 18.184ZM17 14H16V18.184C17.161 18.598 18 19.698 18 21V24H22V19C22 16.243 19.757 14 17 14ZM15 20C14.7348 20 14.4804 20.1054 14.2929 20.2929C14.1054 20.4804 14 20.7348 14 21V24H16V21C16 20.7348 15.8946 20.4804 15.7071 20.2929C15.5196 20.1054 15.2652 20 15 20Z"
+                    fill="#F5F5F7"
+                  />
+                </svg>
+              }
+              title="Clinician"
+              description="Provide clinical perspectives and help move protocols toward clinical relevance"
+              items={[
+                "Review clinical feasibility",
+                "Advise safety & ethics",
+                "Pilot protocols",
+              ]}
+            />
+          </div>
         </div>
-        <div>
+        <div >
           <RoleCard
             icon={
               <svg

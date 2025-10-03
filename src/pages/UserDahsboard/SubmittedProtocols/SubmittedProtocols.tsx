@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 import React, { useState, useMemo } from "react";
 import type { Protocol } from "../../../types/userdashboard.type";
 import { User } from "lucide-react";

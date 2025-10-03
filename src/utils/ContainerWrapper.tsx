@@ -10,7 +10,7 @@ const ContainerWrapper: React.FC<ContainerWrapperProps> = ({
   className = "",
 }) => {
   return (
-    <div className={`px-4  mx-auto w-11/12 md:w-10/12 sm:px-6 ${className}`}>
+    <div className={`px-4  mx-auto container sm:px-6 ${className}`}>
       {children}
     </div>
   );

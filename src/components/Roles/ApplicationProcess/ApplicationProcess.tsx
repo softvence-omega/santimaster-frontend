@@ -50,7 +50,7 @@ const ApplicationProcess: React.FC = () => {
   };
 
   return (
-    <div className="bg-gradient-to-b from-white-500 to-teal-50 py-16 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto">
+    <div className="bg-gradient-to-b from-white-500 to-teal-50 py-16 px-4 sm:px-6 lg:px-8">
       <div className="">
         {/* ---------Header ----------------*/}
         <div className="text-center mb-16">

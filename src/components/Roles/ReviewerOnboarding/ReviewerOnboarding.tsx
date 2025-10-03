@@ -71,7 +71,7 @@ const ReviewerOnboarding: React.FC = () => {
 
   return (
     <div className=" py-16 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-6xl mx-auto">
+      <div className="">
         <SectionHeader
           title="  Reviewer Onboarding & Expectations"
           subtitle=" Special requirements and responsibilities for our peer review team"

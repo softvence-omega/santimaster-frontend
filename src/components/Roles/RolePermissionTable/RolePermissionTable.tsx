@@ -80,13 +80,7 @@ const PermissionRow = ({
 
 export default function RolePermissionsTable() {
   return (
-    <section className="py-12 px-6 max-w-5xl mx-auto">
-      {/* <h2 className="text-2xl md:text-3xl font-semibold text-center text-gray-800">
-        Role Permissions Overview
-      </h2>
-      <p className="text-gray-600 text-center mt-2 mb-8">
-        Understanding what each role can do within the Open Gene platform
-      </p> */}
+    <section className="py-12 px-6 ">
       <SectionHeader
         title="Role Permissions Overview"
         subtitle="  Understanding what each role can do within the Open Gene platform"
