@@ -1,3 +1,4 @@
+// Material used in protocol
 export interface Material {
   itemName: string;
   quantity: number;
@@ -5,11 +6,34 @@ export interface Material {
   supplier: string;
 }
 
+// Equipment used in protocol
 export interface Equipment {
   equipmentName: string;
   note: string;
 }
 
+// Author type
+export interface Author {
+  _id: string;
+  fullName: string;
+  affiliation: string;
+  orcid?: string;
+  email: string;
+  isDeleted: boolean;
+  accountStatus: string;
+  isTermAgree: boolean;
+  role: string;
+  additionalInfo?: {
+    isAgree: boolean;
+  };
+  createdAt: string;
+  updatedAt: string;
+  lastLoginTime?: string;
+  profileImage?: string;
+  bio?: string;
+}
+
+// Protocol type
 export interface Protocol {
   _id: string;
   protocolTitle: string;
@@ -30,7 +54,8 @@ export interface Protocol {
   stepProcedure: string;
   attachment?: string;
   license: string;
-  coAuthors: string[];
+  authors: Author;        // Single author object
+  coAuthors: Author[];    // Array of co-authors
   isConfirmed: boolean;
   isAcknowledged: boolean;
   isConfidential: boolean;

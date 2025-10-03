@@ -20,8 +20,13 @@ const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
-    setAuth: (state, action: PayloadAction<{ token?: string; user: TUser | null }>) => {
-      state.accessToken = action?.payload?.token as string || localStorage.getItem("accessToken") as string;
+    setAuth: (
+      state,
+      action: PayloadAction<{ token?: string; user: TUser | null }>
+    ) => {
+      state.accessToken =
+        (action?.payload?.token as string) ||
+        (localStorage.getItem("accessToken") as string);
       state.user = action.payload.user;
 
       localStorage.setItem("accessToken", action?.payload?.token as string);
@@ -33,8 +38,11 @@ const authSlice = createSlice({
       state.accessToken = null;
       state.user = null;
 
+      // Clear localStorage
       localStorage.removeItem("accessToken");
       localStorage.removeItem("user");
+
+      document.cookie = "token=; path=/;";
     },
   },
 });

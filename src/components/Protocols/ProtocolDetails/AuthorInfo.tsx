@@ -1,7 +1,21 @@
 import { Link } from "react-router-dom";
-import AuthorImg from "../../../assets/potocals/author.png";
 
-export default function AuthorInformation() {
+interface Author {
+  fullName: string;
+  affiliation: string;
+  orcid?: string;
+  email: string;
+  profileImage?: string;
+  bio?: string;
+}
+
+interface AuthorInformationProps {
+  authors: Author[];
+}
+
+export default function AuthorInformation({ authors }: AuthorInformationProps) {
+  const author = authors?.[0];
+  console.log("the author", author);
   return (
     <div className="py-16">
       {/* Section Title */}
@@ -20,8 +34,8 @@ export default function AuthorInformation() {
           {/* Author Image */}
           <div className="w-[20rem] mt-[-260px] sm:w-[24rem] md:w-[28rem] lg:w-[32rem] rounded-2xl overflow-hidden ">
             <img
-              src={AuthorImg}
-              alt="Portrait of Dr. Sarah Chen"
+              src={author?.profileImage || "/assets/potocals/author.png"}
+              alt={`Portrait of ${author?.fullName || "Author"}`}
               className="w-full h-full object-cover"
             />
           </div>
@@ -31,46 +45,44 @@ export default function AuthorInformation() {
             {/* Name & Info */}
             <div>
               <h3 className="text-2xl font-bold text-[#1C1C1E] mb-2">
-                Dr. Sarah Chen
+                {author?.fullName || "Unknown Author"}
               </h3>
               <p className="text-[#444] font-medium mb-1">
-                Associate Professor of Molecular Biology
+                {author?.affiliation || "Affiliation not provided"}
               </p>
-              <p className="text-[#1C1C1E] font-medium">
-                Stanford University School of Medicine
-              </p>
+              <p className="text-[#1C1C1E] font-medium">{author?.email}</p>
             </div>
 
             {/* ORCID + Links */}
             <div className="text-sm space-x-4">
-              <a
-                href="https://orcid.org/0000-0002-1825-0097"
-                target="_blank"
-                rel="noopener noreferrer"
+              {author?.orcid && (
+                <a
+                  href={`https://orcid.org/${author.orcid}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-[#0A251D] underline hover:text-[#148666]"
+                >
+                  ORCID: {author.orcid}
+                </a>
+              )}
+              <Link
+                to="#"
                 className="text-[#0A251D] underline hover:text-[#148666]"
               >
-                ORCID: 0000-0002-1825-0097
-              </a>
-              <a
-                href="#"
-                className="text-[#0A251D] underline hover:text-[#148666]"
-              >
-                View Other Protocols (12)
-              </a>
+                View Other Protocols
+              </Link>
             </div>
 
             {/* Bio */}
             <p className="text-gray-700 leading-relaxed">
-              Dr. Chen specializes in CRISPR technology and gene editing
-              applications in mammalian cells. Her lab has developed several
-              innovative protocols for targeted genome modification.
+              {author?.bio || "No bio available for this author."}
             </p>
 
             {/* Contact Button */}
             <div>
               <Link to="/contract">
                 <button
-                  aria-label="Contact Dr. Sarah Chen"
+                  aria-label={`Contact ${author?.fullName || "Author"}`}
                   className="bg-[#17AA80] hover:bg-[#0F5B46] text-white px-6 py-3 rounded-lg font-medium flex items-center gap-2 transition-all"
                 >
                   {/* Mail Icon */}

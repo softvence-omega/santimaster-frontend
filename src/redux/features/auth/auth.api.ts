@@ -63,7 +63,7 @@ forgotPassword: build.mutation({
         url: `/auth/delete-account/${id}`,
         method: "DELETE",
       }),
-      invalidatesTags: ["Users"], // ✅ auto refresh users
+      invalidatesTags: ["Users"], 
     }),
     
     updateProfileSetting: build.mutation({

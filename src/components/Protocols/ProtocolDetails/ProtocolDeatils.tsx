@@ -31,7 +31,13 @@ const ProtocolDeatils = ({ id }: { id: string }) => {
       <ProtocalStapper stepProcedure={singleProtocol.stepProcedure} />
       <FilesAttachments attachment={singleProtocol.attachment} />
       <TroubleshootingTips />
-      <AuthorInfo />
+      <AuthorInfo
+        authors={
+          singleProtocol.authors
+            ? [singleProtocol.authors]
+            : []
+        }
+      />
       <PeerReviewSection />
       <RelatedProtocols />
       <References />
