@@ -14,22 +14,13 @@ import {
 interface Material {
   itemName: string;
   quantity: number;
-  catalog?: string;
-  supplier?: string;
+  catalog: string;
+  supplier: string;
 }
 
 interface Equipment {
   equipmentName: string;
   note: string;
-  catalog?: string;
-  supplier?: string;
-}
-
-interface Author {
-  fullName: string;
-  email: string;
-  affiliation: string;
-  orcid?: string; // Made orcid optional
 }
 
 interface UploadedFile {
@@ -40,6 +31,10 @@ interface UploadedFile {
   url: string;
   preview?: string;
   uploadProgress?: number;
+}
+
+interface Author {
+  name: string;
 }
 
 interface FormData {
@@ -58,7 +53,8 @@ interface FormData {
   equipments: Equipment[];
   stepProcedure: string;
   notes: string;
-  authors: Author[];
+  // authors: Author[];
+  coAuthors: Author[];
   doiLink: string;
   additionalReference: string;
   license: string;
@@ -66,7 +62,7 @@ interface FormData {
   isAcknowledged: boolean;
   isConfidential: boolean;
   image?: File;
-  attachment?: string;
+  attachment?: File;
 }
 
 interface UpdateProtocolProps {
@@ -102,17 +98,19 @@ export default function UpdateProtocol({ protocolId }: UpdateProtocolProps) {
       difficulty: "Intermediate",
       bslLevel: "",
       materials: [{ itemName: "", quantity: 0, catalog: "", supplier: "" }],
-      equipments: [{ equipmentName: "", note: "", catalog: "", supplier: "" }],
+      equipments: [{ equipmentName: "", note: "" }],
       stepProcedure: "",
       notes: "",
-      authors: [{ fullName: "", email: "", affiliation: "", orcid: "" }],
+      // authors: [{ name: "" }],
+      coAuthors: [],
       doiLink: "",
       additionalReference: "",
       license: "",
       isConfirmed: false,
       isAcknowledged: false,
       isConfidential: false,
-      attachment: "",
+      image: undefined,
+      attachment: undefined,
     },
   });
 
@@ -134,14 +132,23 @@ export default function UpdateProtocol({ protocolId }: UpdateProtocolProps) {
     name: "equipments",
   });
 
-  const {
-    fields: authorFields,
-    append: appendAuthor,
-    remove: removeAuthor,
-  } = useFieldArray({
-    control,
-    name: "authors",
-  });
+  // const {
+  //   fields: authorFields,
+  //   append: appendAuthor,
+  //   remove: removeAuthor,
+  // } = useFieldArray({
+  //   control,
+  //   name: "authors",
+  // });
+
+  // const {
+  //   fields: coAuthorFields,
+  //   append: appendCoAuthor,
+  //   remove: removeCoAuthor,
+  // } = useFieldArray({
+  //   control,
+  //   name: "coAuthors",
+  // });
 
   const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
   const [isDragging, setIsDragging] = useState(false);
@@ -170,25 +177,22 @@ export default function UpdateProtocol({ protocolId }: UpdateProtocolProps) {
           : [{ itemName: "", quantity: 0, catalog: "", supplier: "" }],
         equipments: protocol.equipment?.length
           ? protocol.equipment
-          : [{ equipmentName: "", note: "", catalog: "", supplier: "" }],
+          : [{ equipmentName: "", note: "" }],
         stepProcedure: protocol.stepProcedure || "",
-        // notes: protocol.notes || "", // Remove or handle if not present in Protocol type
-        notes: "", // fallback to empty string if not present
-        authors:
-          Array.isArray(protocol.authors) && protocol.authors.length > 0
-            ? protocol.authors.map((author: any) =>
-                typeof author === "string"
-                  ? { fullName: author, email: "", affiliation: "", orcid: "" }
-                  : author
-              )
-            : [{ fullName: "", email: "", affiliation: "", orcid: "" }],
+        notes: "",
+        // authors: [{ name: "" }],
+        coAuthors:
+          Array.isArray(protocol.coAuthors) && protocol.coAuthors.length > 0
+            ? protocol.coAuthors.map((name) => ({ name }))
+            : [],
         doiLink: protocol.doiLink || "",
         additionalReference: protocol.additionalReference || "",
         license: protocol.license || "",
         isConfirmed: protocol.isConfirmed || false,
         isAcknowledged: protocol.isAcknowledged || false,
         isConfidential: protocol.isConfidential || false,
-        attachment: protocol.attachment || "",
+        image: undefined,
+        attachment: undefined,
       });
 
       // Prepopulate uploaded files if attachment exists
@@ -198,7 +202,7 @@ export default function UpdateProtocol({ protocolId }: UpdateProtocolProps) {
           {
             id: uuidv4(),
             name: protocol.attachment.split("/").pop() || protocol.attachment,
-            size: 0, // Size not available from protocol data
+            size: 0,
             type:
               extension === "pdf"
                 ? "application/pdf"
@@ -382,7 +386,7 @@ export default function UpdateProtocol({ protocolId }: UpdateProtocolProps) {
         if (isImage) {
           setValue("image", file);
         } else {
-          setValue("attachment", file.name);
+          setValue("attachment", file);
         }
       }, 2000);
 
@@ -407,16 +411,61 @@ export default function UpdateProtocol({ protocolId }: UpdateProtocolProps) {
         if (file.type.startsWith("image/")) {
           setValue("image", undefined);
         } else {
-          setValue("attachment", "");
+          setValue("attachment", undefined);
         }
       }
       return prev.filter((f) => f.id !== fileId);
     });
   };
 
+  // const onSubmit: SubmitHandler<FormData> = async (data) => {
+  //   const protocolData = {
+  //     protocolTitle: data.protocolTitle,
+  //     protocolDescription: data.protocolDescription,
+  //     category: data.category,
+  //     tags: data.tags.split(",").map((tag) => tag.trim()).filter(Boolean),
+  //     technique: data.technique,
+  //     modality: data.modality,
+  //     organism: data.organism,
+  //     phase: data.phase,
+  //     estimatedTime: data.estimatedTime,
+  //     difficulty: data.difficulty,
+  //     bslLevel: data.bslLevel,
+  //     materials: data.materials.map(({ itemName, quantity, catalog, supplier }) => ({
+  //       itemName,
+  //       quantity: Number(quantity),
+  //       catalog: catalog || "",
+  //       supplier: supplier || "",
+  //     })),
+  //     equipment: data.equipments.map(({ equipmentName, note }) => ({
+  //       equipmentName,
+  //       note,
+  //     })),
+  //     stepProcedure: data.stepProcedure,
+  //     authors: data.authors.map(author => author.name).filter(Boolean),
+  //     coAuthors: data.coAuthors.map(author => author.name).filter(Boolean),
+  //     doiLink: data.doiLink || "",
+  //     additionalReference: data.additionalReference || "",
+  //     license: data.license,
+  //     isConfirmed: data.isConfirmed,
+  //     isAcknowledged: data.isAcknowledged,
+  //     isConfidential: data.isConfidential,
+  //   };
+
+  //   try {
+  //     console.log(protocolData);
+  //     const response = await updateProtocol({ id: protocolId, data: protocolData }).unwrap();
+  //     toast.success("Protocol updated successfully!");
+  //     console.log(response);
+  //   } catch (error) {
+  //     console.error("Error updating protocol:", error);
+  //     toast.error("Error updating protocol");
+  //   }
+  // };
+
   const onSubmit: SubmitHandler<FormData> = async (data) => {
-    const apiData = {
-      id: protocolId,
+    // build protocol object
+    const protocolData = {
       protocolTitle: data.protocolTitle,
       protocolDescription: data.protocolDescription,
       category: data.category,
@@ -439,29 +488,27 @@ export default function UpdateProtocol({ protocolId }: UpdateProtocolProps) {
           supplier: supplier || "",
         })
       ),
-      equipments: data.equipments.map(
-        ({ equipmentName, note, catalog, supplier }) => ({
-          equipmentName,
-          note,
-          catalog,
-          supplier,
-        })
-      ),
+      equipment: data.equipments.map(({ equipmentName, note }) => ({
+        equipmentName,
+        note,
+      })),
       stepProcedure: data.stepProcedure,
-      notes: data.notes,
-      authors: data.authors.map((author) => author.fullName),
-      doiLink: data.doiLink,
-      additionalReference: data.additionalReference,
+      // authors: data.authors.map((author) => author.name).filter(Boolean),
+      coAuthors: data.coAuthors.map((author) => author.name).filter(Boolean),
+      doiLink: data.doiLink || "",
+      additionalReference: data.additionalReference || "",
       license: data.license,
       isConfirmed: data.isConfirmed,
       isAcknowledged: data.isAcknowledged,
       isConfidential: data.isConfidential,
-      attachment: data.attachment,
-      image: data.image,
     };
 
     try {
-      const response = await updateProtocol(apiData).unwrap();
+      const response = await updateProtocol({
+        id: protocolId,
+        data: protocolData,
+      }).unwrap();
+
       toast.success("Protocol updated successfully!");
       console.log(response);
     } catch (error) {
@@ -524,14 +571,14 @@ export default function UpdateProtocol({ protocolId }: UpdateProtocolProps) {
                   required: "Abstract is required",
                   minLength: {
                     value: 10,
-                    message: "Abstract must be at least 280 characters",
+                    message: "Abstract must be at least 10 characters",
                   },
                   maxLength: {
                     value: 400,
                     message: "Abstract must not exceed 400 characters",
                   },
                 })}
-                placeholder="Provide a brief abstract describing your protocol (280-400 characters)"
+                placeholder="Provide a brief abstract describing your protocol (10-400 characters)"
                 rows={3}
                 className="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
               />
@@ -876,7 +923,7 @@ export default function UpdateProtocol({ protocolId }: UpdateProtocolProps) {
               {equipmentFields.map((equipment, i) => (
                 <div
                   key={equipment.id}
-                  className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 p-3 rounded-lg"
+                  className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-3 rounded-lg"
                 >
                   <div className="grid gap-2">
                     <label className="text-sm font-medium text-gray-700">
@@ -912,31 +959,11 @@ export default function UpdateProtocol({ protocolId }: UpdateProtocolProps) {
                       </p>
                     )}
                   </div>
-                  <div className="grid gap-2">
-                    <label className="text-sm font-medium text-gray-700">
-                      Catalog
-                    </label>
-                    <input
-                      {...register(`equipments.${i}.catalog`)}
-                      className="border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      placeholder="Catalog (optional)"
-                    />
-                  </div>
-                  <div className="grid gap-2">
-                    <label className="text-sm font-medium text-gray-700">
-                      Supplier
-                    </label>
-                    <input
-                      {...register(`equipments.${i}.supplier`)}
-                      className="border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      placeholder="Supplier (optional)"
-                    />
-                  </div>
                   {equipmentFields.length > 1 && (
                     <button
                       type="button"
                       onClick={() => removeEquipment(i)}
-                      className="sm:col-span-4 lg:col-span-1 bg-red-100 text-red-600 px-3 py-1 rounded-md text-sm hover:bg-red-200 transition-colors"
+                      className="sm:col-span-2 bg-red-100 text-red-600 px-3 py-1 rounded-md text-sm hover:bg-red-200 transition-colors"
                     >
                       Remove
                     </button>
@@ -949,8 +976,6 @@ export default function UpdateProtocol({ protocolId }: UpdateProtocolProps) {
                   appendEquipment({
                     equipmentName: "",
                     note: "",
-                    catalog: "",
-                    supplier: "",
                   })
                 }
                 className="flex items-center justify-center gap-2 px-4 py-2 border border-[#17AA80] rounded-lg text-[#17AA80] text-sm font-medium hover:bg-[#17AA80] hover:text-white transition-colors"
@@ -960,6 +985,100 @@ export default function UpdateProtocol({ protocolId }: UpdateProtocolProps) {
               </button>
             </div>
           </section>
+
+          {/* Authors & Co-Authors */}
+          {/* <section className="space-y-4 mb-8">
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
+              <h2 className="text-lg sm:text-xl font-medium text-[#1C1C1E]">
+                Authors & Co-Authors
+              </h2>
+              <button
+                type="button"
+                onClick={() => appendAuthor({ name: "" })}
+                className="flex items-center justify-center gap-2 px-4 py-2 border border-[#17AA80] rounded-lg text-[#17AA80] text-sm sm:text-base font-medium hover:bg-[#17AA80] hover:text-white transition-colors"
+              >
+                <Plus className="w-4 h-4 sm:w-5 sm:h-5" />
+                Add Author
+              </button>
+            </div>
+            {authorFields.map((author, i) => (
+              <div
+                key={author.id}
+                className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-3 border border-gray-200 rounded-lg bg-gray-50"
+              >
+                <div className="grid gap-2">
+                  <label className="text-sm font-medium text-gray-700">
+                    Author Name
+                  </label>
+                  <input
+                    {...register(`authors.${i}.name`, {
+                      required: "Author name is required",
+                    })}
+                    placeholder="Author Name"
+                    className="border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                  {errors.authors?.[i] && (
+                    <p className="text-red-600 text-sm">
+                      {errors.authors[i]?.message}
+                    </p>
+                  )}
+                </div>
+                {authorFields.length > 1 && (
+                  <button
+                    type="button"
+                    onClick={() => removeAuthor(i)}
+                    className="sm:col-span-1 bg-red-100 text-red-600 px-3 py-1 rounded-md text-sm hover:bg-red-200 transition-colors"
+                  >
+                    Remove
+                  </button>
+                )}
+              </div>
+            ))}
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mt-4">
+              <h3 className="text-lg font-medium text-[#1C1C1E]">Co-Authors</h3>
+              <button
+                type="button"
+                onClick={() => appendCoAuthor({ name: "" })}
+                className="flex items-center justify-center gap-2 px-4 py-2 border border-[#17AA80] rounded-lg text-[#17AA80] text-sm sm:text-base font-medium hover:bg-[#17AA80] hover:text-white transition-colors"
+              >
+                <Plus className="w-4 h-4 sm:w-5 sm:h-5" />
+                Add Co-Author
+              </button>
+            </div>
+            {coAuthorFields.map((coAuthor, i) => (
+              <div
+                key={coAuthor.id}
+                className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-3 border border-gray-200 rounded-lg bg-gray-50"
+              >
+                <div className="grid gap-2">
+                  <label className="text-sm font-medium text-gray-700">
+                    Co-Author Name
+                  </label>
+                  <input
+                    {...register(`coAuthors.${i}.name`, {
+                      required: "Co-author name is required",
+                    })}
+                    placeholder="Co-Author Name"
+                    className="border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                  {errors.coAuthors?.[i] && (
+                    <p className="text-red-600 text-sm">
+                      {errors.coAuthors[i]?.message}
+                    </p>
+                  )}
+                </div>
+                {coAuthorFields.length > 1 && (
+                  <button
+                    type="button"
+                    onClick={() => removeCoAuthor(i)}
+                    className="sm:col-span-1 bg-red-100 text-red-600 px-3 py-1 rounded-md text-sm hover:bg-red-200 transition-colors"
+                  >
+                    Remove
+                  </button>
+                )}
+              </div>
+            ))}
+          </section> */}
 
           {/* Additional References */}
           <section className="space-y-4 mb-8">
@@ -972,12 +1091,7 @@ export default function UpdateProtocol({ protocolId }: UpdateProtocolProps) {
                   DOI Link
                 </label>
                 <input
-                  {...register("doiLink", {
-                    pattern: {
-                      value: /^https?:\/\/(dx\.)?doi\.org\/.+$/,
-                      message: "Please enter a valid DOI link",
-                    },
-                  })}
+                  {...register("doiLink", {})}
                   placeholder="https://doi.org/..."
                   className="border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
@@ -1278,117 +1392,6 @@ export default function UpdateProtocol({ protocolId }: UpdateProtocolProps) {
                 </div>
               </div>
             )}
-          </section>
-
-          {/* Authors & Affiliations */}
-          <section className="space-y-4 mb-8">
-            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
-              <h2 className="text-lg sm:text-xl font-medium text-[#1C1C1E]">
-                Authors & Affiliations
-              </h2>
-              <button
-                type="button"
-                onClick={() =>
-                  appendAuthor({
-                    fullName: "",
-                    email: "",
-                    affiliation: "",
-                    orcid: "",
-                  })
-                }
-                className="flex items-center justify-center gap-2 px-4 py-2 border border-[#17AA80] rounded-lg text-[#17AA80] text-sm sm:text-base font-medium hover:bg-[#17AA80] hover:text-white transition-colors"
-              >
-                <Plus className="w-4 h-4 sm:w-5 sm:h-5" />
-                Add Author
-              </button>
-            </div>
-            {authorFields.map((author, i) => (
-              <div
-                key={author.id}
-                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 p-3 border border-gray-200 rounded-lg bg-gray-50"
-              >
-                <div className="grid gap-2">
-                  <label className="text-sm font-medium text-gray-700">
-                    Full Name
-                  </label>
-                  <input
-                    {...register(`authors.${i}.fullName`, {
-                      required: "Full name is required",
-                    })}
-                    placeholder="Full Name"
-                    className="border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  />
-                  {errors.authors?.[i]?.fullName && (
-                    <p className="text-red-600 text-sm">
-                      {errors.authors[i].fullName.message}
-                    </p>
-                  )}
-                </div>
-                <div className="grid gap-2">
-                  <label className="text-sm font-medium text-gray-700">
-                    Email
-                  </label>
-                  <input
-                    {...register(`authors.${i}.email`, {
-                      required: "Email is required",
-                      pattern: {
-                        value:
-                          /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-                        message: "Invalid email address",
-                      },
-                    })}
-                    placeholder="Email"
-                    className="border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  />
-                  {errors.authors?.[i]?.email && (
-                    <p className="text-red-600 text-sm">
-                      {errors.authors[i].email.message}
-                    </p>
-                  )}
-                </div>
-                <div className="grid gap-2">
-                  <label className="text-sm font-medium text-gray-700">
-                    Affiliation
-                  </label>
-                  <input
-                    {...register(`authors.${i}.affiliation`, {
-                      required: "Affiliation is required",
-                    })}
-                    placeholder="Affiliation"
-                    className="border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  />
-                  {errors.authors?.[i]?.affiliation && (
-                    <p className="text-red-600 text-sm">
-                      {errors.authors[i].affiliation.message}
-                    </p>
-                  )}
-                </div>
-                <div className="grid gap-2">
-                  <label className="text-sm font-medium text-gray-700">
-                    ORCID
-                  </label>
-                  <input
-                    {...register(`authors.${i}.orcid`, {})}
-                    placeholder="ORCID (XXXX-XXXX-XXXX-XXXX)"
-                    className="border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  />
-                  {errors.authors?.[i]?.orcid && (
-                    <p className="text-red-600 text-sm">
-                      {errors.authors[i].orcid.message}
-                    </p>
-                  )}
-                </div>
-                {authorFields.length > 1 && (
-                  <button
-                    type="button"
-                    onClick={() => removeAuthor(i)}
-                    className="sm:col-span-4 lg:col-span-1 bg-red-100 text-red-600 px-3 py-1 rounded-md text-sm hover:bg-red-200 transition-colors"
-                  >
-                    Remove
-                  </button>
-                )}
-              </div>
-            ))}
           </section>
 
           {/* Consent & Safety */}

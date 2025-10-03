@@ -140,7 +140,7 @@ const OpenMvp = () => {
               </clipPath>
             </defs>
           </svg>
-          <span className="ml-2">Upload</span>
+          <span className="ml-2">Review</span>
         </button>
         {/* ---------published------------- */}
         {/* ----arrow-- */}

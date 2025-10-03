@@ -56,9 +56,9 @@ const protocolsApi = baseAPI.injectEndpoints({
     // ------------- Update protocol --------------
     updateProtocol: builder.mutation<
       Protocol,
-      { id: string } & Partial<Protocol>
+      { id: string; data: Partial<Protocol> }
     >({
-      query: ({ id, ...data }) => ({
+      query: ({ id, data }) => ({
         url: `/protocol/${id}`,
         method: "PATCH",
         body: data,

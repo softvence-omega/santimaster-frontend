@@ -9,6 +9,7 @@ import {
 import { useGetAdminDashboardQuery } from "../../../redux/features/admindashboard/admindashboard";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
+import SectionHeader from "../../../utils/SectionHeading";
 
 const DataExportManagement = () => {
   const { data: adminDashboardData } = useGetAdminDashboardQuery();
@@ -119,12 +120,10 @@ const DataExportManagement = () => {
     <div className="py-16 mt-10 rounded-xl shadow-sm border border-gray-200 p-6">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">
-          Data Export & Management
-        </h1>
-        <p className="text-gray-600">
-          Export data, manage archives, and schedule reports
-        </p>
+        <SectionHeader
+          title="Data Export & Management"
+          subtitle="Export data, manage archives, and schedule reports"
+        ></SectionHeader>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">

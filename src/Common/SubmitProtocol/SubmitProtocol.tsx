@@ -392,7 +392,7 @@ export default function SubmitProtocol() {
       console.log(response);
     } catch (error) {
       console.error("Error submitting protocol:", error);
-      toast("Error submitting protocol")
+      toast("Error submitting protocol");
     }
   };
 
@@ -579,8 +579,8 @@ export default function SubmitProtocol() {
                       onClick={() => setValue("estimatedTime", time)}
                       className={`px-3 py-2 border rounded-lg text-sm font-medium transition-colors ${
                         time === control._formValues.estimatedTime
-                          ? "bg-green-200 border-blue-500 text-[#636363]"
-                          : "bg-white border-gray-300 text-gray-700 hover:border-blue-300"
+                          ? "bg-green-500 text-white border-green-600"
+                          : "bg-white border-gray-300 text-gray-700 hover:border-green-400"
                       }`}
                     >
                       {time}
@@ -593,6 +593,7 @@ export default function SubmitProtocol() {
                   </p>
                 )}
               </div>
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Difficulty
@@ -1165,7 +1166,7 @@ export default function SubmitProtocol() {
                 className="flex items-center justify-center gap-2 px-4 py-2 border border-[#17AA80] rounded-lg text-[#17AA80] text-sm sm:text-base font-medium hover:bg-[#17AA80] hover:text-white transition-colors"
               >
                 <Plus className="w-4 h-4 sm:w-5 sm:h-5" />
-                Add Author
+                Add co Author
               </button>
             </div>
             {authorFields.map((author, i) => (

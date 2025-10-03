@@ -184,11 +184,8 @@ export default function Banner() {
                   <div className="relative" ref={mobileDropdownRef}>
                     <button
                       type="button"
-                      onClick={() => {
-                        setDropdownOpen(!dropdownOpen);
-                        setMenuOpen(false);
-                      }}
-                      className="flex items-center space-x-2 px-3 py-2 rounded-lg border border-gray-300 hover:bg-gray-100"
+                      onClick={() => setDropdownOpen(!dropdownOpen)}
+                      className="flex items-center justify-center w-12 h-12 rounded-full border border-gray-300 hover:bg-gray-100"
                       aria-label="User menu"
                       aria-expanded={dropdownOpen}
                     >
@@ -196,10 +193,10 @@ export default function Banner() {
                         <img
                           src={user.profileImage}
                           alt={user.fullName || "User"}
-                          className="h-8 w-8 rounded-full object-cover"
+                          className="h-10 w-10 rounded-full object-cover"
                         />
                       ) : (
-                        <User className="h-5 w-5 text-green-900" />
+                        <User className="h-6 w-6 text-green-900" />
                       )}
                     </button>
                     {dropdownOpen && (

@@ -9,11 +9,11 @@ const FilterDropdown: React.FC<{
   options: string[];
   onChange: (val: string) => void;
 }> = ({ value, options, onChange }) => (
-  <div className="relative">
+  <div className="relative w-full sm:w-auto">
     <select
       value={value}
       onChange={(e) => onChange(e.target.value)}
-      className="flex items-center space-x-2 bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm hover:bg-gray-50 cursor-pointer"
+      className="w-full sm:w-auto flex items-center bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm hover:bg-gray-50 cursor-pointer"
     >
       {options.map((opt) => (
         <option key={opt} value={opt}>
@@ -66,30 +66,23 @@ const ReviewItem: React.FC<{
   submitted: string;
   bslLevel: number;
   status: string;
-  dueDate?: string;
-}> = ({
-  title,
-  description,
-  reviewer,
-
-  submitted,
-  bslLevel,
-  status,
-}) => (
-  <div className="bg-white rounded-lg border border-gray-200 p-6">
-    <div className="flex justify-between items-start mb-4">
+}> = ({ title, description, reviewer, submitted, bslLevel, status }) => (
+  <div className="bg-white rounded-lg border border-gray-200 p-4 sm:p-6">
+    <div className="flex flex-col sm:flex-row justify-between items-start gap-3 sm:gap-0 mb-4">
       <div className="flex-1">
-        <h3 className="text-lg font-semibold text-gray-900 mb-2">{title}</h3>
+        <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-2">
+          {title}
+        </h3>
         <p className="text-gray-600 text-sm mb-3">{description}</p>
-        <div className="flex items-center space-x-4 text-sm text-gray-500">
-          <div className="flex items-center space-x-1">
+        <div className="flex flex-wrap items-center gap-3 text-xs sm:text-sm text-gray-500">
+          <div className="flex items-center gap-1">
             <User className="w-4 h-4" />
             <span>{reviewer.name}</span>
           </div>
           <span>Submitted: {submitted}</span>
         </div>
       </div>
-      <div className="flex flex-col items-end space-y-2">
+      <div className="flex flex-col items-start sm:items-end space-y-2">
         <BSLBadge level={bslLevel} />
         <StatusBadge status={status} />
       </div>
@@ -103,12 +96,10 @@ interface ReviewQueueProps {
 }
 
 const ReviewQueue: React.FC<ReviewQueueProps> = ({ queue }) => {
-  // 🔹 filter states
   const [protocolType, setProtocolType] = useState("All Protocols");
   const [bslFilter, setBslFilter] = useState("All Levels");
   const [difficulty, setDifficulty] = useState("All Levels");
 
-  // 🔹 derive filtered list
   const filteredQueue = useMemo(() => {
     return queue.filter((protocol) => {
       let matches = true;
@@ -119,70 +110,76 @@ const ReviewQueue: React.FC<ReviewQueueProps> = ({ queue }) => {
       ) {
         matches = false;
       }
-
       if (
         bslFilter !== "All Levels" &&
         `BSL-${protocol.bslLevel}` !== bslFilter
       ) {
         matches = false;
       }
-
       if (difficulty !== "All Levels" && protocol.difficulty !== difficulty) {
         matches = false;
       }
-
       return matches;
     });
   }, [queue, protocolType, bslFilter, difficulty]);
 
   return (
-    <div className="max-w-5xl mx-auto py-10 p-6 ">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Review Queue</h1>
-        <div className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-medium">
+    <div className="max-w-5xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-3">
+        <h1 className="text-xl sm:text-2xl font-bold text-gray-900">
+          Review Queue
+        </h1>
+        <div className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs sm:text-sm font-medium">
           {filteredQueue.length} protocols awaiting review
         </div>
       </div>
 
       {/* Filters */}
-      <div className="flex items-center space-x-4 mb-6">
-        <span className="text-sm text-gray-600 font-medium">
-          Protocol Type:
-        </span>
-        <FilterDropdown
-          label="Protocol Type"
-          value={protocolType}
-          options={[
-            "All Protocols",
-            ...Array.from(new Set(queue.map((p) => p.category))),
-          ]}
-          onChange={setProtocolType}
-        />
+      <div className="flex flex-col sm:flex-row flex-wrap gap-3 sm:gap-4 mb-6">
+        <div className="flex items-center gap-2">
+          <span className="text-sm text-gray-600 font-medium">
+            Protocol Type:
+          </span>
+          <FilterDropdown
+            label="Protocol Type"
+            value={protocolType}
+            options={[
+              "All Protocols",
+              ...Array.from(new Set(queue.map((p) => p.category))),
+            ]}
+            onChange={setProtocolType}
+          />
+        </div>
 
-        <span className="text-sm text-gray-600 font-medium">BSL Level:</span>
-        <FilterDropdown
-          label="BSL Level"
-          value={bslFilter}
-          options={[
-            "All Levels",
-            ...Array.from(new Set(queue.map((p) => `BSL-${p.bslLevel}`))),
-          ]}
-          onChange={setBslFilter}
-        />
+        <div className="flex items-center gap-2">
+          <span className="text-sm text-gray-600 font-medium">BSL Level:</span>
+          <FilterDropdown
+            label="BSL Level"
+            value={bslFilter}
+            options={[
+              "All Levels",
+              ...Array.from(new Set(queue.map((p) => `BSL-${p.bslLevel}`))),
+            ]}
+            onChange={setBslFilter}
+          />
+        </div>
 
-        <span className="text-sm text-gray-600 font-medium">Difficulty:</span>
-        <FilterDropdown
-          label="Difficulty"
-          value={difficulty}
-          options={[
-            "All Levels",
-            ...Array.from(new Set(queue.map((p) => p.difficulty))),
-          ]}
-          onChange={setDifficulty}
-        />
+        <div className="flex items-center gap-2">
+          <span className="text-sm text-gray-600 font-medium">Difficulty:</span>
+          <FilterDropdown
+            label="Difficulty"
+            value={difficulty}
+            options={[
+              "All Levels",
+              ...Array.from(new Set(queue.map((p) => p.difficulty))),
+            ]}
+            onChange={setDifficulty}
+          />
+        </div>
       </div>
 
-      {/* Render filtered data */}
+      {/* Data */}
       <div className="space-y-4">
         {filteredQueue.length > 0 ? (
           filteredQueue.map((protocol) => (
@@ -191,14 +188,16 @@ const ReviewQueue: React.FC<ReviewQueueProps> = ({ queue }) => {
               title={protocol.protocolTitle}
               description={protocol.protocolDescription}
               reviewer={{ name: "Reviewer Pending" }}
-              priority={"High"} // could be mapped from difficulty
+              priority={"High"}
               submitted={new Date(protocol.createdAt).toLocaleDateString()}
               bslLevel={parseInt(protocol.bslLevel)}
               status={protocol.status}
             />
           ))
         ) : (
-          <p className="text-gray-500 text-center">No matching protocols</p>
+          <p className="text-gray-500 text-center text-sm sm:text-base">
+            No matching protocols
+          </p>
         )}
       </div>
     </div>

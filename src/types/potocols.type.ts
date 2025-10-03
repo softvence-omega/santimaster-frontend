@@ -30,7 +30,6 @@ export interface Protocol {
   stepProcedure: string;
   attachment?: string;
   license: string;
-  authors: string[];
   coAuthors: string[];
   isConfirmed: boolean;
   isAcknowledged: boolean;

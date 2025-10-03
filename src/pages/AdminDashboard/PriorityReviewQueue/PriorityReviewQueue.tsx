@@ -3,6 +3,7 @@ import toast from "react-hot-toast";
 import { Link } from "react-router-dom";
 import { useUpdateProtocolStatusMutation } from "../../../redux/features/admindashboard/admindashboard";
 import type { Protocol } from "../../../types/admindashboard.type";
+import SectionHeader from "../../../utils/SectionHeading";
 
 interface PriorityReviewQueueProps {
   pendingProtocol?: Protocol[];
@@ -54,33 +55,27 @@ const PriorityReviewQueue: React.FC<PriorityReviewQueueProps> = ({
   };
 
   return (
-    <div className="py-16 p-6 max-w-7xl mx-auto">
+    <div className="py-10 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
       {/* Header */}
-      <div className="flex justify-between items-start mb-6">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">
-            Priority Review Queue
-          </h1>
-          <p className="text-gray-600">
-            Submissions requiring immediate attention
-          </p>
-        </div>
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-3">
+        <SectionHeader
+          title="Priority Review Queue"
+          subtitle="Submissions requiring immediate attention"
+        />
         <button className="text-emerald-600 hover:text-emerald-700 font-medium text-sm transition-colors">
           View All
         </button>
       </div>
 
       {/* Submissions List */}
-
       {isLoading ? (
-        <div className="">
+        <div>
           {Array.from({ length: 6 }).map((_, i) => (
             <div
               key={i}
               className="rounded-lg p-4 bg-gray-200 animate-pulse w-full mx-auto mt-4"
             >
               <div className="flex space-x-4 py-4">
-                {/* Text lines */}
                 <div className="flex-1 space-y-4 py-1">
                   <div className="h-4 bg-gray-300 rounded w-3/4"></div>
                   <div className="space-y-2">
@@ -100,31 +95,31 @@ const PriorityReviewQueue: React.FC<PriorityReviewQueueProps> = ({
               className="border border-gray-200 rounded-lg p-5 hover:border-gray-300 hover:shadow-sm transition-all"
             >
               {/* Title and Priority */}
-              <div className="flex items-start justify-between mb-3">
-                <h3 className="text-lg font-semibold text-gray-900 leading-tight pr-4">
-                  {submission.title}
+              <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-3 gap-2">
+                <h3 className="text-base sm:text-lg font-semibold text-gray-900 leading-tight">
+                  {submission?.title}
                 </h3>
                 <div className="flex items-center gap-2 flex-shrink-0">
                   <span
                     className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getRiskLevelStyle(
-                      submission.riskLevel
+                      submission?.riskLevel
                     )}`}
                   >
-                    {submission.riskLevel}
+                    {submission?.riskLevel}
                   </span>
-                  {submission.priority && (
+                  {submission?.priority && (
                     <span
                       className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${submission.priorityColor}`}
                     >
-                      {submission.priority}
+                      {submission?.priority}
                     </span>
                   )}
                 </div>
               </div>
 
               {/* Submission Details */}
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-4 text-sm text-gray-600">
+              <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                <div className="flex flex-wrap items-center gap-2 text-xs sm:text-sm text-gray-600">
                   <span className="flex items-center gap-1">
                     <span className="w-1 h-1 bg-gray-400 rounded-full"></span>
                     {submission?.author?.fullName}
@@ -138,8 +133,9 @@ const PriorityReviewQueue: React.FC<PriorityReviewQueueProps> = ({
                     {submission?.category}
                   </span>
                 </div>
+
                 {/* ----action button ---- */}
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-3 sm:gap-4">
                   <Link
                     to={`/update-protocol/${submission.id}`}
                     title="Edit Protocol"
@@ -148,7 +144,7 @@ const PriorityReviewQueue: React.FC<PriorityReviewQueueProps> = ({
                   </Link>
                   <button
                     onClick={() => updateStatus(submission?.id)}
-                    className="bg-emerald-600 cursor-pointer hover:bg-emerald-700 text-white px-4 py-2 rounded-lg font-medium text-sm transition-colors"
+                    className="bg-emerald-600 cursor-pointer hover:bg-emerald-700 text-white px-3 sm:px-4 py-2 rounded-lg font-medium text-xs sm:text-sm transition-colors"
                   >
                     Approve
                   </button>
@@ -161,16 +157,16 @@ const PriorityReviewQueue: React.FC<PriorityReviewQueueProps> = ({
 
       {/* Footer Actions */}
       <div className="mt-6 pt-4 border-t border-gray-200">
-        <div className="flex justify-between items-center">
-          <div className="text-sm text-gray-600">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+          <div className="text-xs sm:text-sm text-gray-600">
             Showing {submissions.length} of {submissions.length} priority
             submissions
           </div>
-          <div className="flex gap-2">
-            <button className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors">
+          <div className="flex flex-wrap gap-2">
+            <button className="px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors">
               Bulk Review
             </button>
-            <button className="px-4 py-2 text-sm font-medium text-emerald-700 bg-emerald-100 rounded-lg hover:bg-emerald-200 transition-colors">
+            <button className="px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium text-emerald-700 bg-emerald-100 rounded-lg hover:bg-emerald-200 transition-colors">
               Export Queue
             </button>
           </div>

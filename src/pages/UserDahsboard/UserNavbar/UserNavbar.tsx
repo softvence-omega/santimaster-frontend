@@ -1,10 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import {
-  Menu,
-  X
-  
-} from "lucide-react";
+import { Menu, X } from "lucide-react";
 import logo from "../../../assets/logo.png";
 import { useAppSelector } from "../../../redux/hook";
 import { useDispatch } from "react-redux";
@@ -74,11 +70,11 @@ const UserNavbar = () => {
 
         {/* Search (hidden on mobile) */}
         <div className="hidden md:block w-full max-w-xs">
-          <input
+          {/* <input
             type="text"
             className="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-600"
             placeholder="Search users..."
-          />
+          /> */}
         </div>
 
         {/* Profile + Mobile Toggle */}
@@ -148,11 +144,11 @@ const UserNavbar = () => {
 
       {/* Search on Mobile */}
       <div className="md:hidden px-4 py-3">
-        <input
+        {/* <input
           type="text"
           className="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-600"
           placeholder="Search users..."
-        />
+        /> */}
       </div>
     </nav>
   );
