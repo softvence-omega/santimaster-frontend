@@ -54,8 +54,8 @@ export interface Protocol {
   stepProcedure: string;
   attachment?: string;
   license: string;
-  authors: Author;        // Single author object
-  coAuthors: Author[];    // Array of co-authors
+  authors: Author;        
+  coAuthors: Author[];   
   isConfirmed: boolean;
   isAcknowledged: boolean;
   isConfidential: boolean;
