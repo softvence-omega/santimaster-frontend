@@ -45,8 +45,6 @@ const AdminNavbar = () => {
     navigate("/login");
   };
 
-
-
   return (
     <nav className="w-full max-w-7xl mx-auto">
       {/* Top Bar */}
@@ -82,12 +80,21 @@ const AdminNavbar = () => {
                     {user?.fullName || "User"}
                   </div>
 
-                  <button
-                    onClick={handleLogout}
-                    className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
+                  <Link
+                    to="/change-password"
+                    className="w-full text-left px-4 py-2 text-sm text-green-600 hover:bg-gray-100"
                   >
-                    Logout
-                  </button>
+                    Change Password
+                  </Link>
+                  <div className="mt-2">
+                    {" "}
+                    <button
+                      onClick={handleLogout}
+                      className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
+                    >
+                      Logout
+                    </button>
+                  </div>
                 </div>
               )}
             </div>
@@ -113,13 +120,13 @@ const AdminNavbar = () => {
       </div>
 
       {/* Search on Mobile */}
-      <div className="md:hidden px-4 pb-3">
+      {/* <div className="md:hidden px-4 pb-3">
         <input
           type="text"
           className="w-full px-4 py-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
           placeholder="Search users..."
         />
-      </div>
+      </div> */}
 
       <div
         className={`${

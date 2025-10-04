@@ -6,7 +6,7 @@ import toast from "react-hot-toast";
 
 export default function RegisterForm() {
   const [registerUser, { isLoading }] = useRegisterMutation();
-const route=useNavigate()
+  const route = useNavigate();
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
@@ -27,13 +27,25 @@ const route=useNavigate()
   };
 
   const handleSubmit = async () => {
+    // ✅ Required field validation
+    if (
+      !formData.fullName.trim() ||
+      !formData.email.trim() ||
+      !formData.password.trim() ||
+      !formData.affiliation.trim() ||
+      !formData.orcid.trim()
+    ) {
+      toast.error("All fields are required!");
+      return;
+    }
+
     if (!agreeToTerms) {
-      toast("Please agree to the Terms and Privacy Policy.");
+      toast.error("Please agree to the Terms and Privacy Policy.");
       return;
     }
 
     if (!isNotRobot) {
-      toast("Please confirm you are not a robot.");
+      toast.error("Please confirm you are not a robot.");
       return;
     }
 
@@ -41,7 +53,7 @@ const route=useNavigate()
       const response = await registerUser(formData).unwrap();
       console.log("Registration successful:", response);
 
-      // You can reset form or navigate after success
+      // Reset form on success
       setFormData({
         fullName: "",
         email: "",
@@ -52,11 +64,11 @@ const route=useNavigate()
       setAgreeToTerms(false);
       setIsNotRobot(false);
 
-      toast(response.message || "Account registration successful!");
+      toast.success(response.message || "Account registration successful!");
       route("/login");
     } catch (error: any) {
       console.error("Registration error:", error);
-      toast(error?.data?.message || "Registration failed!");
+      toast.error(error?.data?.message || "Registration failed!");
     }
   };
 
@@ -79,12 +91,16 @@ const route=useNavigate()
           <div className="space-y-6">
             {/* Full Name Field */}
             <div>
-              <label htmlFor="fullName" className="block text-sm font-medium text-gray-700 mb-2">
-                Full name
+              <label
+                htmlFor="fullName"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
+                Full name <span className="text-red-500">*</span>
               </label>
               <input
                 id="fullName"
                 type="text"
+                required
                 value={formData.fullName}
                 onChange={(e) => handleInputChange("fullName", e.target.value)}
                 className="w-full px-3 py-3 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
@@ -94,12 +110,16 @@ const route=useNavigate()
 
             {/* Email Field */}
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-                Email address
+              <label
+                htmlFor="email"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
+                Email address <span className="text-red-500">*</span>
               </label>
               <input
                 id="email"
                 type="email"
+                required
                 value={formData.email}
                 onChange={(e) => handleInputChange("email", e.target.value)}
                 className="w-full px-3 py-3 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
@@ -109,15 +129,21 @@ const route=useNavigate()
 
             {/* Password Field */}
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
-                Password
+              <label
+                htmlFor="password"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
+                Password <span className="text-red-500">*</span>
               </label>
               <div className="relative">
                 <input
                   id="password"
                   type={showPassword ? "text" : "password"}
+                  required
                   value={formData.password}
-                  onChange={(e) => handleInputChange("password", e.target.value)}
+                  onChange={(e) =>
+                    handleInputChange("password", e.target.value)
+                  }
                   className="w-full px-3 py-3 pr-10 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
                   placeholder="Create a password"
                 />
@@ -126,22 +152,35 @@ const route=useNavigate()
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
                 >
-                  {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                  {showPassword ? (
+                    <EyeOff className="h-5 w-5" />
+                  ) : (
+                    <Eye className="h-5 w-5" />
+                  )}
                 </button>
               </div>
-              <p className="text-xs text-gray-500 mt-1">Use at least 8 characters with a number</p>
+              <p className="text-xs text-gray-500 mt-1">
+                Use at least 8 characters with a number
+              </p>
             </div>
 
             {/* Affiliation Field */}
             <div>
-              <label htmlFor="affiliation" className="block text-sm font-medium text-gray-700 mb-2">
-                Affiliation / Organization
+              <label
+                htmlFor="affiliation"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
+                Affiliation / Organization{" "}
+                <span className="text-red-500">*</span>
               </label>
               <input
                 id="affiliation"
                 type="text"
+                required
                 value={formData.affiliation}
-                onChange={(e) => handleInputChange("affiliation", e.target.value)}
+                onChange={(e) =>
+                  handleInputChange("affiliation", e.target.value)
+                }
                 className="w-full px-3 py-3 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
                 placeholder="University, Company, or Institution"
               />
@@ -149,12 +188,16 @@ const route=useNavigate()
 
             {/* ORCID Field */}
             <div>
-              <label htmlFor="orcid" className="block text-sm font-medium text-gray-700 mb-2">
-                ORCID (Optional)
+              <label
+                htmlFor="orcid"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
+                ORCID <span className="text-red-500">*</span>
               </label>
               <input
                 id="orcid"
                 type="text"
+                required
                 value={formData.orcid}
                 onChange={(e) => handleInputChange("orcid", e.target.value)}
                 className="w-full px-3 py-3 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
@@ -171,7 +214,10 @@ const route=useNavigate()
                 onChange={(e) => setAgreeToTerms(e.target.checked)}
                 className="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded mt-0.5"
               />
-              <label htmlFor="terms" className="ml-2 block text-sm text-gray-700">
+              <label
+                htmlFor="terms"
+                className="ml-2 block text-sm text-gray-700"
+              >
                 I agree to the{" "}
                 <a href="#" className="text-green-600 hover:text-green-500">
                   Terms
@@ -192,7 +238,10 @@ const route=useNavigate()
                 onChange={(e) => setIsNotRobot(e.target.checked)}
                 className="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded"
               />
-              <label htmlFor="not-robot" className="ml-2 block text-sm text-gray-700">
+              <label
+                htmlFor="not-robot"
+                className="ml-2 block text-sm text-gray-700"
+              >
                 I'm not a robot
               </label>
             </div>
@@ -211,7 +260,10 @@ const route=useNavigate()
           <div className="mt-6 text-center">
             <p className="text-sm text-gray-600">
               Already have an account?{" "}
-              <Link to={"/login"} className="font-medium text-green-600 hover:text-green-500">
+              <Link
+                to={"/login"}
+                className="font-medium text-green-600 hover:text-green-500"
+              >
                 Login
               </Link>
             </p>

@@ -26,7 +26,7 @@ export const userAPI = baseAPI.injectEndpoints({
       }),
       invalidatesTags: [],
     }),
-forgotPassword: build.mutation({
+    forgotPassword: build.mutation({
       query: (data) => ({
         url: "/auth/forgot-password",
         method: "POST",
@@ -48,7 +48,7 @@ forgotPassword: build.mutation({
         body: data,
       }),
     }),
-    
+
     getMe: build.query({
       query: () => ({
         url: "/auth/me",
@@ -56,16 +56,16 @@ forgotPassword: build.mutation({
       }),
     }),
 
-  // ------ delete user ---
+    // ------ delete user ---
 
-   deleteUserAdmin: build.mutation({
+    deleteUserAdmin: build.mutation({
       query: (id) => ({
         url: `/auth/delete-account/${id}`,
         method: "DELETE",
       }),
-      invalidatesTags: ["Users"], 
+      invalidatesTags: ["Users"],
     }),
-    
+
     updateProfileSetting: build.mutation({
       query: (payload) => ({
         url: "/auth/update-profile",
@@ -73,10 +73,16 @@ forgotPassword: build.mutation({
         body: payload,
       }),
     }),
+    // ------ change password ----
+    chnangePassword: build.mutation({
+      query: (payload) => ({
+        url: "/auth/change-password",
+        method: "POST",
+        body: payload,
+      }),
+    }),
   }),
 });
-
-
 
 export const {
   useForgotPasswordMutation,
@@ -87,5 +93,6 @@ export const {
   useGetMeQuery,
   useUpdateProfileSettingMutation,
   useResetPasswordMutation,
-  useDeleteUserAdminMutation
+  useDeleteUserAdminMutation,
+  useChnangePasswordMutation,
 } = userAPI;
