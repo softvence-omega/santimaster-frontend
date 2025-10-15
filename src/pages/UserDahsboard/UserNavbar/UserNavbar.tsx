@@ -56,7 +56,7 @@ const UserNavbar = () => {
   };
 
   return (
-    <nav className="w-full fixed top-0 left-0 z-50">
+    <nav className="w-full fixed top-0 right-1/2 transform translate-x-1/2 z-[500] container mx-auto ">
       {/* Top Bar */}
       <div className="flex items-center justify-between px-4 py-3 sm:px-6 lg:px-8 bg-white border-b border-gray-200 shadow-sm">
         {/* Logo */}

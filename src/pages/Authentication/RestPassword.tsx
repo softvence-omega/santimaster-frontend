@@ -1,11 +1,46 @@
-import { useState } from "react";
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Eye, EyeOff } from "lucide-react";
+import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
+import { useLocation } from "react-router-dom";
+import { useResetPasswordMutation } from "../../redux/features/auth/auth.api";
 
 const ResetPassword = () => {
+  const [handelResetPassword] = useResetPasswordMutation();
+  const [token, setToken] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const location = useLocation()
+  useEffect(() => {
+    // Extract query params from URL
+    const queryParams = new URLSearchParams(location.search);
+
+    const tokenValue = queryParams.get("token");
+    const emailValue = queryParams.get("email");
+
+    if (tokenValue) setToken(tokenValue);
+    if (emailValue) setEmail(emailValue);
+  }, [location.search]);
+
+  const resetPasswordNow = async () => {
+    const payload = {
+      email,
+      token,
+      newPassword: password,
+    }
+    try {
+      const res = await handelResetPassword(payload).unwrap();
+      if (res?.success) {
+        toast.success(res?.message || "Password reset successfully!")
+      }
+    } catch (error) {
+      toast.error((error as any)?.data?.message || "Failed to send password reset link.");
+    }
+
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center px-4">
@@ -84,7 +119,7 @@ const ResetPassword = () => {
 
         {/* Submit Button */}
         <button
-          type="submit"
+          onClick={resetPasswordNow}
           className="w-full py-3 px-4 rounded-lg bg-green-600 text-white font-medium shadow-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition"
         >
           Reset Password

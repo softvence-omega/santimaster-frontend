@@ -31,6 +31,7 @@ import ForgotPassword from "../pages/Authentication/ForgotPassword";
 import ResearchFundingOverview from "../pages/AdminDashboard/ResearchFundingOverview/ResearchFundingOverview";
 import MessagesTable from "../pages/AdminDashboard/Message/Massage";
 import ChangePassword from "../pages/Authentication/ChangePassword";
+import AdminProtocols from "../pages/AdminDashboard/Protocols/AdminProtocols";
 
 // Wrapper component to extract id from URL params
 // eslint-disable-next-line react-refresh/only-export-components
@@ -78,7 +79,7 @@ const router = createBrowserRouter([
         element: <RegisterForm />,
       },
       {
-        path: "/reset-password",
+        path: "/reset",
         element: <ResetPassword />,
       },
       {
@@ -179,6 +180,10 @@ const router = createBrowserRouter([
       {
         path: "research-funding-overview",
         element: <ResearchFundingOverview />,
+      },
+      {
+        path: "protocols",
+        element: <AdminProtocols />,
       },
       {
         path: "messages",

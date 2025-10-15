@@ -1,21 +1,20 @@
+import { Menu, User, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { Menu, X, User } from "lucide-react";
-import logo from "../../assets/logo.png";
-import { Link, useNavigate } from "react-router-dom";
-import { useAppSelector } from "../../redux/hook";
-import { useDispatch } from "react-redux";
-import type { AppDispatch } from "../../redux/store";
-import { logout } from "../../redux/features/auth/auth.slice";
 import { toast } from "react-hot-toast";
+import { useDispatch } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
+import logo from "../../assets/logo.png";
+import { logout } from "../../redux/features/auth/auth.slice";
+import { useAppSelector } from "../../redux/hook";
+import type { AppDispatch } from "../../redux/store";
 
 const Navbar = () => {
-  const [active, setActive] = useState("");
+  const [active, setActive] = useState("/");
   const [menuOpen, setMenuOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
 
-  // Separate refs for desktop and mobile dropdowns
   const desktopDropdownRef = useRef<HTMLDivElement>(null);
   const mobileDropdownRef = useRef<HTMLDivElement>(null);
 
@@ -37,14 +36,14 @@ const Navbar = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+
+
   const handleLogout = () => {
     dispatch(logout());
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("user");
     setDropdownOpen(false);
     setMenuOpen(false);
     toast.success("Logged out successfully!");
-    navigate("/login");
+    window.location.replace("/");
   };
 
   const handleDashboardRedirect = () => {
@@ -67,8 +66,15 @@ const Navbar = () => {
   ];
 
   return (
-    <div className="w-full p-2 fixed top-0 left-0 z-100">
-      <div className="rounded-[12px] border border-black/25 bg-white shadow-[0_4px_15px_0_rgba(0,0,0,0.15)] backdrop-blur-[10px]">
+    <div className="w-full p-0 fixed top-0 left-0 z-[500]">
+      <div
+        className={`shadow-[0_4px_15px_0_rgba(0,0,0,0.15)] transition-colors duration-300`}
+        style={{
+          backgroundColor: "rgba(255, 255, 255, 0.9)",
+          WebkitBackdropFilter: "blur(10px)" ,
+          backdropFilter: "blur(10px)" ,
+        }}
+      >
         <div className="px-4 sm:px-6 py-3 flex items-center justify-between">
           {/*------------- Logo ------------------------*/}
           <Link to="/" className="flex items-center space-x-2">
@@ -89,9 +95,8 @@ const Navbar = () => {
                   setActive(link.name);
                   setDropdownOpen(false);
                 }}
-                className={`relative text-[#1D6953] text-[16px] sm:text-[18px] font-normal leading-normal hover:text-green-700 ${
-                  active === link.name ? "font-medium" : ""
-                }`}
+                className={`relative text-[#1D6953] text-[16px] sm:text-[18px] font-normal leading-normal hover:text-green-700 ${active === link.name ? "font-medium" : ""
+                  }`}
               >
                 {link.name}
                 {active === link.name && (
@@ -101,7 +106,7 @@ const Navbar = () => {
             ))}
           </div>
 
-          {/*------------- Search & Auth (Desktop: md and above) ----------------*/}
+          {/*------------- User/Auth (Desktop: md and above) ----------------*/}
           <div className="hidden md:flex items-center space-x-3">
             {user ? (
               <div className="relative" ref={desktopDropdownRef}>
@@ -220,11 +225,10 @@ const Navbar = () => {
 
         {/*------------ Mobile Menu (below md)---------- */}
         <div
-          className={`md:hidden bg-white border-t border-gray-200 transition-all duration-300 ease-in-out overflow-hidden ${
-            menuOpen
+          className={`md:hidden bg-white border-t border-gray-200 transition-all duration-300 ease-in-out overflow-hidden ${menuOpen
               ? "max-h-[500px] opacity-100 pointer-events-auto"
               : "max-h-0 opacity-0 pointer-events-none"
-          }`}
+            }`}
         >
           <div className="px-4 sm:px-6 py-4 flex flex-col space-y-4">
             {links.map((link) => (
@@ -235,9 +239,8 @@ const Navbar = () => {
                   setActive(link.name);
                   setMenuOpen(false);
                 }}
-                className={`relative text-[#1D6953] text-center text-[16px] font-normal leading-normal hover:text-green-700 ${
-                  active === link.name ? "font-medium" : ""
-                }`}
+                className={`relative text-[#1D6953] text-center text-[16px] font-normal leading-normal hover:text-green-700 ${active === link.name ? "font-medium" : ""
+                  }`}
               >
                 {link.name}
                 {active === link.name && (
@@ -245,14 +248,6 @@ const Navbar = () => {
                 )}
               </Link>
             ))}
-            {/* <div className="flex items-center border border-gray-400 rounded-lg px-3 py-2">
-              <Search className="h-4 w-4 text-gray-500 mr-2" />
-              <input
-                type="text"
-                placeholder="Search"
-                className="outline-none text-black text-sm w-full"
-              />
-            </div> */}
           </div>
         </div>
       </div>

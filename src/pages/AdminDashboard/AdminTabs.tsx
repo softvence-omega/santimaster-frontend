@@ -17,10 +17,15 @@ const AdminDahboardTab = () => {
       value: "messages",
       href: "/admin/messages",
     },
+    {
+      title: "Protocols",
+      value: "protocols",
+      href: "/admin/protocols",
+    },
   ];
 
   return (
-    <div className="hidden md:flex items-center justify-center gap-4 md:gap-[30px] pt-10">
+    <div className="hidden md:flex items-center justify-center container mx-auto gap-4 md:gap-[30px] pt-10">
       <Tabs tabs={tabOptions} />
     </div>
   );

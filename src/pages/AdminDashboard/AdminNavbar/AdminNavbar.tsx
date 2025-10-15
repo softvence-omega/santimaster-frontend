@@ -48,7 +48,7 @@ const AdminNavbar = () => {
 
 
   return (
-    <nav className="w-full max-w-7xl mx-auto">
+    <nav className="w-full container mx-auto">
       {/* Top Bar */}
       <div className="flex items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
         {/* Logo */}

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // Material used in protocol
 export interface Material {
   itemName: string;
@@ -54,7 +55,7 @@ export interface Protocol {
   stepProcedure: string;
   attachment?: string;
   license: string;
-  authors: Author;        
+  authors: any;        
   coAuthors: Author[];   
   isConfirmed: boolean;
   isAcknowledged: boolean;

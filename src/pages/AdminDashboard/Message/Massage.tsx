@@ -1,14 +1,13 @@
 import React, { useState } from "react";
-import {
-  useGetMessagesQuery,
-  useDeleteMessageMutation,
-} from "../../../redux/features/contract/contract.api";
 import { toast } from "react-hot-toast";
-import SkeletonLoader from "../../../shared/SkeletonLoader";
+import {
+  useDeleteMessageMutation,
+  useGetMessagesQuery,
+} from "../../../redux/features/contract/contract.api";
 
 const MessagesTable: React.FC = () => {
   const [page, setPage] = useState(1);
-  const limit = 5; // messages per page
+  const limit = 10; // messages per page
 
   const { data: messages = [], isLoading, isError } = useGetMessagesQuery();
 
@@ -43,16 +42,24 @@ const MessagesTable: React.FC = () => {
 
   if (isLoading)
     return (
-      <div className="p-4 text-gray-500">
-        <SkeletonLoader />
-      </div>
+      
+        <div className="container mx-auto mt-20">
+          {Array.from({ length: 6 }).map((_, index) => (
+            <div key={index} className="w-full">
+              <div className="w-full h-8  bg-gray-300 rounded-lg "></div>
+
+              <h1 className="w-56 h-2 mt-4 bg-gray-200 rounded-lg "></h1>
+              <p className="w-24 h-2 mt-4 bg-gray-200 rounded-lg "></p>
+            </div>
+          ))}
+        </div>
     );
 
   if (isError)
     return <div className="p-4 text-red-500">Failed to load messages.</div>;
 
   return (
-    <div className="p-6 bg-white rounded-xl shadow-sm overflow-x-auto">
+    <div className="p-6 bg-white rounded-xl shadow-sm overflow-x-auto container mx-auto">
       <h2 className="text-2xl font-semibold text-gray-900 mb-6">Messages</h2>
 
       <table className="min-w-full divide-y divide-gray-200">

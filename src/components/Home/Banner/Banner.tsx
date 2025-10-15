@@ -1,8 +1,8 @@
+import { Upload } from "lucide-react";
 import { Link } from "react-router-dom";
 import Bannerimg from "../../../assets/Homeimg/Bannerimg.png";
 import VirusImg from "../../../assets/Homeimg/virus.png";
 import menicon from "../../../assets/icon/men.svg";
-import uploadicon from "../../../assets/icon/upload.svg";
 
 export default function Banner() {
   return (
@@ -45,11 +45,7 @@ export default function Banner() {
                   to="/submit-protocol"
                   className="flex justify-center items-center gap-[10px] px-[20px] sm:px-[28px] py-[12px] sm:py-[16px] rounded-[8px] border border-[#17AA80] text-[#17AA80] hover:bg-[#17AA80] hover:text-white"
                 >
-                  <img
-                    src={uploadicon}
-                    alt="Protocol Icon"
-                    className="w-5 h-5"
-                  />
+                  <Upload />
                   Submit a Protocol
                 </Link>
               </div>

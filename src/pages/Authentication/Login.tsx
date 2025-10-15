@@ -1,11 +1,12 @@
-import { useState } from "react";
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Eye, EyeOff } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import { useState } from "react";
 import { toast } from "react-hot-toast";
+import { Link, useNavigate } from "react-router-dom";
 
 import { useLoginMutation, userAPI } from "../../redux/features/auth/auth.api";
-import { useAppDispatch } from "../../redux/hook";
 import { setAuth } from "../../redux/features/auth/auth.slice";
+import { useAppDispatch } from "../../redux/hook";
 import SectionHeader from "../../utils/SectionHeading";
 
 export default function LoginForm() {
@@ -13,9 +14,8 @@ export default function LoginForm() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isNotRobot, setIsNotRobot] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const [login] = useLoginMutation();
+  const [login,{isLoading:isSubmitting}] = useLoginMutation();
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
@@ -25,14 +25,10 @@ export default function LoginForm() {
       toast.error("Please fill in all fields");
       return;
     }
-
     if (!isNotRobot) {
       toast.error("Please confirm you are not a robot");
       return;
     }
-
-    setIsSubmitting(true);
-
     try {
       const loginResponse = await login({ email, password }).unwrap();
 
@@ -63,9 +59,7 @@ export default function LoginForm() {
       const errorMessage =
         err?.data?.message || "An unexpected error occurred during login.";
       toast.error(errorMessage);
-    } finally {
-      setIsSubmitting(false);
-    }
+    } 
   };
 
   return (
@@ -74,7 +68,7 @@ export default function LoginForm() {
         <div className="bg-white rounded-lg shadow-md p-8">
           {/* Header */}
           <div className="text-center mb-8">
-           
+
             <SectionHeader
               title="Welcome back"
               subtitle="Access your account to submit and manage protocols"
@@ -159,11 +153,10 @@ export default function LoginForm() {
             <button
               onClick={handleSubmit}
               disabled={isSubmitting}
-              className={`w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white transition duration-150 ease-in-out ${
-                isSubmitting
+              className={`w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white transition duration-150 ease-in-out ${isSubmitting
                   ? "bg-gray-400 cursor-not-allowed"
                   : "bg-[#17AA80] hover:bg-green-700 focus:ring-2 focus:ring-offset-2 focus:ring-green-500 cursor-pointer"
-              }`}
+                }`}
             >
               {isSubmitting ? (
                 <span className="flex items-center">

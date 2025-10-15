@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Plus, Upload, X, FileText } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import MDEditor from "react-markdown-editor-lite";
@@ -160,40 +161,7 @@ export default function UpdateProtocol({ protocolId }: UpdateProtocolProps) {
   // Prepopulate form with fetched protocol data
   useEffect(() => {
     if (protocol) {
-      reset({
-        protocolTitle: protocol.protocolTitle || "",
-        protocolDescription: protocol.protocolDescription || "",
-        category: protocol.category || "",
-        tags: protocol.tags?.join(", ") || "",
-        technique: protocol.technique || "",
-        modality: protocol.modality || "",
-        organism: protocol.organism || "",
-        phase: protocol.phase || "",
-        estimatedTime: protocol.estimatedTime || "",
-        difficulty: protocol.difficulty || "Intermediate",
-        bslLevel: protocol.bslLevel || "",
-        materials: protocol.materials?.length
-          ? protocol.materials
-          : [{ itemName: "", quantity: 0, catalog: "", supplier: "" }],
-        equipments: protocol.equipment?.length
-          ? protocol.equipment
-          : [{ equipmentName: "", note: "" }],
-        stepProcedure: protocol.stepProcedure || "",
-        notes: "",
-        // authors: [{ name: "" }],
-        coAuthors:
-          Array.isArray(protocol.coAuthors) && protocol.coAuthors.length > 0
-            ? protocol.coAuthors.map((name) => ({ name }))
-            : [],
-        doiLink: protocol.doiLink || "",
-        additionalReference: protocol.additionalReference || "",
-        license: protocol.license || "",
-        isConfirmed: protocol.isConfirmed || false,
-        isAcknowledged: protocol.isAcknowledged || false,
-        isConfidential: protocol.isConfidential || false,
-        image: undefined,
-        attachment: undefined,
-      });
+      reset();
 
       // Prepopulate uploaded files if attachment exists
       if (protocol.attachment) {
@@ -506,7 +474,7 @@ export default function UpdateProtocol({ protocolId }: UpdateProtocolProps) {
     try {
       const response = await updateProtocol({
         id: protocolId,
-        data: protocolData,
+        data: protocolData as any,
       }).unwrap();
 
       toast.success("Protocol updated successfully!");

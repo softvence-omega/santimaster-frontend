@@ -1,19 +1,27 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from "react";
+import toast from "react-hot-toast";
 import { useForgotPasswordMutation } from "../../redux/features/auth/auth.api";
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState("");
-  const [forgotPassword, { isLoading, isSuccess, isError }] =
-    useForgotPasswordMutation();
+  const [forgotPassword, { isLoading }] = useForgotPasswordMutation();
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: any) => {
     e.preventDefault();
-    if (!email) return;
-
+    if (!email) return toast.error("Please enter your email address.");
     try {
-      await forgotPassword({ email }).unwrap();
-    } catch (err) {
-      console.error("Forgot password error:", err);
+      const res = await forgotPassword({ email }).unwrap();
+      if (res?.success) {
+        toast.success(res.message || "Password reset link sent successfully!");
+        setEmail("");
+      } else {
+        toast.error(res?.message || "Failed to send password reset link.");
+        
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error((error as any)?.data?.message || "Failed to send password reset link.");
     }
   };
 
@@ -45,7 +53,6 @@ const ForgotPassword = () => {
               onChange={(e) => setEmail(e.target.value)}
               className="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition"
               placeholder="Enter your email"
-              required
             />
           </div>
 
@@ -60,18 +67,6 @@ const ForgotPassword = () => {
             </button>
           </div>
         </form>
-
-        {/* Status Messages */}
-        {isSuccess && (
-          <p className="text-green-600 text-sm text-center">
-            ✅ Reset link sent to your email!
-          </p>
-        )}
-        {isError && (
-          <p className="text-red-600 text-sm text-center">
-            ❌ Failed to send reset link. Try again.
-          </p>
-        )}
       </div>
     </div>
   );

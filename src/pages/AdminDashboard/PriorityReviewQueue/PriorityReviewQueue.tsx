@@ -2,6 +2,7 @@ import { Edit } from "lucide-react";
 import toast from "react-hot-toast";
 import { Link } from "react-router-dom";
 import { useUpdateProtocolStatusMutation } from "../../../redux/features/admindashboard/admindashboard";
+import { useDeleteProtocolMutation } from "../../../redux/features/protocols/potocols.api";
 import type { Protocol } from "../../../types/admindashboard.type";
 import SectionHeader from "../../../utils/SectionHeading";
 
@@ -15,6 +16,7 @@ const PriorityReviewQueue: React.FC<PriorityReviewQueueProps> = ({
   isLoading,
 }) => {
   const [updateProtocol] = useUpdateProtocolStatusMutation();
+  const [deleteProtocolById] = useDeleteProtocolMutation()
   const submissions =
     pendingProtocol?.map((protocol) => ({
       id: protocol._id,
@@ -53,6 +55,18 @@ const PriorityReviewQueue: React.FC<PriorityReviewQueueProps> = ({
       toast.error(result?.message, { id });
     }
   };
+  const deleteProtocol = async (protocolId: string) => {
+    if (!window.confirm("Are you sure you want to delete this protocol?"))
+      return;
+    const id = toast.loading("Deleting...");
+    const res = await deleteProtocolById(protocolId).unwrap();
+    console.log(res)
+    if (res?.success) {
+      toast.success(res?.message, { id });
+    } else {
+      toast.error(res?.message, { id });
+    }
+  };
 
   return (
     <div className="py-10 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
@@ -62,9 +76,9 @@ const PriorityReviewQueue: React.FC<PriorityReviewQueueProps> = ({
           title="Priority Review Queue"
           subtitle="Submissions requiring immediate attention"
         />
-        <button className="text-emerald-600 hover:text-emerald-700 font-medium text-sm transition-colors">
+        <Link to="/admin/protocols" className="text-emerald-600 hover:text-emerald-700 font-medium text-sm transition-colors">
           View All
-        </button>
+        </Link>
       </div>
 
       {/* Submissions List */}
@@ -147,6 +161,12 @@ const PriorityReviewQueue: React.FC<PriorityReviewQueueProps> = ({
                     className="bg-emerald-600 cursor-pointer hover:bg-emerald-700 text-white px-3 sm:px-4 py-2 rounded-lg font-medium text-xs sm:text-sm transition-colors"
                   >
                     Approve
+                  </button>
+                  <button
+                    onClick={() => deleteProtocol(submission?.id)}
+                    className="bg-red-700 cursor-pointer hover:bg-emerald-700 text-white px-3 sm:px-4 py-2 rounded-lg font-medium text-xs sm:text-sm transition-colors"
+                  >
+                    Delete
                   </button>
                 </div>
               </div>

@@ -28,19 +28,17 @@ const route=useNavigate()
 
   const handleSubmit = async () => {
     if (!agreeToTerms) {
-      toast("Please agree to the Terms and Privacy Policy.");
+      toast.error("Please agree to the Terms and Privacy Policy.");
       return;
     }
 
     if (!isNotRobot) {
-      toast("Please confirm you are not a robot.");
+      toast.error("Please confirm you are not a robot.");
       return;
     }
 
     try {
       const response = await registerUser(formData).unwrap();
-      console.log("Registration successful:", response);
-
       // You can reset form or navigate after success
       setFormData({
         fullName: "",
@@ -52,11 +50,11 @@ const route=useNavigate()
       setAgreeToTerms(false);
       setIsNotRobot(false);
 
-      toast(response.message || "Account registration successful!");
+      toast.success(response.message || "Account registration successful!");
       route("/login");
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
-      console.error("Registration error:", error);
-      toast(error?.data?.message || "Registration failed!");
+      toast.error(error?.data?.message || "Registration failed!");
     }
   };
 

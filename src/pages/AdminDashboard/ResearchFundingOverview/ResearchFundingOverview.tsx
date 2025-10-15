@@ -1,8 +1,8 @@
 import React from "react";
 import SectionHeader from "../../../utils/SectionHeading";
 
-import Loading from "../../../utils/Loading";
 import { useGetDonationsQuery } from "../../../redux/features/donation/donation.api";
+import Loading from "../../../utils/Loading";
 
 interface RecentDonar {
   _id: string;
@@ -35,17 +35,12 @@ const ResearchFundingOverview: React.FC = () => {
 
   const donation: DonationOverview | undefined = data?.data
     ? {
-        totalDonation,
-        averageDonation,
-        donationCount,
-        donations,
-      }
+      totalDonation,
+      averageDonation,
+      donationCount,
+      donations,
+    }
     : undefined;
-
-  const currentAmount =
-    donation?.donations.reduce((acc, d) => acc + d.amount, 0) || 0;
-  const targetAmount = 15000; // Example target
-  const progressPercentage = Math.round((currentAmount / targetAmount) * 100);
 
   if (isLoading)
     return (
@@ -57,7 +52,7 @@ const ResearchFundingOverview: React.FC = () => {
   if (error) return <p className="text-red-500">Error loading donations.</p>;
 
   return (
-    <div className="py-6 px-4 sm:px-6 lg:px-8">
+    <div className="py-6 px-4 sm:px-6 lg:px-8 container mx-auto">
       {/* Header */}
       <SectionHeader
         title="Research Funding Overview"
@@ -65,9 +60,9 @@ const ResearchFundingOverview: React.FC = () => {
       />
 
       {/* Stats and Progress */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8 mb-8">
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-6 lg:gap-8 mb-8">
         {/* Stats Cards */}
-        <div className="lg:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+        
           <div className="bg-gray-50 rounded-lg p-4 sm:p-6">
             <div className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-1">
               {donation?.donationCount || 0}
@@ -96,23 +91,19 @@ const ResearchFundingOverview: React.FC = () => {
             </div>
           </div>
 
-          {/* Monthly Progress Bar */}
-          <div className="sm:col-span-2">
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">
-              Monthly Goal Progress
-            </h3>
-            <div className="w-full bg-gray-200 rounded-full h-3 sm:h-4">
-              <div
-                className="bg-green-600 h-3 sm:h-4 rounded-full transition-all duration-500 ease-in-out"
-                style={{ width: `${progressPercentage}%` }}
-              />
+          <div className="bg-gray-50 rounded-lg p-4 sm:p-6">
+            <div className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-1">
+              ${totalDonation || 0}
             </div>
-            <p className="text-sm text-gray-600 mt-2">
-              ${currentAmount.toLocaleString()} / $
-              {targetAmount.toLocaleString()} ({progressPercentage}% of target)
-            </p>
+            <div className="text-sm sm:text-base text-gray-600 mb-2">
+              Total Donation
+            </div>
+            <div className="flex items-center text-xs sm:text-sm">
+              <span className="inline-flex items-center px-2 py-1 rounded-full text-black bg-[#DDE9E5] font-medium">
+                +8% this month
+              </span>
+            </div>
           </div>
-        </div>
       </div>
 
       {/* Donation Table */}
@@ -157,13 +148,12 @@ const ResearchFundingOverview: React.FC = () => {
                 <td className="px-4 py-3 font-semibold">${d.amount}</td>
                 <td className="px-4 py-3">
                   <span
-                    className={`px-2 py-1 rounded-full text-xs font-medium ${
-                      d.paymentStatus === "SUCCESS"
-                        ? "bg-emerald-100 text-emerald-700"
-                        : d.paymentStatus === "PENDING"
+                    className={`px-2 py-1 rounded-full text-xs font-medium ${d.paymentStatus === "SUCCESS"
+                      ? "bg-emerald-100 text-emerald-700"
+                      : d.paymentStatus === "PENDING"
                         ? "bg-yellow-100 text-yellow-700"
                         : "bg-gray-200 text-gray-700"
-                    }`}
+                      }`}
                   >
                     {d.paymentStatus}
                   </span>

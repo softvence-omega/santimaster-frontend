@@ -13,7 +13,6 @@ const AdminDashboard = () => {
 
   return (
     <ContainerWrapper>
-      {/* <AdminNavbar /> */}
       {/* Pass data as props if needed */}
       <AdminOverview
         isLoading={isLoading}

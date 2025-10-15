@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { baseAPI } from "../../api/baseApi";
 import type { ApiResponse } from "../../../types/api.response";
 import type { Protocol } from "../../../types/potocols.type";
@@ -6,14 +7,11 @@ import type { MyProtocol } from "../../../types/myprotocols.type";
 const protocolsApi = baseAPI.injectEndpoints({
   endpoints: (builder) => ({
     // ---------- Get all protocols -------------------
-    getAllProtocols: builder.query<
-      { data: Protocol[]; meta?: any },
-      { name: string; value: string }[] | void
-    >({
+    getAllProtocols: builder.query({
       query: (args) => {
         const params = new URLSearchParams();
         if (args) {
-          args.forEach((item) => {
+          args.forEach((item:any) => {
             params.append(item.name, item.value);
           });
         }
@@ -102,10 +100,10 @@ const protocolsApi = baseAPI.injectEndpoints({
       },
       transformResponse: (response: ApiResponse<Protocol[]>) => {
         return {
-          data: response.data.map((protocol) => ({
+          data: response?.data?.map((protocol) => ({
             ...protocol,
             status: protocol.status as any,
-          })) as MyProtocol[],
+          })) as unknown as MyProtocol[],
           meta: response.meta,
         };
       },

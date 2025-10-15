@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from "react";
 import jsPDF from "jspdf";
 import { Download, Info, Menu, Star } from "lucide-react";
@@ -144,7 +145,7 @@ const generatePDF = () => {
     yOffset += 5;
     doc.setFontSize(10);
     doc.setFont("helvetica", "normal");
-    const authorsText = protocol.authors?.length ? protocol.authors.join(", ") : "No authors";
+    const authorsText = protocol.authors ? protocol.authors : "No authors";
     const coAuthorsText = protocol.coAuthors?.length ? protocol.coAuthors.join(", ") : "None";
     const authorLines = doc.splitTextToSize(authorsText, 170);
     checkPageOverflow(authorLines.length * 5);
