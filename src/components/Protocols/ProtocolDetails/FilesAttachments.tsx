@@ -69,7 +69,7 @@ const FilesAttachments = ({ attachment }: { attachment?: string }) => {
     <div className="max-w-4xl mx-auto p-4 sm:p-6 bg-white">
       <h2
         className="text-[#0A251D] text-center font-semibold leading-normal
-           text-2xl sm:text-3xl md:text-4xl lg:text-[48px] m-6"
+           text-2xl sm:text-3xl md:text-4xl m-6"
       >
         Files & Attachments
       </h2>

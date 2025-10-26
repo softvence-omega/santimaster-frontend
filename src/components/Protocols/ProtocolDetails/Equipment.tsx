@@ -12,9 +12,9 @@ interface EquipmentProps {
 
 const Equipment = ({ equipment = [] }: EquipmentProps) => {
   return (
-    <section className="text-center my-12 max-w-5xl mx-auto px-4">
+    <section className="text-center my-12 container mx-auto">
       {/* Title */}
-      <h2 className="text-[#0A251D] font-semibold leading-normal text-2xl sm:text-3xl md:text-4xl lg:text-[48px] m-6">
+      <h2 className="text-[#0A251D] font-semibold leading-normal text-2xl sm:text-3xl md:text-4xl m-6">
         Equipment
       </h2>
 
@@ -27,7 +27,7 @@ const Equipment = ({ equipment = [] }: EquipmentProps) => {
             <img
               src={EquipmentImage}
               alt="Equipment"
-              className="rounded-lg shadow-md w-full max-w-md object-cover"
+              className="rounded-lg shadow-md w-full  object-cover"
             />
           </div>
 

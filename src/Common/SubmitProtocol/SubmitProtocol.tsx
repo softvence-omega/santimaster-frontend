@@ -1,15 +1,17 @@
-import { Plus, Upload, X, FileText } from "lucide-react";
-import { useState, useRef } from "react";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { FileText, Plus, Upload, X } from "lucide-react";
+import MarkdownIt from 'markdown-it';
+import { useRef, useState } from "react";
+import { useFieldArray, useForm, type SubmitHandler } from "react-hook-form";
+import toast from "react-hot-toast";
 import MDEditor from "react-markdown-editor-lite";
 import "react-markdown-editor-lite/lib/index.css";
-import { useForm, useFieldArray, type SubmitHandler } from "react-hook-form";
 import { v4 as uuidv4 } from "uuid";
 import { useAddProtocolMutation } from "../../redux/features/protocols/potocols.api";
-import toast from "react-hot-toast";
 
 interface Material {
   itemName: string;
-  quantity: number;
+  quantity: string;
   catalog?: string;
   supplier?: string;
 }
@@ -42,14 +44,19 @@ interface FormData {
   protocolTitle: string;
   protocolDescription: string;
   category: string;
+  customCategory?: string; // New field for custom category
   tags: string;
   technique: string;
+  customTechnique?: string; // New field for custom technique
   modality: string;
+  customModality?: string; // New field for custom modality
   organism: string;
   phase: string;
+  customPhase?: string; // New field for custom phase
   estimatedTime: string;
   difficulty: string;
   bslLevel: string;
+  customBslLevel?: string; // New field for custom BSL level
   materials: Material[];
   equipments: Equipment[];
   stepProcedure: string;
@@ -58,6 +65,7 @@ interface FormData {
   doiLink: string;
   additionalReference: string;
   license: string;
+  customLicense?: string; // New field for custom license
   isConfirmed: boolean;
   isAcknowledged: boolean;
   isConfidential: boolean;
@@ -66,6 +74,7 @@ interface FormData {
 }
 
 export default function SubmitProtocol() {
+  const mdParser = new MarkdownIt(/* Markdown-it options */);
   const [submitProtocol] = useAddProtocolMutation();
   const {
     register,
@@ -73,20 +82,26 @@ export default function SubmitProtocol() {
     handleSubmit,
     formState: { errors },
     setValue,
+    watch,
   } = useForm<FormData>({
     defaultValues: {
       protocolTitle: "",
       protocolDescription: "",
       category: "",
+      customCategory: "",
       tags: "",
       technique: "",
+      customTechnique: "",
       modality: "",
+      customModality: "",
       organism: "",
       phase: "",
+      customPhase: "",
       estimatedTime: "",
       difficulty: "Intermediate",
       bslLevel: "",
-      materials: [{ itemName: "", quantity: 0, catalog: "", supplier: "" }],
+      customBslLevel: "",
+      materials: [{ itemName: "", quantity: "", catalog: "", supplier: "" }],
       equipments: [{ equipmentName: "", note: "", catalog: "", supplier: "" }],
       stepProcedure: "",
       notes: "",
@@ -94,6 +109,7 @@ export default function SubmitProtocol() {
       doiLink: "",
       additionalReference: "",
       license: "",
+      customLicense: "",
       isConfirmed: false,
       isAcknowledged: false,
       isConfidential: false,
@@ -101,36 +117,34 @@ export default function SubmitProtocol() {
     },
   });
 
-  const {
-    fields: materialFields,
-    append: appendMaterial,
-    remove: removeMaterial,
-  } = useFieldArray({
-    control,
-    name: "materials",
-  });
+  const selectedCategory = watch("category");
+  const selectedTechnique = watch("technique");
+  const selectedModality = watch("modality");
+  const selectedPhase = watch("phase");
+  const selectedBslLevel = watch("bslLevel");
+  const selectedLicense = watch("license");
+  const selectedEstimatedTime = watch("estimatedTime");
+  const selectedDifficulty = watch("difficulty");
 
-  const {
-    fields: equipmentFields,
-    append: appendEquipment,
-    remove: removeEquipment,
-  } = useFieldArray({
-    control,
-    name: "equipments",
-  });
+  const { fields: materialFields, append: appendMaterial, remove: removeMaterial } =
+    useFieldArray({
+      control,
+      name: "materials",
+    });
 
-  const {
-    fields: authorFields,
-    append: appendAuthor,
-    remove: removeAuthor,
-  } = useFieldArray({
-    control,
-    name: "authors",
-  });
+  const { fields: equipmentFields, append: appendEquipment, remove: removeEquipment } =
+    useFieldArray({
+      control,
+      name: "equipments",
+    });
+
+  const { fields: authorFields, append: appendAuthor, remove: removeAuthor } =
+    useFieldArray({
+      control,
+      name: "authors",
+    });
 
   const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
-  const [isDragging, setIsDragging] = useState(false);
-  const [dragCounter, setDragCounter] = useState(0);
   const [uploadingFiles, setUploadingFiles] = useState<Set<string>>(new Set());
   const fileInputRef = useRef<HTMLInputElement>(null);
   const imageInputRef = useRef<HTMLInputElement>(null);
@@ -141,6 +155,7 @@ export default function SubmitProtocol() {
     "Molecular Biology",
     "Immunotherapy",
     "Cell Biology",
+    "Other",
   ];
 
   const techniqueOptions = [
@@ -149,6 +164,7 @@ export default function SubmitProtocol() {
     "Prime Editing",
     "CAR-T",
     "Aseptic Technique",
+    "Other",
   ];
 
   const modalityOptions = [
@@ -157,14 +173,12 @@ export default function SubmitProtocol() {
     "Viral Vector",
     "Lipid Nanoparticle",
     "In-vitro",
+    "Other",
   ];
 
-  const phaseOptions = ["Research", "Preclinical", "Clinical", "Experimental"];
-
+  const phaseOptions = ["Research", "Preclinical", "Clinical", "Experimental", "Other"];
   const bslOptions = ["BSL-1", "BSL-2", "BSL-3", "Other"];
-
   const timeOptions = ["<1h", "1-4h", "1-3d", ">3d"];
-
   const licenseOptions = ["CC-BY-4.0", "CC-BY-NC-4.0", "MIT", "Other"];
 
   const formatFileSize = (bytes: number) => {
@@ -183,79 +197,34 @@ export default function SubmitProtocol() {
     return "📎";
   };
 
-  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>, isImage: boolean) => {
     const files = Array.from(event.target.files || []);
-    handleFiles(files, event.target === imageInputRef.current);
-  };
-
-  const handleDrop = (
-    event: React.DragEvent<HTMLDivElement>,
-    isImage: boolean
-  ) => {
-    event.preventDefault();
-    setIsDragging(false);
-    setDragCounter(0);
-
-    const files = Array.from(event.dataTransfer.files || []);
     handleFiles(files, isImage);
-  };
-
-  const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
-    event.preventDefault();
-    setIsDragging(true);
-  };
-
-  const handleDragEnter = (event: React.DragEvent<HTMLDivElement>) => {
-    event.preventDefault();
-    setDragCounter((prev) => prev + 1);
-  };
-
-  const handleDragLeave = (event: React.DragEvent<HTMLDivElement>) => {
-    event.preventDefault();
-    setDragCounter((prev) => {
-      const newCount = prev - 1;
-      if (newCount <= 0) {
-        setIsDragging(false);
-      }
-      return newCount;
-    });
-  };
-
-  const handleClickUpload = (isImage: boolean) => {
-    if (isImage) {
-      imageInputRef.current?.click();
-    } else {
-      fileInputRef.current?.click();
-    }
   };
 
   const handleFiles = (files: File[], isImage: boolean) => {
     const validTypes = isImage
       ? ["image/jpeg", "image/jpg", "image/png", "image/gif", "image/webp"]
       : [
-          "application/pdf",
-          "application/msword",
-          "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-          "application/vnd.ms-excel",
-          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-        ];
+        "application/pdf",
+        "application/msword",
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        "application/vnd.ms-excel",
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      ];
     const maxSize = 10 * 1024 * 1024; // 10MB
 
     const validFiles = files.filter((file) => {
       if (!validTypes.includes(file.type)) {
-        toast(
-          `File type ${file.name} is not supported. Please upload ${
-            isImage ? "images" : "PDF or documents"
-          }.`
+        toast.error(
+          `File type ${file.name} is not supported. Please upload ${isImage ? "images" : "PDF or documents"}.`
         );
         return false;
       }
-
       if (file.size > maxSize) {
-        toast(`File ${file.name} is too large. Maximum size is 10MB.`);
+        toast.error(`File ${file.name} is too large. Maximum size is 10MB.`);
         return false;
       }
-
       return true;
     });
 
@@ -267,9 +236,7 @@ export default function SubmitProtocol() {
         size: file.size,
         type: file.type,
         url: URL.createObjectURL(file),
-        preview: file.type.startsWith("image/")
-          ? URL.createObjectURL(file)
-          : undefined,
+        preview: file.type.startsWith("image/") ? URL.createObjectURL(file) : undefined,
       };
 
       setUploadingFiles((prev) => new Set([...prev, fileId]));
@@ -277,9 +244,7 @@ export default function SubmitProtocol() {
       const progressInterval = setInterval(() => {
         setUploadedFiles((prev) =>
           prev.map((f) =>
-            f.id === fileId
-              ? { ...f, uploadProgress: (f.uploadProgress || 0) + 10 }
-              : f
+            f.id === fileId ? { ...f, uploadProgress: (f.uploadProgress || 0) + 10 } : f
           )
         );
       }, 200);
@@ -294,7 +259,6 @@ export default function SubmitProtocol() {
         setUploadedFiles((prev) =>
           prev.map((f) => (f.id === fileId ? { ...f, uploadProgress: 100 } : f))
         );
-
         setTimeout(() => {
           setUploadedFiles((prev) => [
             ...prev.filter((f) => f.id !== fileId),
@@ -337,27 +301,28 @@ export default function SubmitProtocol() {
   };
 
   const onSubmit: SubmitHandler<FormData> = async (data) => {
+    const toastId = toast.loading("Protocol submitting...");
     const apiData = {
       image: data.image,
       data: {
         protocolTitle: data.protocolTitle,
         protocolDescription: data.protocolDescription,
-        category: data.category,
+        category: data.category === "Other" ? data.customCategory || "Other" : data.category,
         tags: data.tags
           .split(",")
           .map((tag) => tag.trim())
           .filter(Boolean),
-        technique: data.technique,
-        modality: data.modality,
+        technique: data.technique === "Other" ? data.customTechnique || "Other" : data.technique,
+        modality: data.modality === "Other" ? data.customModality || "Other" : data.modality,
         organism: data.organism,
-        phase: data.phase,
+        phase: data.phase === "Other" ? data.customPhase || "Other" : data.phase,
         estimatedTime: data.estimatedTime,
         difficulty: data.difficulty,
-        bslLevel: data.bslLevel,
+        bslLevel: data.bslLevel === "Other" ? data.customBslLevel || "Other" : data.bslLevel,
         materials: data.materials.map(
           ({ itemName, quantity, catalog, supplier }) => ({
             itemName,
-            quantity: Number(quantity), // Convert to number
+            quantity: quantity,
             catalog,
             supplier,
           })
@@ -374,7 +339,7 @@ export default function SubmitProtocol() {
         additionalReference: data.additionalReference,
         stepProcedure: data.stepProcedure,
         attachment: data.attachment,
-        license: data.license,
+        license: data.license === "Other" ? data.customLicense || "Other" : data.license,
         isConfirmed: data.isConfirmed,
         isAcknowledged: data.isAcknowledged,
         isConfidential: data.isConfidential,
@@ -386,13 +351,12 @@ export default function SubmitProtocol() {
       formData.append("image", apiData.image);
     }
     formData.append("data", JSON.stringify(apiData.data));
+
     try {
-      const response = await submitProtocol(formData).unwrap();
-      toast("Protocol submitted successfully:");
-      console.log(response);
+      await submitProtocol(formData);
+      toast.success("Protocol submitted successfully", { id: toastId });
     } catch (error) {
-      console.error("Error submitting protocol:", error);
-      toast("Error submitting protocol");
+      toast.error((error as any)?.data?.message || "Error submitting protocol", { id: toastId });
     }
   };
 
@@ -406,14 +370,13 @@ export default function SubmitProtocol() {
             </h1>
             <p>Auto-saved at 14:23</p>
           </div>
-
           {/* Basic Information */}
           <section className="space-y-4 mb-8">
             <h2 className="text-lg sm:text-xl font-medium text-[#1C1C1E]">
               Basic Information
             </h2>
             <div className="grid gap-2">
-              <h1>Protocol Title</h1>
+              <label>Protocol Title</label>
               <input
                 {...register("protocolTitle", {
                   required: "Protocol title is required",
@@ -428,18 +391,14 @@ export default function SubmitProtocol() {
               )}
             </div>
             <div className="grid gap-2">
-              <h1>Abstract (Short Description)</h1>
+              <label>Abstract (Short Description)</label>
               <textarea
                 {...register("protocolDescription", {
                   required: "Abstract is required",
                   minLength: {
-                    value: 0,
-                    message: "Abstract must be at least 280 characters",
-                  },
-                  maxLength: {
-                    value: 3000,
-                    message: "Abstract must not exceed 400 characters",
-                  },
+                    value: 10,
+                    message: "Abstract must be at least 10 characters",
+                  }
                 })}
                 placeholder="Provide a brief abstract describing your protocol (280-400 characters)"
                 rows={3}
@@ -452,39 +411,62 @@ export default function SubmitProtocol() {
               )}
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <select
-                {...register("category", { required: "Category is required" })}
-                className="border border-gray-300 rounded-lg p-3 text-[#636363] focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              >
-                <option value="">Select a category</option>
-                {categoryOptions.map((option) => (
-                  <option key={option} value={option}>
-                    {option}
-                  </option>
-                ))}
-              </select>
-              {errors.category && (
-                <p className="text-red-600 text-sm">
-                  {errors.category.message}
-                </p>
-              )}
-              <input
-                {...register("tags", {
-                  required: "Tags are required",
-                  pattern: {
-                    value: /^[\w\s,-]+$/,
-                    message: "Tags must be comma-separated words",
-                  },
-                })}
-                placeholder="Add tags separated by commas"
-                className="border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              />
-              {errors.tags && (
-                <p className="text-red-600 text-sm">{errors.tags.message}</p>
-              )}
+              <div className="grid gap-2">
+                <label>Category</label>
+                <select
+                  {...register("category", {
+                    required: "Category is required",
+                  })}
+                  className="w-full border border-gray-300 rounded-lg p-3 text-[#636363] focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                >
+                  <option value="">Select a category</option>
+                  {categoryOptions.map((option) => (
+                    <option key={option} value={option}>
+                      {option}
+                    </option>
+                  ))}
+                </select>
+                {errors.category && (
+                  <p className="text-red-600 text-sm">
+                    {errors.category.message}
+                  </p>
+                )}
+                {selectedCategory === "Other" && (
+                  <div className="mt-2">
+                    <input
+                      {...register("customCategory", {
+                        required: "Custom category is required when 'Other' is selected",
+                      })}
+                      placeholder="Specify custom category"
+                      className="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    />
+                    {errors.customCategory && (
+                      <p className="text-red-600 text-sm">
+                        {errors.customCategory.message}
+                      </p>
+                    )}
+                  </div>
+                )}
+              </div>
+              <div>
+                <label>Tags</label>
+                <input
+                  {...register("tags", {
+                    required: "Tags are required",
+                    pattern: {
+                      value: /^[\w\s,-]+$/,
+                      message: "Tags must be comma-separated words",
+                    },
+                  })}
+                  placeholder="Add tags separated by commas"
+                  className="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+                {errors.tags && (
+                  <p className="text-red-600 text-sm">{errors.tags.message}</p>
+                )}
+              </div>
             </div>
           </section>
-
           {/* Protocol Details */}
           <section className="space-y-4 mb-8">
             <h2 className="text-lg sm:text-xl font-medium text-[#1C1C1E]">
@@ -492,12 +474,12 @@ export default function SubmitProtocol() {
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               <div className="grid gap-2">
-                <h1>Select technique</h1>
+                <label>Select technique</label>
                 <select
                   {...register("technique", {
                     required: "Technique is required",
                   })}
-                  className="border border-gray-300 rounded-lg p-3 text-[#636363] focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full border border-gray-300 rounded-lg p-3 text-[#636363] focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 >
                   <option value="">Select technique</option>
                   {techniqueOptions.map((option) => (
@@ -511,14 +493,30 @@ export default function SubmitProtocol() {
                     {errors.technique.message}
                   </p>
                 )}
+                {selectedTechnique === "Other" && (
+                  <div className="mt-2">
+                    <input
+                      {...register("customTechnique", {
+                        required: "Custom technique is required when 'Other' is selected",
+                      })}
+                      placeholder="Specify custom technique"
+                      className="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    />
+                    {errors.customTechnique && (
+                      <p className="text-red-600 text-sm">
+                        {errors.customTechnique.message}
+                      </p>
+                    )}
+                  </div>
+                )}
               </div>
               <div className="grid gap-2">
-                <h1>Select modality</h1>
+                <label>Select modality</label>
                 <select
                   {...register("modality", {
                     required: "Modality is required",
                   })}
-                  className="border border-gray-300 rounded-lg p-3 text-[#636363] focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full border border-gray-300 rounded-lg p-3 text-[#636363] focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 >
                   <option value="">Select modality</option>
                   {modalityOptions.map((option) => (
@@ -532,15 +530,31 @@ export default function SubmitProtocol() {
                     {errors.modality.message}
                   </p>
                 )}
+                {selectedModality === "Other" && (
+                  <div className="mt-2">
+                    <input
+                      {...register("customModality", {
+                        required: "Custom modality is required when 'Other' is selected",
+                      })}
+                      placeholder="Specify custom modality"
+                      className="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    />
+                    {errors.customModality && (
+                      <p className="text-red-600 text-sm">
+                        {errors.customModality.message}
+                      </p>
+                    )}
+                  </div>
+                )}
               </div>
               <div className="grid gap-2">
-                <h1>Organism / Cell Type</h1>
+                <label>Organism / Cell Type</label>
                 <input
                   {...register("organism", {
                     required: "Organism/Cell Type is required",
                   })}
                   placeholder="Organism / Cell Type"
-                  className="border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
                 {errors.organism && (
                   <p className="text-red-600 text-sm">
@@ -549,10 +563,10 @@ export default function SubmitProtocol() {
                 )}
               </div>
               <div className="grid gap-2">
-                <h1>Phase</h1>
+                <label>Phase</label>
                 <select
                   {...register("phase", { required: "Phase is required" })}
-                  className="border border-gray-300 rounded-lg p-3 text-[#636363] focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full border border-gray-300 rounded-lg p-3 text-[#636363] focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 >
                   <option value="">Select phase</option>
                   {phaseOptions.map((option) => (
@@ -563,6 +577,22 @@ export default function SubmitProtocol() {
                 </select>
                 {errors.phase && (
                   <p className="text-red-600 text-sm">{errors.phase.message}</p>
+                )}
+                {selectedPhase === "Other" && (
+                  <div className="mt-2">
+                    <input
+                      {...register("customPhase", {
+                        required: "Custom phase is required when 'Other' is selected",
+                      })}
+                      placeholder="Specify custom phase"
+                      className="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    />
+                    {errors.customPhase && (
+                      <p className="text-red-600 text-sm">
+                        {errors.customPhase.message}
+                      </p>
+                    )}
+                  </div>
                 )}
               </div>
             </div>
@@ -576,12 +606,11 @@ export default function SubmitProtocol() {
                     <button
                       key={time}
                       type="button"
-                      onClick={() => setValue("estimatedTime", time)}
-                      className={`px-3 py-2 border rounded-lg text-sm font-medium transition-colors ${
-                        time === control._formValues.estimatedTime
-                          ? "bg-green-500 text-white border-green-600"
-                          : "bg-white border-gray-300 text-gray-700 hover:border-green-400"
-                      }`}
+                      onClick={() => setValue("estimatedTime", time, { shouldValidate: true })}
+                      className={`px-3 py-2 border rounded-lg text-sm font-medium transition-colors ${selectedEstimatedTime === time
+                        ? "bg-green-500 text-white border-green-600"
+                        : "bg-white border-gray-300 text-gray-700 hover:border-green-400"
+                        }`}
                     >
                       {time}
                     </button>
@@ -593,7 +622,6 @@ export default function SubmitProtocol() {
                   </p>
                 )}
               </div>
-
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Difficulty
@@ -602,11 +630,10 @@ export default function SubmitProtocol() {
                   {["Easy", "Intermediate", "Hard"].map((level) => (
                     <label
                       key={level}
-                      className={`px-3 py-2 border rounded-lg cursor-pointer text-sm font-medium transition-colors ${
-                        level === control._formValues.difficulty
-                          ? "bg-green-100 border-green-500 text-green-700"
-                          : "bg-white text-gray-700 border-gray-300 hover:border-green-300"
-                      }`}
+                      className={`px-3 py-2 border rounded-lg cursor-pointer text-sm font-medium transition-colors ${selectedDifficulty === level
+                        ? "bg-green-100 border-green-500 text-green-700"
+                        : "bg-white text-gray-700 border-gray-300 hover:border-green-300"
+                        }`}
                     >
                       <input
                         type="radio"
@@ -628,7 +655,6 @@ export default function SubmitProtocol() {
               </div>
             </div>
           </section>
-
           {/* Biosafety */}
           <section className="mb-8 bg-yellow-50 border border-yellow-200 rounded-lg p-4 sm:p-6">
             <h3 className="text-lg font-medium text-yellow-800 mb-3">
@@ -648,31 +674,42 @@ export default function SubmitProtocol() {
             {errors.bslLevel && (
               <p className="text-red-600 text-sm">{errors.bslLevel.message}</p>
             )}
+            {selectedBslLevel === "Other" && (
+              <div className="mt-2">
+                <input
+                  {...register("customBslLevel", {
+                    required: "Custom BSL level is required when 'Other' is selected",
+                  })}
+                  placeholder="Specify custom BSL level"
+                  className="w-full border border-yellow-300 rounded-lg p-3 focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                />
+                {errors.customBslLevel && (
+                  <p className="text-red-600 text-sm">
+                    {errors.customBslLevel.message}
+                  </p>
+                )}
+              </div>
+            )}
             <p className="text-sm mt-3 text-yellow-800 leading-relaxed">
-              Important: This protocol requires BSL-2+ handling. Detailed
-              procedural steps will remain hidden until a reviewer confirms
-              compliance.
+              Important: This protocol requires BSL-2+ handling. Detailed procedural steps will remain hidden until a reviewer confirms compliance.
             </p>
           </section>
-
           {/* Materials */}
           <section className="space-y-4 mb-8">
             <h2 className="text-lg sm:text-xl font-medium text-[#1C1C1E]">
               Materials & Equipment
             </h2>
-            <h1 className="text-2xl sm:text-xl font-medium text-[#1C1C1E]">
-              Materials
-            </h1>
+            <h3 className="text-xl font-medium text-[#1C1C1E]">Materials</h3>
             <div className="space-y-3">
               {materialFields.map((material, i) => (
                 <div
                   key={material.id}
-                  className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 p-3"
+                  className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 p-3 bg-gray-50 rounded-lg"
                 >
-                  <div className="gap-2 grid">
-                    <h1>Item Name</h1>
+                  <div className="grid gap-2">
+                    <label>Item Name</label>
                     <input
-                      {...register(`materials.${i}.itemName`, {
+                      {...register(`materials.${i}.itemName` as const, {
                         required: "Item name is required",
                       })}
                       className="border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -680,43 +717,38 @@ export default function SubmitProtocol() {
                     />
                     {errors.materials?.[i]?.itemName && (
                       <p className="text-red-600 text-sm">
-                        {errors.materials[i].itemName.message}
+                        {errors.materials[i]?.itemName?.message}
                       </p>
                     )}
                   </div>
-                  <div className="gap-2 grid">
-                    <h1>Quantity</h1>
+                  <div className="grid gap-2">
+                    <label>Quantity</label>
                     <input
-                      type="number"
-                      {...register(`materials.${i}.quantity`, {
+                      type="text"
+                      {...register(`materials.${i}.quantity` as const, {
                         required: "Quantity is required",
-                        valueAsNumber: true,
-                        min: {
-                          value: 0,
-                          message: "Quantity must be a positive number",
-                        },
                       })}
                       className="border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       placeholder="Quantity"
                     />
                     {errors.materials?.[i]?.quantity && (
                       <p className="text-red-600 text-sm">
-                        {errors.materials[i].quantity.message}
+                        {errors.materials[i]?.quantity?.message}
                       </p>
                     )}
                   </div>
                   <div className="grid gap-2">
-                    <h1>Catalog</h1>
+                    <label>Catalog</label>
                     <input
-                      {...register(`materials.${i}.catalog`)}
+                      {...register(`materials.${i}.catalog` as const)}
                       className="border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       placeholder="Catalog (optional)"
                     />
                   </div>
                   <div className="grid gap-2">
-                    <h1>Supplier</h1>
+                    <label>Supplier</label>
                     <input
-                      {...register(`materials.${i}.supplier`)}
+                      {...register(`materials.${i}.supplier` as const)}
                       className="border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       placeholder="Supplier (optional)"
                     />
@@ -737,7 +769,7 @@ export default function SubmitProtocol() {
                 onClick={() =>
                   appendMaterial({
                     itemName: "",
-                    quantity: 0,
+                    quantity: "",
                     catalog: "",
                     supplier: "",
                   })
@@ -749,22 +781,19 @@ export default function SubmitProtocol() {
               </button>
             </div>
           </section>
-
           {/* Equipment */}
           <section className="space-y-4 mb-8">
-            <h1 className="text-2xl sm:text-xl font-medium text-[#1C1C1E]">
-              Equipment
-            </h1>
+            <h3 className="text-xl font-medium text-[#1C1E1E]">Equipment</h3>
             <div className="space-y-3">
               {equipmentFields.map((equipment, i) => (
                 <div
                   key={equipment.id}
-                  className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 p-3 rounded-lg"
+                  className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 p-3 rounded-lg bg-gray-50"
                 >
                   <div className="grid gap-2">
-                    <h1>Equipment Name</h1>
+                    <label>Equipment Name</label>
                     <input
-                      {...register(`equipments.${i}.equipmentName`, {
+                      {...register(`equipments.${i}.equipmentName` as const, {
                         required: "Equipment name is required",
                       })}
                       className="border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -772,14 +801,14 @@ export default function SubmitProtocol() {
                     />
                     {errors.equipments?.[i]?.equipmentName && (
                       <p className="text-red-600 text-sm">
-                        {errors.equipments[i].equipmentName.message}
+                        {errors.equipments[i]?.equipmentName?.message}
                       </p>
                     )}
                   </div>
                   <div className="grid gap-2">
-                    <h1>Note</h1>
+                    <label>Note</label>
                     <input
-                      {...register(`equipments.${i}.note`, {
+                      {...register(`equipments.${i}.note` as const, {
                         required: "Note is required",
                       })}
                       className="border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -787,22 +816,22 @@ export default function SubmitProtocol() {
                     />
                     {errors.equipments?.[i]?.note && (
                       <p className="text-red-600 text-sm">
-                        {errors.equipments[i].note.message}
+                        {errors.equipments[i]?.note?.message}
                       </p>
                     )}
                   </div>
-                  <div className="gap-2 grid">
-                    <h1>Catalog</h1>
+                  <div className="grid gap-2">
+                    <label>Catalog</label>
                     <input
-                      {...register(`equipments.${i}.catalog`)}
+                      {...register(`equipments.${i}.catalog` as const)}
                       className="border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       placeholder="Catalog (optional)"
                     />
                   </div>
                   <div className="grid gap-2">
-                    <h1>Supplier</h1>
+                    <label>Supplier</label>
                     <input
-                      {...register(`equipments.${i}.supplier`)}
+                      {...register(`equipments.${i}.supplier` as const)}
                       className="border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       placeholder="Supplier (optional)"
                     />
@@ -835,7 +864,6 @@ export default function SubmitProtocol() {
               </button>
             </div>
           </section>
-
           {/* Additional References */}
           <section className="space-y-4 mb-8">
             <h2 className="text-lg sm:text-xl font-medium text-[#1C1C1E]">
@@ -843,11 +871,11 @@ export default function SubmitProtocol() {
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="grid gap-2">
-                <h1>DOI Link</h1>
+                <label>DOI Link</label>
                 <input
-                  {...register("doiLink", {})}
+                  {...register("doiLink")}
                   placeholder="https://doi.org/..."
-                  className="border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
                 {errors.doiLink && (
                   <p className="text-red-600 text-sm">
@@ -856,16 +884,15 @@ export default function SubmitProtocol() {
                 )}
               </div>
               <div className="grid gap-2">
-                <h1>Additional Reference</h1>
+                <label>Additional Reference</label>
                 <input
                   {...register("additionalReference")}
                   placeholder="E.g., Smith J. et al. (2022) Cell Culture Basics"
-                  className="border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
               </div>
             </div>
           </section>
-
           {/* License */}
           <section className="space-y-4 mb-8">
             <h2 className="text-lg sm:text-xl font-medium text-[#1C1C1E]">
@@ -885,24 +912,37 @@ export default function SubmitProtocol() {
             {errors.license && (
               <p className="text-red-600 text-sm">{errors.license.message}</p>
             )}
+            {selectedLicense === "Other" && (
+              <div className="mt-2">
+                <input
+                  {...register("customLicense", {
+                    required: "Custom license is required when 'Other' is selected",
+                  })}
+                  placeholder="Specify custom license"
+                  className="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+                {errors.customLicense && (
+                  <p className="text-red-600 text-sm">
+                    {errors.customLicense.message}
+                  </p>
+                )}
+              </div>
+            )}
           </section>
-
           {/* Full Protocol */}
-          <section className="space-y-3 mb-8">
+          <section className=" space-y-3 mb-8">
             <h2 className="text-lg sm:text-xl font-medium text-[#1C1C1E]">
               Full Protocol / Steps
             </h2>
             <div className="bg-red-50 border border-red-200 rounded-lg p-3 text-sm text-red-700">
-              Ensure all procedures comply with your institution's safety
-              policies. Include all necessary safety precautions.
+              Ensure all procedures comply with your institution's safety policies. Include all necessary safety precautions.
             </div>
             <div>
               <MDEditor
-                value={control._formValues.stepProcedure}
-                onChange={(val: any) =>
-                  setValue("stepProcedure", val.text, { shouldValidate: true })
-                }
-                renderHTML={(text) => Promise.resolve(text)}
+                value={watch("stepProcedure")}
+                onChange={({ text }) => setValue("stepProcedure", text, { shouldValidate: true })}
+                renderHTML={(text) => mdParser.render(text)}
+                className="h-[400px]"
               />
               {errors.stepProcedure && (
                 <p className="text-red-600 text-sm">
@@ -911,7 +951,6 @@ export default function SubmitProtocol() {
               )}
             </div>
           </section>
-
           {/* Notes */}
           <section className="space-y-3 mb-8">
             <h2 className="text-lg sm:text-xl font-medium text-[#1C1C1E]">
@@ -926,13 +965,12 @@ export default function SubmitProtocol() {
               />
             </div>
           </section>
-
           {/* Files & Attachments */}
           <section className="mb-8">
             <h2 className="text-lg sm:text-xl font-medium text-[#1C1C1E]">
               Files & Attachments
             </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+            <div className="grid grid-cols-1 gap-4 mt-4">
               {/* Image Upload */}
               <div>
                 <h3 className="text-sm font-medium text-gray-900 mb-2">
@@ -942,118 +980,29 @@ export default function SubmitProtocol() {
                   ref={imageInputRef}
                   type="file"
                   accept="image/jpeg,image/jpg,image/png,image/gif,image/webp"
-                  onChange={handleFileSelect}
+                  onChange={(e) => handleFileSelect(e, true)}
                   className="hidden"
                 />
                 <div
-                  className={`relative border-2 border-dashed rounded-lg p-6 text-center transition-all duration-200 ${
-                    isDragging
-                      ? "border-blue-400 bg-blue-50 ring-2 ring-blue-200"
-                      : "border-gray-300 hover:border-blue-300 hover:bg-blue-50"
-                  }`}
-                  onDrop={(e) => handleDrop(e, true)}
-                  onDragOver={handleDragOver}
-                  onDragEnter={handleDragEnter}
-                  onDragLeave={handleDragLeave}
-                  onClick={() => handleClickUpload(true)}
+                  className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-blue-300 hover:bg-blue-50 cursor-pointer"
+                  onClick={() => imageInputRef.current?.click()}
                 >
                   <div className="flex flex-col items-center justify-center space-y-3">
-                    <div
-                      className={`p-3 rounded-full transition-colors ${
-                        isDragging ? "bg-blue-100" : "bg-blue-50"
-                      }`}
-                    >
-                      <Upload
-                        className={`w-8 h-8 ${
-                          isDragging ? "text-blue-500" : "text-blue-400"
-                        }`}
-                      />
+                    <div className="p-3 rounded-full bg-blue-50">
+                      <Upload className="w-8 h-8 text-blue-400" />
                     </div>
                     <div>
                       <p className="text-lg font-medium text-gray-900 mb-1">
-                        {isDragging
-                          ? "Drop your image here"
-                          : "Drop your image or click to browse"}
+                        Drop your image or click to browse
                       </p>
                       <p className="text-sm text-gray-500">
                         Supports JPG, PNG, GIF, WEBP (max 10MB)
                       </p>
                     </div>
                   </div>
-                  {dragCounter > 0 && (
-                    <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-75">
-                      <div className="text-center">
-                        <Upload className="w-12 h-12 text-blue-500 mx-auto mb-2 animate-bounce" />
-                        <p className="text-blue-600 font-medium">
-                          Drop image to upload
-                        </p>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {/* Attachment Upload */}
-              <div>
-                <h3 className="text-sm font-medium text-gray-900 mb-2">
-                  Upload Attachment
-                </h3>
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept=".pdf,.doc,.docx,.xls,.xlsx"
-                  onChange={handleFileSelect}
-                  className="hidden"
-                />
-                <div
-                  className={`relative border-2 border-dashed rounded-lg p-6 text-center transition-all duration-200 ${
-                    isDragging
-                      ? "border-blue-400 bg-blue-50 ring-2 ring-blue-200"
-                      : "border-gray-300 hover:border-blue-300 hover:bg-blue-50"
-                  }`}
-                  onDrop={(e) => handleDrop(e, false)}
-                  onDragOver={handleDragOver}
-                  onDragEnter={handleDragEnter}
-                  onDragLeave={handleDragLeave}
-                  onClick={() => handleClickUpload(false)}
-                >
-                  <div className="flex flex-col items-center justify-center space-y-3">
-                    <div
-                      className={`p-3 rounded-full transition-colors ${
-                        isDragging ? "bg-blue-100" : "bg-blue-50"
-                      }`}
-                    >
-                      <Upload
-                        className={`w-8 h-8 ${
-                          isDragging ? "text-blue-500" : "text-blue-400"
-                        }`}
-                      />
-                    </div>
-                    <div>
-                      <p className="text-lg font-medium text-gray-900 mb-1">
-                        {isDragging
-                          ? "Drop your file here"
-                          : "Drop your file or click to browse"}
-                      </p>
-                      <p className="text-sm text-gray-500">
-                        Supports PDF, DOCX, XLSX (max 10MB)
-                      </p>
-                    </div>
-                  </div>
-                  {dragCounter > 0 && (
-                    <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-75">
-                      <div className="text-center">
-                        <Upload className="w-12 h-12 text-blue-500 mx-auto mb-2 animate-bounce" />
-                        <p className="text-blue-600 font-medium">
-                          Drop file to upload
-                        </p>
-                      </div>
-                    </div>
-                  )}
                 </div>
               </div>
             </div>
-
             {/* Uploaded Files List */}
             {uploadedFiles.length > 0 && (
               <div className="mt-6">
@@ -1065,11 +1014,10 @@ export default function SubmitProtocol() {
                   {uploadedFiles.map((file) => (
                     <div
                       key={file.id}
-                      className={`relative p-3 border rounded-lg transition-all ${
-                        uploadingFiles.has(file.id)
-                          ? "bg-blue-50 border-blue-200"
-                          : "bg-gray-50 border-gray-200 hover:bg-gray-100"
-                      }`}
+                      className={`relative p-3 border rounded-lg transition-all ${uploadingFiles.has(file.id)
+                        ? "bg-blue-50 border-blue-200"
+                        : "bg-gray-50 border-gray-200 hover:bg-gray-100"
+                        }`}
                     >
                       {file.preview && (
                         <div className="mb-2">
@@ -1097,9 +1045,7 @@ export default function SubmitProtocol() {
                             <div className="w-full bg-gray-200 rounded-full h-2">
                               <div
                                 className="bg-blue-600 h-2 rounded-full transition-all duration-300"
-                                style={{
-                                  width: `${file.uploadProgress || 0}%`,
-                                }}
+                                style={{ width: `${file.uploadProgress || 0}%` }}
                               ></div>
                             </div>
                             <p className="text-xs text-blue-600 mt-1">
@@ -1146,7 +1092,6 @@ export default function SubmitProtocol() {
               </div>
             )}
           </section>
-
           {/* Authors & Affiliations */}
           <section className="space-y-4 mb-8">
             <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
@@ -1174,56 +1119,64 @@ export default function SubmitProtocol() {
                 key={author.id}
                 className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 p-3 border border-gray-200 rounded-lg bg-gray-50"
               >
-                <input
-                  {...register(`authors.${i}.fullName`, {
-                    required: "Full name is required",
-                  })}
-                  placeholder="Full Name"
-                  className="border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-                {errors.authors?.[i]?.fullName && (
-                  <p className="text-red-600 text-sm">
-                    {errors.authors[i].fullName.message}
-                  </p>
-                )}
-                <input
-                  {...register(`authors.${i}.email`, {
-                    required: "Email is required",
-                    pattern: {
-                      value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-                      message: "Invalid email address",
-                    },
-                  })}
-                  placeholder="Email"
-                  className="border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-                {errors.authors?.[i]?.email && (
-                  <p className="text-red-600 text-sm">
-                    {errors.authors[i].email.message}
-                  </p>
-                )}
-                <input
-                  {...register(`authors.${i}.affiliation`, {
-                    required: "Affiliation is required",
-                  })}
-                  placeholder="Affiliation"
-                  className="border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-                {errors.authors?.[i]?.affiliation && (
-                  <p className="text-red-600 text-sm">
-                    {errors.authors[i].affiliation.message}
-                  </p>
-                )}
-                <input
-                  {...register(`authors.${i}.orcid`, {})}
-                  placeholder="ORCID (XXXX-XXXX-XXXX-XXXX)"
-                  className="border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-                {errors.authors?.[i]?.orcid && (
-                  <p className="text-red-600 text-sm">
-                    {errors.authors[i].orcid.message}
-                  </p>
-                )}
+                <div className="grid gap-2">
+                  <input
+                    {...register(`authors.${i}.fullName` as const, {
+                      required: "Full name is required",
+                    })}
+                    placeholder="Full Name"
+                    className="border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                  {errors.authors?.[i]?.fullName && (
+                    <p className="text-red-600 text-sm">
+                      {errors.authors[i]?.fullName?.message}
+                    </p>
+                  )}
+                </div>
+                <div className="grid gap-2">
+                  <input
+                    {...register(`authors.${i}.email` as const, {
+                      required: "Email is required",
+                      pattern: {
+                        value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+                        message: "Invalid email address",
+                      },
+                    })}
+                    placeholder="Email"
+                    className="border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                  {errors.authors?.[i]?.email && (
+                    <p className="text-red-600 text-sm">
+                      {errors.authors[i]?.email?.message}
+                    </p>
+                  )}
+                </div>
+                <div className="grid gap-2">
+                  <input
+                    {...register(`authors.${i}.affiliation` as const, {
+                      required: "Affiliation is required",
+                    })}
+                    placeholder="Affiliation"
+                    className="border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                  {errors.authors?.[i]?.affiliation && (
+                    <p className="text-red-600 text-sm">
+                      {errors.authors[i]?.affiliation?.message}
+                    </p>
+                  )}
+                </div>
+                <div className="grid gap-2">
+                  <input
+                    {...register(`authors.${i}.orcid` as const)}
+                    placeholder="ORCID (XXXX-XXXX-XXXX-XXXX)"
+                    className="border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                  {errors.authors?.[i]?.orcid && (
+                    <p className="text-red-600 text-sm">
+                      {errors.authors[i]?.orcid?.message}
+                    </p>
+                  )}
+                </div>
                 {authorFields.length > 1 && (
                   <button
                     type="button"
@@ -1236,7 +1189,6 @@ export default function SubmitProtocol() {
               </div>
             ))}
           </section>
-
           {/* Consent & Safety */}
           <section className="space-y-3 mb-8">
             <h2 className="text-lg sm:text-xl font-medium text-[#1C1C1E]">
@@ -1252,8 +1204,7 @@ export default function SubmitProtocol() {
                   className="mt-1 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                 />
                 <span className="text-sm text-gray-700 leading-relaxed">
-                  I confirm this submission follows my institution's policies
-                  and allow reviewer access
+                  I confirm this submission follows my institution's policies and allow reviewer access
                 </span>
               </label>
               {errors.isConfirmed && (
@@ -1282,10 +1233,9 @@ export default function SubmitProtocol() {
                 <input
                   type="checkbox"
                   {...register("isConfidential", {
-                    required:
-                      "You must confirm no confidential patient information is included",
+                    required: "You must confirm no confidential patient information is included",
                   })}
-                  className="mt-1 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-200 rounded"
+                  className="mt-1 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                 />
                 <span className="text-sm text-gray-700 leading-relaxed">
                   No confidential patient information included
@@ -1298,7 +1248,6 @@ export default function SubmitProtocol() {
               )}
             </div>
           </section>
-
           <div className="mt-8 flex justify-center mx-auto">
             <button
               type="submit"

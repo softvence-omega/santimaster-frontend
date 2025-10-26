@@ -1,13 +1,14 @@
 import type { Material } from "../../../types/potocols.type";
 
 const TableMaterials = ({ materials }: { materials: Material[] }) => {
+  console.log(materials)
   return (
     <div>
       {/* ------------Materials & Reagents------------ */}
       <section>
         <h2
           className="text-[#0A251D] text-center font-semibold leading-normal
-           text-2xl sm:text-3xl md:text-4xl lg:text-[48px] m-6"
+           text-2xl sm:text-3xl md:text-4xl m-6"
         >
           Materials & Reagents
         </h2>

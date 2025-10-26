@@ -1,12 +1,12 @@
-import { useEffect, useRef, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
 import { Menu, X } from "lucide-react";
-import logo from "../../../assets/logo.png";
+import { useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
-import { useAppSelector } from "../../../redux/hook";
 import { useDispatch } from "react-redux";
-import type { AppDispatch } from "../../../redux/store";
+import { Link } from "react-router-dom";
+import logo from "../../../assets/logo.png";
 import { logout } from "../../../redux/features/auth/auth.slice";
+import { useAppSelector } from "../../../redux/hook";
+import type { AppDispatch } from "../../../redux/store";
 
 const AdminNavbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -14,9 +14,8 @@ const AdminNavbar = () => {
 
   const desktopDropdownRef = useRef<HTMLDivElement>(null);
   const mobileDropdownRef = useRef<HTMLDivElement>(null);
-
   const dispatch = useDispatch<AppDispatch>();
-  const navigate = useNavigate();
+
 
   const user = useAppSelector((state) => state?.auth?.user);
 
@@ -37,12 +36,10 @@ const AdminNavbar = () => {
 
   const handleLogout = () => {
     dispatch(logout());
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("user");
     setDropdownOpen(false);
     setIsOpen(false);
     toast.success("Logged out successfully!");
-    navigate("/login");
+    window.location.replace("/");
   };
 
 
@@ -77,7 +74,7 @@ const AdminNavbar = () => {
                 </span>
               </button>
               {dropdownOpen && (
-                <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
+                <div className="absolute right-0 mt-2 min-w-xs max-w-md bg-white border border-gray-200 rounded-lg shadow-lg z-50">
                   <div className="px-4 py-2 text-sm text-gray-700 border-b">
                     {user?.fullName || "User"}
                   </div>
@@ -122,9 +119,8 @@ const AdminNavbar = () => {
       </div>
 
       <div
-        className={`${
-          isOpen ? "block" : "hidden"
-        } md:block rounded-xl border border-black/25 bg-white shadow-md backdrop-blur-md`}
+        className={`${isOpen ? "block" : "hidden"
+          } md:block rounded-xl border border-black/25 bg-white shadow-md backdrop-blur-md`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"></div>
       </div>

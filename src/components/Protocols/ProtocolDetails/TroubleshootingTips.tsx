@@ -1,5 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { AlertTriangle, CheckCircle, Lightbulb, Shield } from "lucide-react";
 import React from "react";
-import { AlertTriangle, Lightbulb, Shield, CheckCircle } from "lucide-react";
 
 interface TipItem {
   text: string;
@@ -17,7 +18,7 @@ interface TroubleshootingSection {
   textColor: string;
 }
 
-const TroubleshootingTips: React.FC = () => {
+const TroubleshootingTips = () => {
   const sections: TroubleshootingSection[] = [
     {
       id: "low-transfection",
@@ -78,7 +79,7 @@ const TroubleshootingTips: React.FC = () => {
     <div className="max-w-4xl mx-auto p-6">
       <h2
         className="text-[#0A251D] text-center font-semibold leading-normal
-           text-2xl sm:text-3xl md:text-4xl lg:text-[48px] m-6"
+           text-2xl sm:text-3xl md:text-4xl  m-6"
       >
         Troubleshooting & Tips
       </h2>

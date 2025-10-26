@@ -5,10 +5,6 @@ import AuthorInfo from "./AuthorInfo";
 import CrisprDeatils from "./CrisprDeatils";
 import Equipment from "./Equipment";
 import FilesAttachments from "./FilesAttachments";
-import PeerReviewSection from "./PeerReviewSection";
-import ProtocalStapper from "./ProtocolStapper";
-import References from "./References";
-import RelatedProtocols from "./RelatedProtocol";
 import TableMaterials from "./TableMaterials";
 import TroubleshootingTips from "./TroubleshootingTips";
 
@@ -28,7 +24,7 @@ const ProtocolDeatils = ({ id }: { id: string }) => {
       <CrisprDeatils protocol={singleProtocol} />
       <TableMaterials materials={singleProtocol.materials} />
       <Equipment equipment={singleProtocol.equipment} />
-      <ProtocalStapper stepProcedure={singleProtocol.stepProcedure} />
+      {/* <ProtocalStapper stepProcedure={singleProtocol.stepProcedure} /> */}
       <FilesAttachments attachment={singleProtocol.attachment} />
       <TroubleshootingTips />
       <AuthorInfo
@@ -38,9 +34,6 @@ const ProtocolDeatils = ({ id }: { id: string }) => {
             : []
         }
       />
-      <PeerReviewSection />
-      <RelatedProtocols />
-      <References />
     </ContainerWrapper>
   );
 };

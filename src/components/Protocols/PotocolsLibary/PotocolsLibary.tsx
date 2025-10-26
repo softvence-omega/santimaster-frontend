@@ -4,13 +4,13 @@ import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 
 import { useGetAllProtocolsQuery } from "../../../redux/features/protocols/potocols.api";
+import SkeletonLoader from "../../../shared/SkeletonLoader";
 
 interface FilterCategory {
   name: string;
   options: {
     label: string;
     value: string;
-    count: number;
     selected: boolean;
   }[];
 }
@@ -18,10 +18,9 @@ interface FilterCategory {
 const FilterCheckbox: React.FC<{
   label: string;
   value: string;
-  count: number;
   selected: boolean;
   onChange: (value: string, selected: boolean) => void;
-}> = ({ label, value, count, selected, onChange }) => {
+}> = ({ label, value, selected, onChange }) => {
   return (
     <label className="flex items-center justify-between p-2 hover:bg-gray-50 rounded cursor-pointer">
       <div className="flex items-center">
@@ -33,7 +32,6 @@ const FilterCheckbox: React.FC<{
         />
         <span className="text-sm text-gray-700">{label}</span>
       </div>
-      <span className="text-xs text-gray-500">({count})</span>
     </label>
   );
 };
@@ -51,62 +49,39 @@ const PotocolsLibary = () => {
     {
       name: "Technique",
       options: [
-        { label: "PCR", value: "PCR", count: 0, selected: false },
-        {
-          label: "Western Blot",
-          value: "Western Blot",
-          count: 0,
-          selected: false,
-        },
-        {
-          label: "Flow Cytometry",
-          value: "Flow Cytometry",
-          count: 0,
-          selected: false,
-        },
-        { label: "ELISA", value: "ELISA", count: 0, selected: false },
+        { label: "CRISPR/Cas9", value: "CRISPR/Cas9", selected: false },
+        { label: "Base Editing", value: "Base Editing", selected: false },
+        { label: "Prime Editing", value: "Prime Editing", selected: false },
+        { label: "CAR-T", value: "CAR-T", selected: false },
+        { label: "Aseptic Technique", value: "Aseptic Technique", selected: false },
       ],
     },
     {
-      name: "Organism",
+      name: "Category",
       options: [
-        { label: "Human", value: "Human", count: 0, selected: false },
-        { label: "Mouse", value: "Mouse", count: 0, selected: false },
-        { label: "Rat", value: "Rat", count: 0, selected: false },
-        { label: "Zebrafish", value: "Zebrafish", count: 0, selected: false },
+        { label: "Gene Editing", value: "Gene Editing", selected: false },
+        { label: "Cell Therapy", value: "Cell Therapy", selected: false },
+        { label: "Molecular Biology", value: "Molecular Biology", selected: false },
+        { label: "Immunotherapy", value: "Immunotherapy", selected: false },
+        { label: "Cell Biology", value: "Cell Biology", selected: false },
       ],
     },
     {
       name: "Phase",
       options: [
-        { label: "Phase I", value: "Phase I", count: 0, selected: false },
-        { label: "Phase II", value: "Phase II", count: 0, selected: false },
-        { label: "Phase III", value: "Phase III", count: 0, selected: false },
+        { label: "Phase I", value: "Phase I", selected: false },
+        { label: "Phase II", value: "Phase II", selected: false },
+        { label: "Phase III", value: "Phase III", selected: false },
       ],
     },
     {
       name: "Difficulty",
       options: [
-        { label: "Easy", value: "Easy", count: 0, selected: false },
-        { label: "Medium", value: "Medium", count: 0, selected: false },
-        { label: "Hard", value: "Hard", count: 0, selected: false },
+        { label: "Easy", value: "Easy", selected: false },
+        { label: "Medium", value: "Medium", selected: false },
+        { label: "Hard", value: "Hard", selected: false },
       ],
-    },
-    {
-      name: "Estimated Time",
-      options: [
-        { label: "< 1 hour", value: "< 1 hour", count: 0, selected: false },
-        { label: "1-3 hours", value: "1-3 hours", count: 0, selected: false },
-        { label: "> 3 hours", value: "> 3 hours", count: 0, selected: false },
-      ],
-    },
-    {
-      name: "Additional Options",
-      options: [
-        { label: "Has Files", value: "attachment", count: 0, selected: false },
-        { label: "Has DOI", value: "doiLink", count: 0, selected: false },
-      ],
-    },
+    }
   ];
 
   // Prepare query parameters for API
@@ -121,7 +96,7 @@ const PotocolsLibary = () => {
   }, [activeFilters]);
 
   // Fetch protocols from API
-  const { data } = useGetAllProtocolsQuery(queryParams, {
+  const { data ,isLoading} = useGetAllProtocolsQuery(queryParams, {
     refetchOnMountOrArgChange: true,
   });
   const protocols = data?.data || [];
@@ -216,10 +191,8 @@ const PotocolsLibary = () => {
             )}
 
             {Object.entries(activeFilters).flatMap(([category, values]) =>
-              values.map((value) => (
-                <button
-                  key={`${category}-${value}`}
-                  className="flex items-center gap-2 bg-[#DDE9E5] px-3 py-1 rounded-[16px] text-black hover:bg-blue-100"
+              values.map((value) => ( <button key={`${category}-${value}`}
+                 className="flex items-center gap-2 bg-[#DDE9E5] px-3 py-1 rounded-[16px] text-black hover:bg-blue-100"
                   onClick={() => clearFilter(category, value)}
                 >
                   <span>{value}</span>
@@ -286,78 +259,82 @@ const PotocolsLibary = () => {
           <div className="lg:col-span-3">
             {/* All Protocols */}
             <div>
+              {
+                isLoading? <SkeletonLoader /> :
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
+                    {filteredProtocols.map((protocol) => (
+                      <div
+                        key={protocol._id.toString()}
+                        className="bg-[#F5F5F7] rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 border border-gray-200 flex flex-col"
+                      >
+                        {/* Header with techniques and BSL Level */}
+                        <div className="p-4 flex justify-between items-center">
+                          <div className="flex flex-wrap gap-2">
+                            {protocol.technique && (
+                              <span className="px-3 py-1 rounded-full text-xs font-medium bg-[#DDE9E5] text-black">
+                                {protocol.technique}
+                              </span>
+                            )}
+                          </div>
+                          <div className="inline-block bg-[#F8E0DF] text-[#FF3B30] px-2 py-1 rounded-full text-xs font-medium">
+                            {protocol.bslLevel || "Unknown"}
+                          </div>
+                        </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
-                {filteredProtocols.map((protocol) => (
-                  <div
-                    key={protocol._id.toString()}
-                    className="bg-[#F5F5F7] rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 border border-gray-200 flex flex-col"
-                  >
-                    {/* Header with techniques and BSL Level */}
-                    <div className="p-4 flex justify-between items-center">
-                      <div className="flex flex-wrap gap-2">
-                        {protocol.technique && (
-                          <span className="px-3 py-1 rounded-full text-xs font-medium bg-[#DDE9E5] text-black">
-                            {protocol.technique}
-                          </span>
-                        )}
+                        {/* Content */}
+                        <div className="p-6 flex-1">
+                          <h3 className="text-2xl font-bold text-gray-800 mb-3 leading-tight">
+                            {protocol.protocolTitle}
+                          </h3>
+                          <p className="text-lg text-gray-600 mb-4 leading-relaxed">
+                            {protocol.protocolDescription?.slice(0, 100) || "No description available"} ....
+                          </p>
+
+                          {/* Time and Difficulty */}
+                          <div className="flex items-center gap-2 mb-2">
+                            <Clock className="w-4 h-4 text-gray-500" />
+                            <span className="text-[#636363] text-xs font-medium">
+                              {protocol.estimatedTime || "Unknown"}
+                            </span>
+                            <span
+                              className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${protocol.difficulty === "Medium"
+                                ? "bg-yellow-100 text-yellow-800"
+                                : protocol.difficulty === "Hard"
+                                  ? "bg-red-100 text-red-800"
+                                  : "bg-green-100 text-green-800"
+                                }`}
+                            >
+                              {protocol.difficulty || "Unknown"}
+                            </span>
+                          </div>
+
+                          {/* Tags */}
+                          <div className="flex flex-wrap gap-2 mb-4 mt-2">
+                            {protocol.tags.map((tag, index) => (
+                              <span
+                                key={index}
+                                className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded"
+                              >
+                                {tag}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* Footer with button (fixed at bottom) */}
+                        <div className="px-6 py-4 mt-auto">
+                          <Link to={`/protocol/${protocol._id}`}>
+                            <button className="w-full py-3 px-4 bg-[#17AA80] hover:bg-[#148f68] text-white font-medium rounded-md transition-colors duration-200 text-sm">
+                              View Protocol
+                            </button>
+                          </Link>
+                        </div>
                       </div>
-                      <div className="inline-block bg-[#F8E0DF] text-[#FF3B30] px-2 py-1 rounded-full text-xs font-medium">
-                        {protocol.bslLevel || "Unknown"}
-                      </div>
-                    </div>
-
-                    {/* Content */}
-                    <div className="p-6 flex-1">
-                      <h3 className="text-2xl font-bold text-gray-800 mb-3 leading-tight">
-                        {protocol.protocolTitle}
-                      </h3>
-                      <p className="text-lg text-gray-600 mb-4 leading-relaxed">
-                        {protocol.protocolDescription?.slice(0, 100) || "No description available"} ....
-                      </p>
-
-                      {/* Time and Difficulty */}
-                      <div className="flex items-center gap-2 mb-2">
-                        <Clock className="w-4 h-4 text-gray-500" />
-                        <span className="text-[#636363] text-xs font-medium">
-                          {protocol.estimatedTime || "Unknown"}
-                        </span>
-                        <span
-                          className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${protocol.difficulty === "Medium"
-                              ? "bg-yellow-100 text-yellow-800"
-                              : protocol.difficulty === "Hard"
-                                ? "bg-red-100 text-red-800"
-                                : "bg-green-100 text-green-800"
-                            }`}
-                        >
-                          {protocol.difficulty || "Unknown"}
-                        </span>
-                      </div>
-
-                      {/* Tags */}
-                      <div className="flex flex-wrap gap-2 mb-4 mt-2">
-                        {protocol.tags.map((tag, index) => (
-                          <span
-                            key={index}
-                            className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded"
-                          >
-                            {tag}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-
-                    {/* Footer with button (fixed at bottom) */}
-                    <div className="px-6 py-4 mt-auto">
-                      <Link to={`/protocol/${protocol._id}`}>
-                        <button className="w-full py-3 px-4 bg-[#17AA80] hover:bg-[#148f68] text-white font-medium rounded-md transition-colors duration-200 text-sm">
-                          View Protocol
-                        </button>
-                      </Link>
-                    </div>
+                    ))}
                   </div>
-                ))}
-              </div>
+              }
+
+
 
 
               {/* Pagination */}
