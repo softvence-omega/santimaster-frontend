@@ -47,7 +47,6 @@ const protocolsApi = baseAPI.injectEndpoints({
         method: "POST",
         body: data,
       }),
-      transformResponse: (response: ApiResponse<Protocol>) => response.data,
       invalidatesTags: ["protocol"],
     }),
 

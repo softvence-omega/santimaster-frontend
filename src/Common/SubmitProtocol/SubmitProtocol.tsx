@@ -352,12 +352,17 @@ export default function SubmitProtocol() {
     }
     formData.append("data", JSON.stringify(apiData.data));
 
-    try {
-      await submitProtocol(formData);
+    // try {
+    const result = await submitProtocol(formData);
+    console.log(result)
+    if (result?.data) {
       toast.success("Protocol submitted successfully", { id: toastId });
-    } catch (error) {
-      toast.error((error as any)?.data?.message || "Error submitting protocol", { id: toastId });
+    } else {
+      toast.error((result as any)?.error?.data?.errorSources[0]?.message || "Error submitting protocol", { id: toastId });
     }
+    // } catch (error) {
+    //   toast.error((error as any)?.data?.message || "Error submitting protocol", { id: toastId });
+    // }
   };
 
   return (
