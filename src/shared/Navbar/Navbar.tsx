@@ -36,8 +36,6 @@ const Navbar = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-
-
   const handleLogout = () => {
     dispatch(logout());
     setDropdownOpen(false);
@@ -60,6 +58,7 @@ const Navbar = () => {
     { name: "Home", path: "/" },
     { name: "MVP", path: "/mvp" },
     { name: "Protocols", path: "/protocol" },
+    { name: "Blogs", path: "/blog" },
     { name: "Roadmap", path: "/roadmap" },
     { name: "Roles", path: "/roles" },
     { name: "Contact", path: "/contract" },
@@ -71,8 +70,8 @@ const Navbar = () => {
         className={`shadow-[0_4px_15px_0_rgba(0,0,0,0.15)] transition-colors duration-300`}
         style={{
           backgroundColor: "rgba(255, 255, 255, 0.9)",
-          WebkitBackdropFilter: "blur(10px)" ,
-          backdropFilter: "blur(10px)" ,
+          WebkitBackdropFilter: "blur(10px)",
+          backdropFilter: "blur(10px)",
         }}
       >
         <div className="px-4 sm:px-6 py-3 flex items-center justify-between">
@@ -95,8 +94,9 @@ const Navbar = () => {
                   setActive(link.name);
                   setDropdownOpen(false);
                 }}
-                className={`relative text-[#1D6953] text-[16px] sm:text-[18px] font-normal leading-normal hover:text-green-700 ${active === link.name ? "font-medium" : ""
-                  }`}
+                className={`relative text-[#1D6953] text-[16px] sm:text-[18px] font-normal leading-normal hover:text-green-700 ${
+                  active === link.name ? "font-medium" : ""
+                }`}
               >
                 {link.name}
                 {active === link.name && (
@@ -225,10 +225,11 @@ const Navbar = () => {
 
         {/*------------ Mobile Menu (below md)---------- */}
         <div
-          className={`md:hidden bg-white border-t border-gray-200 transition-all duration-300 ease-in-out overflow-hidden ${menuOpen
+          className={`md:hidden bg-white border-t border-gray-200 transition-all duration-300 ease-in-out overflow-hidden ${
+            menuOpen
               ? "max-h-[500px] opacity-100 pointer-events-auto"
               : "max-h-0 opacity-0 pointer-events-none"
-            }`}
+          }`}
         >
           <div className="px-4 sm:px-6 py-4 flex flex-col space-y-4">
             {links.map((link) => (
@@ -239,8 +240,9 @@ const Navbar = () => {
                   setActive(link.name);
                   setMenuOpen(false);
                 }}
-                className={`relative text-[#1D6953] text-center text-[16px] font-normal leading-normal hover:text-green-700 ${active === link.name ? "font-medium" : ""
-                  }`}
+                className={`relative text-[#1D6953] text-center text-[16px] font-normal leading-normal hover:text-green-700 ${
+                  active === link.name ? "font-medium" : ""
+                }`}
               >
                 {link.name}
                 {active === link.name && (

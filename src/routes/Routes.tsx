@@ -14,8 +14,15 @@ import AdminDashboardLayout from "../Layout/AdminDashboardLayout";
 import UserDashboardLayout from "../Layout/UserDashboardLayou";
 import NotFoundPage from "../pages/404/NotFound";
 import AdminDashboard from "../pages/AdminDashboard/AdminDashboard";
+import MessagesTable from "../pages/AdminDashboard/Message/Massage";
+import AdminProtocols from "../pages/AdminDashboard/Protocols/AdminProtocols";
+import ResearchFundingOverview from "../pages/AdminDashboard/ResearchFundingOverview/ResearchFundingOverview";
+import ChangePassword from "../pages/Authentication/ChangePassword";
+import ForgotPassword from "../pages/Authentication/ForgotPassword";
 import LoginForm from "../pages/Authentication/Login";
 import RegisterForm from "../pages/Authentication/Register";
+import ResetPassword from "../pages/Authentication/RestPassword";
+import Blog from "../pages/blog/Blog";
 import Contact from "../pages/Contract/Contract";
 import Protocols from "../pages/Protocols/Protocols";
 import Roadmap from "../pages/Roadmap/Roadmap";
@@ -24,14 +31,8 @@ import DraftProtocols from "../pages/UserDahsboard/DraftProtocols/DraftProtocols
 import ProfileSettings from "../pages/UserDahsboard/ProfileSettings/ProfileSettings";
 import SubmittedProtocols from "../pages/UserDahsboard/SubmittedProtocols/SubmittedProtocols";
 import UserDashboard from "../pages/UserDahsboard/userDashboard";
-import ProtectedRoute from "./ProtectedRoute";
 import AdminRoute from "./AdminRoute";
-import ResetPassword from "../pages/Authentication/RestPassword";
-import ForgotPassword from "../pages/Authentication/ForgotPassword";
-import ResearchFundingOverview from "../pages/AdminDashboard/ResearchFundingOverview/ResearchFundingOverview";
-import MessagesTable from "../pages/AdminDashboard/Message/Massage";
-import ChangePassword from "../pages/Authentication/ChangePassword";
-import AdminProtocols from "../pages/AdminDashboard/Protocols/AdminProtocols";
+import ProtectedRoute from "./ProtectedRoute";
 
 // Wrapper component to extract id from URL params
 // eslint-disable-next-line react-refresh/only-export-components
@@ -69,7 +70,10 @@ const router = createBrowserRouter([
         path: "/protocol/:id",
         element: <ProtocolDetails />,
       },
-
+      {
+        path: "/blog",
+        element: <Blog />,
+      },
       {
         path: "/login",
         element: <LoginForm />,
