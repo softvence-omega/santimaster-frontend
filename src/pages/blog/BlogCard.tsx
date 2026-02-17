@@ -1,8 +1,12 @@
+import { Link } from "react-router-dom";
 import type { Blog } from "../../types/blog.types";
 
 const BlogCard = ({ blog }: { blog: Blog }) => {
   return (
-    <div className="flex flex-col overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm transition-hover hover:shadow-md">
+    <Link
+      to={`/blog/${blog?._id}`}
+      className="flex flex-col overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm transition-hover hover:shadow-md"
+    >
       {/* Blog Image */}
       <img
         src={blog?.blogImage}
@@ -38,7 +42,7 @@ const BlogCard = ({ blog }: { blog: Blog }) => {
           </p>
         </div>
       </div>
-    </div>
+    </Link>
   );
 };
 
