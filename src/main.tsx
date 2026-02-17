@@ -4,6 +4,7 @@ import "./index.css";
 import routes from "./routes/Routes.tsx";
 import { RouterProvider } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
+import "react-quill/dist/quill.snow.css";
 
 import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";

@@ -13,6 +13,7 @@ import ProtocolDeatils from "../components/Protocols/ProtocolDetails/ProtocolDea
 import AdminDashboardLayout from "../Layout/AdminDashboardLayout";
 import UserDashboardLayout from "../Layout/UserDashboardLayou";
 import NotFoundPage from "../pages/404/NotFound";
+import AdminBlogs from "../pages/AdminDashboard/AdminBlogs/AdminBlogs";
 import AdminDashboard from "../pages/AdminDashboard/AdminDashboard";
 import MessagesTable from "../pages/AdminDashboard/Message/Massage";
 import AdminProtocols from "../pages/AdminDashboard/Protocols/AdminProtocols";
@@ -23,6 +24,7 @@ import LoginForm from "../pages/Authentication/Login";
 import RegisterForm from "../pages/Authentication/Register";
 import ResetPassword from "../pages/Authentication/RestPassword";
 import Blog from "../pages/blog/Blog";
+import BlogDetails from "../pages/blog/BlogDetails";
 import Contact from "../pages/Contract/Contract";
 import Protocols from "../pages/Protocols/Protocols";
 import Roadmap from "../pages/Roadmap/Roadmap";
@@ -73,6 +75,10 @@ const router = createBrowserRouter([
       {
         path: "/blog",
         element: <Blog />,
+      },
+      {
+        path: "/blog/:id",
+        element: <BlogDetails />,
       },
       {
         path: "/login",
@@ -188,6 +194,10 @@ const router = createBrowserRouter([
       {
         path: "protocols",
         element: <AdminProtocols />,
+      },
+      {
+        path: "blogs",
+        element: <AdminBlogs />,
       },
       {
         path: "messages",
