@@ -22,6 +22,11 @@ const AdminDahboardTab = () => {
       value: "protocols",
       href: "/admin/protocols",
     },
+    {
+      title: "Blog's",
+      value: "blogs",
+      href: "/admin/blogs",
+    },
   ];
 
   return (

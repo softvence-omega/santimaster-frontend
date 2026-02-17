@@ -1,4 +1,4 @@
-import { fetchBaseQuery, createApi } from "@reduxjs/toolkit/query/react";
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import type { RootState } from "../store";
 const baseQueryAPI = fetchBaseQuery({
   baseUrl: import.meta.env.VITE_SERVER_URL,
@@ -31,6 +31,7 @@ export const baseAPI = createApi({
     "plan",
     "profile",
     "UserDashboard",
+    "blog",
   ],
   endpoints: () => ({}),
 });
